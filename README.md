@@ -24,7 +24,7 @@ It does not rewrite the durable Workspace order used by the sidebar.
 - **Add workspace** needs the local Host's native folder chooser, so it is hidden while the client is connected
   to a remote or SSH-forwarded Host; use the sidebar's in-app directory picker there.
   A failed local adoption stays in the picker with the Host's message.
-- The compact shortlist always shows five rows; the size is not configurable.
+- The compact shortlist shows at most five rows; the size is not configurable.
 - The picker appears only on the blank-session hero.
   The sidebar browser keeps its own controls.
 

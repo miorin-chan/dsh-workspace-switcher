@@ -1245,6 +1245,11 @@ window.__ModuleLoader__.load({
         }
       }, [open, expanded, activeRow && activeRow.id])
 
+      const requestClose = useCallback(() => {
+        closedRef.current = true
+        onClose()
+      }, [onClose])
+
       const choose = useCallback((row) => {
         if (busy) return
         onPick(row.id)
@@ -1284,7 +1289,7 @@ window.__ModuleLoader__.load({
           event.preventDefault()
           event.stopPropagation()
           if (expanded) setExpanded(false)
-          else onClose()
+          else requestClose()
           return
         }
         if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
@@ -1409,7 +1414,7 @@ window.__ModuleLoader__.load({
           h('div', {
             className: 'wsp-modal-layer',
             onMouseDown: (event) => {
-              if (event.target === event.currentTarget) onClose()
+              if (event.target === event.currentTarget) requestClose()
             },
           },
             h('div', {
@@ -1440,7 +1445,7 @@ window.__ModuleLoader__.load({
                   className: 'wsp-icon-btn',
                   'aria-label': t('close'),
                   title: t('close'),
-                  onClick: onClose,
+                  onClick: requestClose,
                 }, h(CloseGlyph, { size: 14 })),
               ),
               h('div', { className: 'wsp-dialog-search' }, search),
@@ -1481,7 +1486,7 @@ window.__ModuleLoader__.load({
         h('div', {
           className: 'wsp-layer',
           onMouseDown: (event) => {
-            if (event.target === event.currentTarget) onClose()
+            if (event.target === event.currentTarget) requestClose()
           },
         },
           h('div', {
