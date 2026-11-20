@@ -1113,6 +1113,7 @@ window.__ModuleLoader__.load({
       const inputRef = useRef(null)
       const panelRef = useRef(null)
       const wasOpen = useRef(false)
+      const closedRef = useRef(false)
       const uid = useId().replace(/[^a-zA-Z0-9_-]/g, '')
       const listId = 'wsp-list-' + uid
       const titleId = 'wsp-title-' + uid
