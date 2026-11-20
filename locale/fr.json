@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Sélecteur d’espaces de travail amélioré",
+    "description": "Améliore le sélecteur d’espaces de travail de la nouvelle session : tri par utilisation récente, recherche, une liste courte de cinq éléments et une boîte de dialogue étendue pour les longues listes. Le désactiver restaure le menu intégré."
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Selector de espacios de trabajo mejorado",
+    "description": "Mejora el selector de espacios de trabajo de la nueva sesión: orden por uso reciente, búsqueda, una lista corta de cinco y un diálogo ampliado para listas grandes. Al desactivarlo vuelve el menú integrado."
+  }
+}

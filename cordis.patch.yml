@@ -1,0 +1,5 @@
+# Activates the bundle. The Host half is inert; the Client half ships through
+# package.json `dsh.client` and carries Refined workspace picker.
+- insert:
+    - id: dsh-workspace-picker
+      name: 'dsh-workspace-picker'

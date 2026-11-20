@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Seletor de áreas de trabalho aprimorado",
+    "description": "Melhora o seletor de áreas de trabalho da nova sessão: ordem por uso recente, pesquisa, uma lista curta de cinco e um diálogo ampliado para listas grandes. Ao desativar, o menu integrado volta."
+  }
+}
