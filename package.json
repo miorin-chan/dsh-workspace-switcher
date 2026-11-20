@@ -1,6 +1,6 @@
 {
   "name": "dsh-workspace-picker",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "license": "MIT",
   "description": "Upgrades the New Session workspace chooser with recently used order, search, a compact shortlist, and an expanded picker for large workspace lists.",

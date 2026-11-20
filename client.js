@@ -65,7 +65,6 @@ window.__ModuleLoader__.load({
             'empty.noAddBody': 'No workspace is available to choose here.',
             'error.title': 'Could not load workspaces',
             'error.body': 'The workspace list is unavailable. Reconnect, then reopen the picker.',
-            'selected': 'Current workspace',
             'addFailed': 'Could not add workspace',
             'dismiss': 'Dismiss',
             'dialog.title': 'Choose a workspace',
@@ -112,7 +111,6 @@ window.__ModuleLoader__.load({
             'empty.noAddBody': '这里没有可选择的工作区。',
             'error.title': '无法加载工作区',
             'error.body': '工作区列表暂时不可用，重新连接后再打开选择器。',
-            'selected': '当前工作区',
             'addFailed': '无法添加工作区',
             'dismiss': '关闭提示',
             'dialog.title': '选择工作区',
@@ -159,7 +157,6 @@ window.__ModuleLoader__.load({
             'empty.noAddBody': '選択できるワークスペースがありません。',
             'error.title': 'ワークスペースを読み込めませんでした',
             'error.body': 'ワークスペース一覧を利用できません。再接続してからピッカーを開き直してください。',
-            'selected': '現在のワークスペース',
             'addFailed': 'ワークスペースを追加できませんでした',
             'dismiss': '閉じる',
             'dialog.title': 'ワークスペースを選択',
@@ -206,7 +203,6 @@ window.__ModuleLoader__.load({
             'empty.noAddBody': 'Hier ist kein Arbeitsbereich zum Auswählen verfügbar.',
             'error.title': 'Arbeitsbereiche konnten nicht geladen werden',
             'error.body': 'Die Arbeitsbereichsliste ist nicht verfügbar. Stellen Sie die Verbindung wieder her und öffnen Sie den Auswahldialog erneut.',
-            'selected': 'Aktueller Arbeitsbereich',
             'addFailed': 'Arbeitsbereich konnte nicht hinzugefügt werden',
             'dismiss': 'Schließen',
             'dialog.title': 'Arbeitsbereich auswählen',
@@ -253,7 +249,6 @@ window.__ModuleLoader__.load({
             'empty.noAddBody': 'No hay ningún espacio de trabajo disponible para elegir.',
             'error.title': 'No se pudieron cargar los espacios de trabajo',
             'error.body': 'La lista no está disponible. Vuelve a conectarte y abre el selector de nuevo.',
-            'selected': 'Espacio de trabajo actual',
             'addFailed': 'No se pudo añadir el espacio de trabajo',
             'dismiss': 'Cerrar',
             'dialog.title': 'Elegir un espacio de trabajo',
@@ -300,7 +295,6 @@ window.__ModuleLoader__.load({
             'empty.noAddBody': 'Aucun espace de travail n’est disponible ici.',
             'error.title': 'Impossible de charger les espaces de travail',
             'error.body': 'La liste est indisponible. Reconnectez-vous, puis rouvrez le sélecteur.',
-            'selected': 'Espace de travail actuel',
             'addFailed': 'Impossible d’ajouter l’espace de travail',
             'dismiss': 'Fermer',
             'dialog.title': 'Choisir un espace de travail',
@@ -347,7 +341,6 @@ window.__ModuleLoader__.load({
             'empty.noAddBody': 'Nenhuma área de trabalho disponível para escolher aqui.',
             'error.title': 'Não foi possível carregar as áreas de trabalho',
             'error.body': 'A lista está indisponível. Reconecte e reabra o seletor.',
-            'selected': 'Área de trabalho atual',
             'addFailed': 'Não foi possível adicionar a área de trabalho',
             'dismiss': 'Fechar',
             'dialog.title': 'Escolher uma área de trabalho',
@@ -394,7 +387,6 @@ window.__ModuleLoader__.load({
             'empty.noAddBody': 'Здесь нет доступных рабочих пространств.',
             'error.title': 'Не удалось загрузить рабочие пространства',
             'error.body': 'Список недоступен. Переподключитесь и снова откройте выбор.',
-            'selected': 'Текущее рабочее пространство',
             'addFailed': 'Не удалось добавить рабочее пространство',
             'dismiss': 'Закрыть',
             'dialog.title': 'Выбор рабочего пространства',
@@ -424,194 +416,186 @@ window.__ModuleLoader__.load({
 
     /** Component-local stylesheet; the portal carries it, so unmounting removes it. */
     const CSS = `
-.wsp-layer { position: fixed; inset: 0; z-index: 1200; }
+/* Surface vocabulary borrowed from the host primitives, not restyled to taste:
+ * the compact popover is a Menu card (4px padding, translucent menu material,
+ * 34px rows with a trailing check) and the expanded chooser is a Modal card
+ * (l2 surface, panel radius, hairline rules, 28px buttons). Only theme tokens
+ * are referenced, so both themes and future host revisions carry over. */
+.wsp-layer { position: fixed; inset: 0; z-index: 1099; }
 .wsp-popover {
-  position: fixed; z-index: 1201; box-sizing: border-box;
+  position: fixed; z-index: 1100; box-sizing: border-box;
   display: flex; flex-direction: column;
-  width: 392px; max-width: calc(100vw - 24px); max-height: min(64vh, 460px);
-  border: 1px solid var(--dsw-alias-border-l1);
-  border-radius: var(--dsw-radius-lg, 12px);
-  background: var(--dsw-alias-bg-overlay);
+  width: 360px; max-width: calc(100vw - 24px); max-height: min(64vh, 420px);
+  padding: 4px;
+  border: 0;
+  border-radius: var(--dsw-radius-lg);
+  background: var(--dsw-specific-menu, var(--dsw-menu-surface-fill, var(--dsw-alias-bg-layer-1)));
+  -webkit-backdrop-filter: var(--dsw-menu-backdrop-filter, blur(40px) saturate(150%));
+  backdrop-filter: var(--dsw-menu-backdrop-filter, blur(40px) saturate(150%));
+  box-shadow: var(--dsw-elevation-prominent, 0 0 0 .5px var(--dsw-alias-border-l1), 0 3px 8px rgba(0, 0, 0, .04), 0 0 20px rgba(0, 0, 0, .05));
   color: var(--dsw-alias-label-primary);
-  box-shadow: var(--dsw-shadow-lv3, 0 18px 48px rgba(0, 0, 0, .18));
-  -webkit-backdrop-filter: blur(24px) saturate(1.2);
-  backdrop-filter: blur(24px) saturate(1.2);
+  --dsw-elevation-stroke-color: var(--dsw-alias-border-l1);
+  --dsh-scrollbar-thumb: var(--dsw-alias-scrollbar-bg-l2);
+  --dsh-scrollbar-thumb-hover: var(--dsw-alias-scrollbar-hover-l2);
   overflow: hidden;
-  animation: wsp-pop 160ms cubic-bezier(.16, 1, .3, 1);
   font-family: var(--dsw-font-family, inherit);
+  animation: wsp-fade 150ms ease-out;
 }
-.wsp-pop-head { padding: 8px 8px 2px; }
+.wsp-pop-head { flex: none; padding: 0; }
 .wsp-pop-body {
   min-height: 0; overflow: auto; overscroll-behavior: contain;
-  padding: 0 6px 4px;
-  scrollbar-width: thin;
-  scrollbar-color: var(--dsw-alias-scrollbar-bg-l2) transparent;
-}
-.wsp-pop-body::-webkit-scrollbar { width: 8px; }
-.wsp-pop-body::-webkit-scrollbar-thumb {
-  border: 2px solid transparent; border-radius: 8px;
-  background: var(--dsw-alias-scrollbar-bg-l2); background-clip: content-box;
+  padding: 0;
 }
 .wsp-search {
-  box-sizing: border-box; display: flex; align-items: center; gap: 8px;
-  height: 38px; padding: 0 9px;
-  border: 1px solid transparent; border-radius: var(--dsw-radius-md, 8px);
-  background: var(--dsw-alias-bg-layer-2);
-  transition: border-color 140ms ease, background 140ms ease, box-shadow 140ms ease;
+  box-sizing: border-box; position: relative; display: flex; align-items: center; gap: 6px;
+  margin: 2px 0 3px; padding: 5px 8px;
+  border: 0; border-radius: var(--dsw-radius-md);
+  background: transparent;
 }
-.wsp-search:focus-within {
-  border-color: var(--dsw-alias-brand-primary);
-  background: var(--dsw-alias-bg-layer-1);
-  box-shadow: 0 0 0 3px var(--dsw-focus-ring-color, transparent);
+.wsp-search[data-has-value='true'] { padding-right: 34px; }
+.wsp-search-icon {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 14px; height: 14px; color: var(--dsw-alias-label-tertiary);
 }
-.wsp-search-icon { flex: none; color: var(--dsw-alias-label-caption); }
 .wsp-search-input {
-  flex: 1; min-width: 0; height: 100%; padding: 0; border: 0; outline: 0;
+  flex: 1; min-width: 0; padding: 0; border: 0; outline: 0;
   background: transparent; color: var(--dsw-alias-label-primary);
-  font: inherit; font-size: 13.5px; line-height: 20px;
+  font: inherit; font-size: 12px; line-height: normal;
 }
 .wsp-search-input::placeholder { color: var(--dsw-alias-label-caption); }
 .wsp-search-input::-webkit-search-cancel-button { display: none; }
 .wsp-search-clear {
-  flex: none; display: grid; place-items: center;
-  width: 20px; height: 20px; padding: 0; border: 0; border-radius: 6px;
-  background: transparent; color: var(--dsw-alias-label-caption); cursor: pointer;
+  position: absolute; top: 50%; right: 4px; transform: translateY(-50%);
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; padding: 0; border: 0;
+  border-radius: 999px; corner-shape: round;
+  background: transparent; color: var(--dsw-alias-label-secondary); cursor: pointer;
 }
-.wsp-search-clear:hover {
-  background: var(--dsw-alias-interactive-bg-hover);
-  color: var(--dsw-alias-label-primary);
+@media (hover: hover) {
+  .wsp-search-clear:hover { background: var(--dsw-alias-interactive-bg-hover); }
+}
+.wsp-search-clear:focus-visible {
+  outline: none; background: var(--dsw-alias-interactive-bg-hover);
 }
 .wsp-section {
-  display: flex; align-items: center; gap: 6px;
-  padding: 9px 8px 5px;
+  display: flex; align-items: baseline; gap: 6px;
+  padding: 6px 8px;
 }
-.wsp-section-label {
-  font-size: 11px; font-weight: 600; letter-spacing: .03em;
-  color: var(--dsw-alias-label-tertiary);
-}
-.wsp-section-count {
-  display: inline-flex; align-items: center; justify-content: center;
-  min-width: 16px; height: 16px; padding: 0 5px;
-  border-radius: 8px; background: var(--dsw-alias-bg-layer-2);
-  color: var(--dsw-alias-label-caption); font-size: 10.5px; font-weight: 500;
-}
-.wsp-list { display: flex; flex-direction: column; gap: 1px; }
+.wsp-section-label { font-size: 11px; line-height: 15px; color: var(--dsw-alias-label-tertiary); }
+.wsp-section-count { font-size: 11px; line-height: 15px; color: var(--dsw-alias-label-tertiary); }
+.wsp-list { display: flex; flex-direction: column; }
 .wsp-row {
-  position: relative; box-sizing: border-box;
-  display: flex; align-items: center; gap: 10px;
-  width: 100%; height: 50px; padding: 0 8px;
-  border: 0; border-radius: var(--dsw-radius-md, 8px);
-  background: transparent; color: inherit; font: inherit;
+  box-sizing: border-box;
+  display: flex; align-items: center; gap: 6px;
+  width: 100%; min-height: 34px; padding: 6px 8px;
+  border: 0; border-radius: var(--dsw-radius-md);
+  background: transparent; color: var(--dsw-alias-label-primary);
+  font: inherit; font-size: 13px; line-height: 20px;
   text-align: left; cursor: pointer;
-  transition: background 120ms ease;
 }
-.wsp-row:hover, .wsp-row[data-active='true'] {
-  background: var(--dsw-alias-interactive-bg-hover);
+@media (hover: hover) {
+  .wsp-row:hover { background: var(--dsw-alias-interactive-bg-hover); }
 }
-.wsp-row[data-active='true']::before {
-  content: ''; position: absolute; left: 2px; top: 13px; bottom: 13px;
-  width: 2px; border-radius: 2px; background: var(--dsw-alias-brand-primary);
+.wsp-row[data-active='true'], .wsp-row:focus-visible {
+  background: var(--dsw-alias-interactive-bg-hover); outline: none;
 }
-.wsp-row:focus-visible {
-  outline: 2px solid var(--dsw-focus-ring-color, var(--dsw-alias-brand-primary));
-  outline-offset: -2px;
-}
-.wsp-row[aria-disabled='true'] { opacity: .62; cursor: default; }
-.wsp-popover button:focus-visible, .wsp-dialog button:focus-visible {
-  outline: 2px solid var(--dsw-focus-ring-color, var(--dsw-alias-brand-primary));
-  outline-offset: 1px;
-}
+.wsp-row[aria-disabled='true'] { opacity: .4; cursor: default; }
 .wsp-row-icon {
-  flex: none; display: grid; place-items: center;
-  width: 30px; height: 30px; border-radius: 9px;
-  background: var(--dsw-alias-bg-layer-2);
-  color: var(--dsw-alias-label-secondary);
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 14px; height: 14px; color: var(--dsw-alias-menu-icon);
 }
-.wsp-row[data-selected='true'] .wsp-row-icon {
-  color: var(--dsw-alias-brand-primary);
+.wsp-row-text { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+/* Compact rows keep the Menu's single 34px line: the disambiguating path
+ * suffix rides beside the title, which gives way first, instead of adding a
+ * second line. It stays quiet at 11/16 so the title keeps priority. */
+.wsp-row-line { display: flex; align-items: baseline; gap: 4px; min-width: 0; flex: 1; }
+.wsp-row-line .wsp-row-title { flex: 0 1 auto; min-width: 0; }
+.wsp-row-suffix {
+  flex: none; max-width: 70%;
+  font-size: 11px; line-height: 16px; color: var(--dsw-alias-label-tertiary);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.wsp-row-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; }
 .wsp-row-title {
-  font-size: 13.5px; font-weight: 500; line-height: 18px;
+  font-size: 13px; line-height: 20px;
   color: var(--dsw-alias-label-primary);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .wsp-row-path {
-  font-size: 11px; line-height: 15px;
+  font-size: 11px; line-height: 16px;
   color: var(--dsw-alias-label-tertiary);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .wsp-row-meta {
-  flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 1px;
+  flex: none; display: flex; flex-direction: column; align-items: flex-end;
   max-width: 42%;
 }
-.wsp-row-time { font-size: 11px; line-height: 15px; color: var(--dsw-alias-label-secondary); white-space: nowrap; }
-.wsp-row-count { font-size: 11px; line-height: 14px; color: var(--dsw-alias-label-tertiary); white-space: nowrap; }
+.wsp-row-time { font-size: 11px; line-height: 16px; color: var(--dsw-alias-label-tertiary); white-space: nowrap; }
+.wsp-row-count { font-size: 11px; line-height: 16px; color: var(--dsw-alias-label-tertiary); white-space: nowrap; }
 .wsp-row-check {
-  flex: none; display: grid; place-items: center;
-  width: 16px; height: 16px; color: var(--dsw-alias-brand-primary);
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 14px; height: 14px; color: var(--dsw-alias-label-primary);
 }
 .wsp-foot {
-  display: flex; align-items: center; justify-content: space-between; gap: 8px;
-  padding: 6px 8px 8px; border-top: 1px solid var(--dsw-alias-border-l1);
+  flex: none;
+  display: flex; align-items: center; justify-content: space-between; gap: 4px;
+  margin-top: 3px; padding-top: 3px;
+  border-top: .5px solid var(--dsw-alias-border-l2);
 }
 .wsp-foot-action {
-  display: inline-flex; align-items: center; gap: 5px;
-  height: 28px; padding: 0 8px; border: 0;
-  border-radius: var(--dsw-radius-sm, 6px);
-  background: transparent; color: var(--dsw-alias-label-secondary);
-  font: inherit; font-size: 12px; line-height: 18px; cursor: pointer;
-  transition: background 120ms ease, color 120ms ease;
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 34px; padding: 6px 8px;
+  border: 0; border-radius: var(--dsw-radius-md);
+  background: transparent; color: var(--dsw-alias-label-primary);
+  font: inherit; font-size: 13px; line-height: 20px; cursor: pointer;
 }
-.wsp-foot-action:hover {
-  background: var(--dsw-alias-interactive-bg-hover);
-  color: var(--dsw-alias-label-primary);
+.wsp-foot-action svg { flex: none; color: var(--dsw-alias-menu-icon); }
+@media (hover: hover) {
+  .wsp-foot-action:hover { background: var(--dsw-alias-interactive-bg-hover); }
 }
-.wsp-foot-action[aria-disabled='true'] { opacity: .55; cursor: default; }
-.wsp-foot-expand { color: var(--dsw-alias-label-primary); font-weight: 500; }
+.wsp-foot-action:focus-visible {
+  background: var(--dsw-alias-interactive-bg-hover); outline: none;
+}
+.wsp-foot-action[aria-disabled='true'] { opacity: .4; cursor: default; }
 .wsp-foot-count, .wsp-foot-note {
-  padding-right: 4px; font-size: 11.5px; color: var(--dsw-alias-label-tertiary);
+  padding: 0 8px; font-size: 12px; line-height: 18px;
+  color: var(--dsw-alias-label-tertiary);
 }
 .wsp-empty {
-  display: flex; flex-direction: column; align-items: center; gap: 5px;
-  padding: 30px 22px 26px; text-align: center;
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 8px 8px 12px;
 }
-.wsp-empty-icon {
-  display: grid; place-items: center;
-  width: 42px; height: 42px; margin-bottom: 3px; border-radius: 12px;
-  background: var(--dsw-alias-bg-layer-2); color: var(--dsw-alias-label-caption);
+.wsp-empty-title { font-size: 13px; line-height: 20px; color: var(--dsw-alias-label-secondary); }
+.wsp-empty-body { font-size: 12px; line-height: 18px; color: var(--dsw-alias-label-tertiary); }
+.wsp-skeleton { display: flex; flex-direction: column; padding: 2px 0; }
+.wsp-skeleton-row {
+  display: flex; align-items: center; gap: 8px;
+  min-height: 34px; padding: 6px 8px;
 }
-.wsp-empty-title { font-size: 13px; font-weight: 600; color: var(--dsw-alias-label-primary); }
-.wsp-empty-body { max-width: 280px; font-size: 12px; line-height: 18px; color: var(--dsw-alias-label-tertiary); }
-.wsp-skeleton { display: flex; flex-direction: column; gap: 2px; padding: 4px 2px; }
-.wsp-skeleton-row { display: flex; align-items: center; gap: 10px; height: 50px; padding: 0 8px; }
 .wsp-skeleton-icon {
-  flex: none; width: 30px; height: 30px; border-radius: 9px;
+  flex: none; width: 14px; height: 14px; border-radius: var(--dsw-radius-xs);
   background: var(--dsw-alias-bg-skeleton); animation: wsp-pulse 1.4s ease-in-out infinite;
 }
-.wsp-skeleton-text { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.wsp-skeleton-text { display: flex; flex-direction: column; gap: 5px; flex: 1; }
 .wsp-skeleton-bar {
-  height: 8px; border-radius: 4px;
+  height: 8px; border-radius: var(--dsw-radius-xs);
   background: var(--dsw-alias-bg-skeleton); animation: wsp-pulse 1.4s ease-in-out infinite;
 }
 .wsp-skeleton-bar-wide { width: 62%; }
 .wsp-skeleton-bar-narrow { width: 38%; opacity: .7; }
 .wsp-error {
-  flex: none;
-  display: flex; align-items: flex-start; gap: 7px;
-  margin: 0 10px 8px; padding: 8px 9px;
-  border-radius: var(--dsw-radius-md, 8px);
-  background: var(--dsw-alias-bg-layer-2);
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 6px;
+  margin: 0 0 3px; padding: 6px 7px;
+  border-radius: var(--dsw-radius-md);
+  background: var(--dsw-alias-interactive-bg-hover-danger);
   color: var(--dsw-alias-state-error-primary);
-  font-size: 12px; line-height: 17px;
+  font-size: 11px; line-height: 16px;
 }
 .wsp-warning {
-  flex: none;
-  margin: 0 10px 8px; padding: 7px 9px;
-  border-radius: var(--dsw-radius-md, 8px);
-  background: var(--dsw-alias-bg-layer-2);
-  color: var(--dsw-alias-label-secondary);
-  font-size: 11.5px; line-height: 16px;
+  margin: 0 0 3px; padding: 6px 7px;
+  border-radius: var(--dsw-radius-md);
+  background: var(--dsw-alias-bg-module-platform);
+  color: var(--dsw-alias-state-warn-label);
+  font-size: 11px; line-height: 16px;
 }
 .wsp-sr-only {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
@@ -621,100 +605,124 @@ window.__ModuleLoader__.load({
 .wsp-error-label { font-weight: 600; }
 .wsp-error-dismiss {
   flex: none; padding: 0; border: 0; background: transparent;
-  color: inherit; font: inherit; font-size: 11px; cursor: pointer;
-  text-decoration: underline; text-underline-offset: 2px;
+  color: inherit; font: inherit; font-weight: 600; cursor: pointer;
 }
 .wsp-modal-layer {
-  position: fixed; inset: 0; z-index: 1300;
+  position: fixed; inset: 0; z-index: 1000;
   display: flex; align-items: center; justify-content: center;
-  padding: 24px;
-  background: var(--dsw-alias-bg-mask-1, rgba(0, 0, 0, .32));
-  animation: wsp-fade 140ms ease;
+  padding: max(24px, var(--dsh-frame-overlay-top, 24px)) 24px;
+}
+/* The mask starts below the Desktop frame chrome, as the host Modal's does;
+ * a titlebar strip left un-dimmed keeps the window draggable around the card. */
+.wsp-modal-layer::before {
+  content: ''; position: absolute;
+  inset: var(--dsh-frame-chrome-top, 0px) 0 0;
+  background: var(--dsw-alias-bg-mask-1);
+  -webkit-backdrop-filter: var(--dsw-mask-blur, none);
+  backdrop-filter: var(--dsw-mask-blur, none);
+  animation: wsp-fade var(--ds-transition-duration, .2s) var(--ds-ease-in-out, cubic-bezier(.4, 0, .2, 1));
 }
 .wsp-dialog {
-  box-sizing: border-box; display: flex; flex-direction: column;
-  width: min(680px, calc(100vw - 32px));
-  height: min(620px, calc(100vh - 64px));
-  border: 1px solid var(--dsw-alias-border-l1);
-  border-radius: var(--dsw-radius-xl, 16px);
-  background: var(--dsw-alias-bg-layer-1);
+  box-sizing: border-box; position: relative;
+  display: flex; flex-direction: column;
+  width: min(680px, 100%);
+  height: min(520px, calc(100dvh - 48px));
+  border: 0;
+  border-radius: var(--dsw-radius-panel);
+  background: var(--dsw-alias-bg-layer-2);
   color: var(--dsw-alias-label-primary);
-  box-shadow: var(--dsw-elevation-prominent, 0 24px 64px rgba(0, 0, 0, .24));
+  box-shadow: var(--dsw-elevation-prominent);
+  --dsh-scrollbar-thumb: var(--dsw-alias-scrollbar-bg-l2);
+  --dsh-scrollbar-thumb-hover: var(--dsw-alias-scrollbar-hover-l2);
   overflow: hidden;
-  animation: wsp-rise 200ms cubic-bezier(.16, 1, .3, 1);
   font-family: var(--dsw-font-family, inherit);
+  animation: wsp-fade var(--ds-transition-duration, .2s) var(--ds-ease-in-out, cubic-bezier(.4, 0, .2, 1));
 }
 .wsp-dialog-head {
   flex: none;
-  display: flex; align-items: flex-start; gap: 12px;
-  padding: 20px 18px 12px 22px;
+  display: flex; align-items: center; gap: 4px;
+  padding: 16px 14px 8px 24px;
 }
-.wsp-dialog-mark {
-  flex: none; display: grid; place-items: center;
-  width: 38px; height: 38px; border-radius: 11px;
-  background: var(--dsw-alias-bg-layer-2);
-  color: var(--dsw-alias-brand-primary);
-}
-.wsp-dialog-heading { flex: 1; min-width: 0; padding-top: 1px; }
+.wsp-dialog-heading { flex: 1; min-width: 0; }
 .wsp-dialog-title {
-  margin: 0; font-size: 16px; font-weight: 600; line-height: 22px;
-  letter-spacing: -.01em;
+  margin: 0; font-size: 16px; line-height: 24px; font-weight: 500;
+  color: var(--dsw-alias-label-primary);
 }
-.wsp-dialog-subtitle { margin: 2px 0 0; font-size: 12px; line-height: 18px; color: var(--dsw-alias-label-tertiary); }
+.wsp-dialog-subtitle { margin: 0; font-size: 14px; line-height: 22px; color: var(--dsw-alias-label-secondary); }
 .wsp-icon-btn {
-  flex: none; display: grid; place-items: center;
-  width: 28px; height: 28px; padding: 0; border: 0; border-radius: 8px;
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; padding: 0; border: 0;
+  border-radius: var(--dsw-radius-sm);
   background: transparent; color: var(--dsw-alias-label-secondary);
   cursor: pointer;
 }
-.wsp-icon-btn:hover {
-  background: var(--dsw-alias-interactive-bg-hover);
-  color: var(--dsw-alias-label-primary);
+@media (hover: hover) {
+  .wsp-icon-btn:hover {
+    background: var(--dsw-alias-interactive-bg-hover);
+    color: var(--dsw-alias-label-primary);
+  }
 }
-.wsp-back { margin-left: -4px; }
-.wsp-dialog-search { flex: none; padding: 0 20px 10px; }
-.wsp-dialog-body {
-  flex: 1; min-height: 0; overflow: auto; overscroll-behavior: contain;
-  padding: 0 12px 12px;
-  scrollbar-width: thin;
-  scrollbar-color: var(--dsw-alias-scrollbar-bg-l2) transparent;
-}
-.wsp-dialog-body::-webkit-scrollbar { width: 10px; }
-.wsp-dialog-body::-webkit-scrollbar-thumb {
-  border: 3px solid transparent; border-radius: 8px;
-  background: var(--dsw-alias-scrollbar-bg-l2); background-clip: content-box;
-}
-.wsp-dialog-body .wsp-section { padding: 14px 12px 6px; }
-.wsp-dialog-body .wsp-row { height: 54px; padding: 0 12px; gap: 12px; }
-.wsp-dialog-body .wsp-row-icon { width: 32px; height: 32px; border-radius: 10px; }
-.wsp-dialog-body .wsp-row-title { font-size: 14px; line-height: 19px; }
-.wsp-dialog-body .wsp-row-path { font-size: 11.5px; line-height: 16px; }
-.wsp-dialog-body .wsp-list { gap: 2px; }
-.wsp-dialog-foot {
+/* Optical overhang: the 14px glyph, not its 28px hitbox, lands on the 24px
+ * gutter the rest of the card uses. */
+.wsp-back { margin-left: -6px; }
+.wsp-dialog-search {
   flex: none;
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  padding: 10px 14px;
-  border-top: 1px solid var(--dsw-alias-border-l1);
+  padding: 0 24px 12px;
+  border-bottom: .5px solid var(--dsw-alias-border-l3);
+}
+.wsp-dialog-search .wsp-search {
+  height: 32px; margin: 0; padding: 0 8px;
+  border: .5px solid var(--dsw-alias-border-l4);
+  border-radius: var(--dsw-radius-md);
   background: var(--dsw-alias-bg-layer-1);
 }
-.wsp-hints { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.wsp-dialog-search .wsp-search:focus-within { border-color: var(--dsw-alias-state-business-primary); }
+.wsp-dialog-search .wsp-search[data-has-value='true'] { padding-right: 34px; }
+.wsp-dialog-search .wsp-search-icon { width: 16px; height: 16px; }
+.wsp-dialog-search .wsp-search-input { font-size: 14px; line-height: 22px; }
+.wsp-dialog-search .wsp-search-input::placeholder { color: var(--dsw-alias-label-dimmed); }
+.wsp-dialog-body {
+  flex: 1; min-height: 0; overflow: auto; overscroll-behavior: contain;
+  padding: 0 24px 16px;
+}
+/* Sticky headings take the card fill so scrolling rows never show through;
+ * the padding keeps the first one off the search divider. */
+.wsp-dialog-body .wsp-section {
+  position: sticky; top: 0; z-index: 1;
+  padding: 12px 8px 6px; font-weight: 500;
+  background: var(--dsw-alias-bg-layer-2);
+}
+.wsp-dialog-body .wsp-row { gap: 8px; }
+.wsp-dialog-body .wsp-row-icon { width: 16px; height: 16px; }
+.wsp-dialog-body .wsp-skeleton-icon { width: 16px; height: 16px; }
+.wsp-dialog-body .wsp-empty { padding: 12px 8px; }
+.wsp-dialog .wsp-error, .wsp-dialog .wsp-warning { margin: 0 24px 12px; }
+.wsp-dialog-foot {
+  flex: none;
+  display: flex; align-items: center; gap: 8px;
+  padding: 16px 24px;
+  border-top: .5px solid var(--dsw-alias-border-l3);
+}
+.wsp-dialog-foot .wsp-foot-action {
+  box-sizing: border-box; justify-content: center;
+  height: 28px; min-height: 0; padding: 0 10px; gap: 4px;
+  border: .5px solid transparent;
+  border-radius: var(--dsw-radius-sm);
+  box-shadow: inset 0 0 0 var(--dsh-hairline-width, .5px) var(--dsw-alias-border-l3);
+  color: var(--dsw-alias-label-primary);
+  font-size: 12px; line-height: 18px;
+}
+.wsp-dialog-foot .wsp-foot-action svg { color: inherit; }
+.wsp-hints { display: flex; align-items: center; gap: 12px; min-width: 0; margin-left: auto; }
 .wsp-hint {
   font-size: 11px; line-height: 16px; color: var(--dsw-alias-label-tertiary);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.wsp-dialog-count { flex: none; font-size: 11px; color: var(--dsw-alias-label-tertiary); white-space: nowrap; }
+.wsp-dialog-count { flex: none; font-size: 12px; line-height: 18px; color: var(--dsw-alias-label-tertiary); white-space: nowrap; }
 .wsp-spinner {
   width: 12px; height: 12px; border-radius: 50%;
   border: 1.5px solid currentColor; border-right-color: transparent;
   animation: wsp-spin .7s linear infinite;
-}
-@keyframes wsp-pop {
-  from { opacity: 0; transform: translateY(-6px) scale(.985); }
-  to { opacity: 1; transform: none; }
-}
-@keyframes wsp-rise {
-  from { opacity: 0; transform: translateY(10px) scale(.99); }
-  to { opacity: 1; transform: none; }
 }
 @keyframes wsp-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes wsp-pulse { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
@@ -723,7 +731,7 @@ window.__ModuleLoader__.load({
   .wsp-search-input { font-size: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .wsp-popover, .wsp-dialog, .wsp-modal-layer, .wsp-skeleton-icon,
+  .wsp-popover, .wsp-dialog, .wsp-modal-layer::before, .wsp-skeleton-icon,
   .wsp-skeleton-bar, .wsp-spinner { animation: none; }
 }
 @media (max-width: 640px) {
@@ -732,17 +740,18 @@ window.__ModuleLoader__.load({
     top: auto !important;
     bottom: max(12px, env(safe-area-inset-bottom)) !important;
     width: auto !important; max-height: min(76vh, 560px) !important;
-    border-radius: var(--dsw-radius-xl, 16px);
-    animation: wsp-rise 200ms cubic-bezier(.16, 1, .3, 1);
+    animation: wsp-fade 150ms ease-out;
   }
   .wsp-modal-layer { padding: 10px; padding-bottom: max(10px, env(safe-area-inset-bottom)); }
   .wsp-dialog {
     width: 100%; height: 100%;
-    border-radius: var(--dsw-radius-lg, 12px);
+    border-radius: var(--dsw-radius-lg);
   }
-  .wsp-dialog-head { padding: 16px 14px 10px 18px; }
-  .wsp-dialog-search { padding: 0 14px 8px; }
-  .wsp-dialog-body { padding: 0 8px 8px; }
+  .wsp-dialog-head { padding: 14px 12px 6px 16px; }
+  .wsp-dialog-search { padding: 0 16px 10px; }
+  .wsp-dialog-body { padding: 0 16px 10px; }
+  .wsp-dialog .wsp-error, .wsp-dialog .wsp-warning { margin: 0 16px 10px; }
+  .wsp-dialog-foot { padding: 12px 16px; }
   .wsp-hint { display: none; }
 }
 `
@@ -935,8 +944,11 @@ window.__ModuleLoader__.load({
      * @returns {object} field element.
      */
     function SearchField({ t, value, onChange, inputRef, listId, activeOptionId }) {
-      return h('div', { className: 'wsp-search' },
-        h(SearchGlyph, { size: 15, className: 'wsp-search-icon' }),
+      return h('div', {
+        className: 'wsp-search',
+        'data-has-value': value === '' ? undefined : 'true',
+      },
+        h('span', { className: 'wsp-search-icon' }, h(SearchGlyph, { size: 14 })),
         h('input', {
           ref: inputRef,
           className: 'wsp-search-input',
@@ -991,13 +1003,16 @@ window.__ModuleLoader__.load({
         onClick: () => onChoose(row),
         onMouseMove: () => onHover(row.id),
       },
-        h('span', { className: 'wsp-row-icon' }, h(FolderGlyph, { size: compact ? 15 : 16 })),
-        h('span', { className: 'wsp-row-text' },
-          h('span', { className: 'wsp-row-title' }, row.title),
-          compact
-            ? (row.showPath ? h('span', { className: 'wsp-row-path' }, shortenPath(row.path)) : null)
-            : (row.path === '' ? null : h('span', { className: 'wsp-row-path' }, row.path)),
-        ),
+        h('span', { className: 'wsp-row-icon' }, h(FolderGlyph, { size: compact ? 14 : 16 })),
+        compact
+          ? h('span', { className: 'wsp-row-line' },
+            h('span', { className: 'wsp-row-title' }, row.title),
+            row.showPath ? h('span', { className: 'wsp-row-suffix' }, shortenPath(row.path)) : null,
+          )
+          : h('span', { className: 'wsp-row-text' },
+            h('span', { className: 'wsp-row-title' }, row.title),
+            row.path === '' ? null : h('span', { className: 'wsp-row-path' }, row.path),
+          ),
         h('span', { className: 'wsp-row-meta' },
           h('span', { className: 'wsp-row-time' }, relativeTime(row.latest, now, t)),
           compact || row.count === 0
@@ -1005,12 +1020,8 @@ window.__ModuleLoader__.load({
             : h('span', { className: 'wsp-row-count' },
               t(row.count === 1 ? 'sessions.one' : 'sessions.other', { n: row.count })),
         ),
-        h('span', {
-          className: 'wsp-row-check',
-          title: selected ? t('selected') : undefined,
-          'aria-label': selected ? t('selected') : undefined,
-          role: selected ? 'img' : undefined,
-        }, selected ? h(CheckGlyph, { size: 13 }) : null),
+        h('span', { className: 'wsp-row-check', 'aria-hidden': 'true' },
+          selected ? h(CheckGlyph, { size: 14 }) : null),
       )
     }
 
@@ -1027,13 +1038,12 @@ window.__ModuleLoader__.load({
     }
 
     /**
-     * Empty-list state.
+     * Empty-list state, in the host's quiet status-text voice.
      * @param {object} props state props.
      * @returns {object} state element.
      */
-    function EmptyState({ title, body, search }) {
+    function EmptyState({ title, body }) {
       return h('div', { className: 'wsp-empty', role: 'status' },
-        h('span', { className: 'wsp-empty-icon' }, h(search ? SearchGlyph : FolderGlyph, { size: 19 })),
         h('span', { className: 'wsp-empty-title' }, title),
         h('span', { className: 'wsp-empty-body' }, body),
       )
@@ -1207,14 +1217,18 @@ window.__ModuleLoader__.load({
           const anchor = anchorRef && anchorRef.current
           if (!anchor) return
           const rect = anchor.getBoundingClientRect()
-          const width = Math.min(392, window.innerWidth - 24)
+          // Same geometry as the host Menu card: 12px viewport gutters and a
+          // 4px gap under the trigger.
+          const width = Math.min(360, window.innerWidth - 24)
           const left = Math.min(Math.max(12, rect.left), Math.max(12, window.innerWidth - width - 12))
-          const below = window.innerHeight - rect.bottom >= 360 || rect.top < 360
-          const available = below ? window.innerHeight - rect.bottom - 20 : rect.top - 20
-          const maxHeight = Math.max(220, Math.min(460, available))
+          const below = window.innerHeight - rect.bottom >= 300 || rect.top < 300
+          const available = below
+            ? window.innerHeight - rect.bottom - 16
+            : rect.top - 16
+          const maxHeight = Math.max(180, Math.min(420, available))
           const next = below
-            ? { left, width, top: rect.bottom + 8, maxHeight }
-            : { left, width, bottom: window.innerHeight - rect.top + 8, maxHeight }
+            ? { left, width, top: rect.bottom + 4, maxHeight }
+            : { left, width, bottom: window.innerHeight - rect.top + 4, maxHeight }
           setPlacement(previous => (
             previous !== null
             && previous.left === next.left
@@ -1366,7 +1380,7 @@ window.__ModuleLoader__.load({
           body: canAdd ? t('empty.noWorkspacesBody') : t('empty.noAddBody'),
         })
       } else if (filtered.length === 0) {
-        body = h(EmptyState, { search: true, title: t('empty.title'), body: t('empty.body') })
+        body = h(EmptyState, { title: t('empty.title'), body: t('empty.body') })
       } else if (expanded) {
         const showRecent = query.trim() === '' && rows.length > SHORTLIST + 1
         const recentRows = showRecent ? filtered.slice(0, SHORTLIST) : []
@@ -1439,7 +1453,6 @@ window.__ModuleLoader__.load({
                   title: t('back'),
                   onClick: () => setExpanded(false),
                 }, h(ChevronLeftGlyph, { size: 14 })),
-                h('span', { className: 'wsp-dialog-mark' }, h(FolderGlyph, { size: 19 })),
                 h('div', { className: 'wsp-dialog-heading' },
                   h('h2', { className: 'wsp-dialog-title', id: titleId }, t('dialog.title')),
                   h('p', { className: 'wsp-dialog-subtitle' }, t('dialog.subtitle')),
@@ -1530,14 +1543,14 @@ window.__ModuleLoader__.load({
               expandable
                 ? h('button', {
                   type: 'button',
-                  className: 'wsp-foot-action wsp-foot-expand',
+                  className: 'wsp-foot-action',
                   onClick: () => setExpanded(true),
                 },
-                  h(GridGlyph, { size: 13 }),
+                  h(GridGlyph, { size: 14 }),
                   h('span', null, query.trim() === ''
                     ? t('expandCount', { n: filtered.length })
                     : t('expandResults', { n: filtered.length })),
-                  h(ChevronRightGlyph, { size: 11 }),
+                  h(ChevronRightGlyph, { size: 12 }),
                 )
                 : h('span', { className: 'wsp-foot-count' },
                   query.trim() === ''
