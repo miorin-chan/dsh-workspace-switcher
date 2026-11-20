@@ -28,8 +28,8 @@ window.__ModuleLoader__.load({
   id: 'dsh-workspace-picker',
   factory(require) {
     const React = require('react')
-    // The shell's module table exposes `react-dom` as an ES-module namespace
-    // whose CommonJS object sits on `default` (the same interop other plugins use).
+    // The shell's module table exposes `react-dom` as a namespace with named
+    // exports plus a `default` CommonJS object; accept either shape.
     const ReactDOMModule = require('react-dom')
     const ReactDOM = ReactDOMModule.default ?? ReactDOMModule
     const {
