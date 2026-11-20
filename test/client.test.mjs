@@ -27,7 +27,7 @@ const ReactStub = {
 }
 const ReactDOMStub = { createPortal: () => null }
 const plugin = registration.factory(name => (
-  name === 'react' ? ReactStub : name === 'react-dom' ? ReactDOMStub : undefined
+  name === 'react' ? ReactStub : name === 'react-dom' ? { default: ReactDOMStub } : undefined
 ))
 const { buildRows, filterRows, shortenPath, relativeTime, toMillis, SHORTLIST } = plugin.__test
 
