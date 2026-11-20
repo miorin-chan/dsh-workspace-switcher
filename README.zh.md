@@ -31,4 +31,10 @@
 在 **插件** > **添加插件** 中选择本目录，或通过 `plugin_manager` 安装 bundle。
 插件显示为 **工作区选择器增强**。
 
+## 工作区聚合包
+
+本插件属于 [`dsh-workspace-family`](../dsh-workspace-family/README.zh.md) 聚合包，
+与会话头部显示工作区名、按工作区保存的 Agent 默认值收在同一张插件卡里。
+聚合包沿用本插件的行 id，因此本插件和聚合包只能安装一个，不能同时安装。
+
 [项目文档](docs/README.md)

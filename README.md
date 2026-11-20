@@ -36,4 +36,10 @@ The durable Workspace registry and Session order are unchanged either way.
 In **Plugins** > **Add plugin**, choose this directory, or install the bundle with `plugin_manager`.
 The bundle appears as **Refined workspace picker**.
 
+## Workspace family
+
+This bundle is part of the [`dsh-workspace-family`](../dsh-workspace-family/README.md) aggregate, which puts it
+on one **Plugins** card with the workspace name in the session header and the per-workspace agent defaults.
+The aggregate inserts the same row id, so install either this bundle or the aggregate, never both.
+
 [Project documentation](docs/README.md)
