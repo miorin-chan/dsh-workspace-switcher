@@ -57,6 +57,27 @@ export type LabelKey =
   | 'countResults'
   | 'sessions.one'
   | 'sessions.other'
+  | 'sessionSearch'
+  | 'workspaceTree'
+  | 'searchWorkspaceTree'
+  | 'untitledSession'
+  | 'ungrouped'
+  | 'noSessions'
+  | 'noMatches'
+  | 'listUnavailable'
+  | 'searching'
+  | 'refineSearch'
+  | 'contentSearchFailed'
+  | 'openFailed'
+  | 'renameWorkspace'
+  | 'renameFailed'
+  | 'save'
+  | 'expandBranch'
+  | 'collapseBranch'
+  | 'sessionKeys'
+  | 'treeKeys'
+  | 'loadingList'
+  | 'renameNamedWorkspace'
 
 /** One locale's complete dictionary. */
 export type LabelDict = Record<LabelKey, string>
@@ -108,7 +129,28 @@ const en: LabelDict = {
   "count.other": "{n} workspaces",
   "countResults": "{n} results",
   "sessions.one": "1 session",
-  "sessions.other": "{n} sessions"
+  "sessions.other": "{n} sessions",
+  sessionSearch: "Search sessions",
+  workspaceTree: "Workspace tree",
+  searchWorkspaceTree: "Search workspaces and sessions",
+  untitledSession: "Untitled session",
+  ungrouped: "Ungrouped",
+  noSessions: "No sessions yet",
+  noMatches: "No matches",
+  listUnavailable: "The list may be unavailable or out of date.",
+  searching: "Searching message content…",
+  refineSearch: "Refine your search for more results",
+  contentSearchFailed: "Could not search message content",
+  openFailed: "Could not open session",
+  renameWorkspace: "Rename workspace",
+  renameFailed: "Could not rename workspace",
+  save: "Save",
+  expandBranch: "Expand",
+  collapseBranch: "Collapse",
+  sessionKeys: "↑↓ to navigate · ↵ to open",
+  treeKeys: "↑↓ to move · ←→ to collapse or expand",
+  loadingList: "Loading list…",
+  renameNamedWorkspace: "Rename {name}",
 }
 
 const zh: LabelDict = {
@@ -155,7 +197,28 @@ const zh: LabelDict = {
   "count.other": "{n} 个工作区",
   "countResults": "{n} 个结果",
   "sessions.one": "1 个会话",
-  "sessions.other": "{n} 个会话"
+  "sessions.other": "{n} 个会话",
+  sessionSearch: "搜索会话",
+  workspaceTree: "工作区树",
+  searchWorkspaceTree: "搜索工作区和会话",
+  untitledSession: "未命名会话",
+  ungrouped: "未分组",
+  noSessions: "暂无会话",
+  noMatches: "没有匹配结果",
+  listUnavailable: "列表可能暂时不可用或尚未更新。",
+  searching: "正在搜索消息内容…",
+  refineSearch: "缩小搜索范围以查找更多结果",
+  contentSearchFailed: "无法搜索消息内容",
+  openFailed: "无法打开会话",
+  renameWorkspace: "重命名工作区",
+  renameFailed: "无法重命名工作区",
+  save: "保存",
+  expandBranch: "展开",
+  collapseBranch: "折叠",
+  sessionKeys: "↑↓ 移动 · ↵ 打开",
+  treeKeys: "↑↓ 移动 · ←→ 折叠或展开",
+  loadingList: "正在加载列表…",
+  renameNamedWorkspace: "重命名「{name}」",
 }
 
 const ja: LabelDict = {
@@ -202,7 +265,28 @@ const ja: LabelDict = {
   "count.other": "{n} 個のワークスペース",
   "countResults": "{n} 件の結果",
   "sessions.one": "1 件のセッション",
-  "sessions.other": "{n} 件のセッション"
+  "sessions.other": "{n} 件のセッション",
+  sessionSearch: "セッションを検索",
+  workspaceTree: "ワークスペースツリー",
+  searchWorkspaceTree: "ワークスペースとセッションを検索",
+  untitledSession: "無題のセッション",
+  ungrouped: "グループなし",
+  noSessions: "セッションがまだありません",
+  noMatches: "一致する項目がありません",
+  listUnavailable: "一覧を利用できないか、最新ではない可能性があります。",
+  searching: "メッセージの内容を検索中…",
+  refineSearch: "検索条件を絞り込んでください",
+  contentSearchFailed: "メッセージの内容を検索できませんでした",
+  openFailed: "セッションを開けませんでした",
+  renameWorkspace: "ワークスペース名を変更",
+  renameFailed: "ワークスペース名を変更できませんでした",
+  save: "保存",
+  expandBranch: "展開",
+  collapseBranch: "折りたたむ",
+  sessionKeys: "↑↓ 移動 · ↵ 開く",
+  treeKeys: "↑↓ 移動 · ←→ 折りたたむ／展開する",
+  loadingList: "一覧を読み込んでいます…",
+  renameNamedWorkspace: "「{name}」の名前を変更",
 }
 
 const de: LabelDict = {
@@ -249,7 +333,28 @@ const de: LabelDict = {
   "count.other": "{n} Arbeitsbereiche",
   "countResults": "{n} Ergebnisse",
   "sessions.one": "1 Sitzung",
-  "sessions.other": "{n} Sitzungen"
+  "sessions.other": "{n} Sitzungen",
+  sessionSearch: "Sitzungen suchen",
+  workspaceTree: "Arbeitsbereichsbaum",
+  searchWorkspaceTree: "Arbeitsbereiche und Sitzungen suchen",
+  untitledSession: "Unbenannte Sitzung",
+  ungrouped: "Ohne Gruppe",
+  noSessions: "Noch keine Sitzungen",
+  noMatches: "Keine Treffer",
+  listUnavailable: "Die Liste ist möglicherweise nicht verfügbar oder veraltet.",
+  searching: "Nachrichteninhalte werden durchsucht…",
+  refineSearch: "Suche für weitere Ergebnisse eingrenzen",
+  contentSearchFailed: "Nachrichteninhalte konnten nicht durchsucht werden",
+  openFailed: "Sitzung konnte nicht geöffnet werden",
+  renameWorkspace: "Arbeitsbereich umbenennen",
+  renameFailed: "Arbeitsbereich konnte nicht umbenannt werden",
+  save: "Speichern",
+  expandBranch: "Ausklappen",
+  collapseBranch: "Einklappen",
+  sessionKeys: "↑↓ Navigieren · ↵ Öffnen",
+  treeKeys: "↑↓ Navigieren · ←→ Ein- oder Ausklappen",
+  loadingList: "Liste wird geladen…",
+  renameNamedWorkspace: "{name} umbenennen",
 }
 
 const es: LabelDict = {
@@ -296,7 +401,28 @@ const es: LabelDict = {
   "count.other": "{n} espacios de trabajo",
   "countResults": "{n} resultados",
   "sessions.one": "1 sesión",
-  "sessions.other": "{n} sesiones"
+  "sessions.other": "{n} sesiones",
+  sessionSearch: "Buscar sesiones",
+  workspaceTree: "Árbol de espacios de trabajo",
+  searchWorkspaceTree: "Buscar espacios de trabajo y sesiones",
+  untitledSession: "Sesión sin título",
+  ungrouped: "Sin agrupar",
+  noSessions: "Aún no hay sesiones",
+  noMatches: "No hay coincidencias",
+  listUnavailable: "Es posible que la lista no esté disponible o esté desactualizada.",
+  searching: "Buscando en el contenido de los mensajes…",
+  refineSearch: "Afina la búsqueda para ver más resultados",
+  contentSearchFailed: "No se pudo buscar en el contenido de los mensajes",
+  openFailed: "No se pudo abrir la sesión",
+  renameWorkspace: "Cambiar el nombre del espacio de trabajo",
+  renameFailed: "No se pudo cambiar el nombre del espacio de trabajo",
+  save: "Guardar",
+  expandBranch: "Expandir",
+  collapseBranch: "Contraer",
+  sessionKeys: "↑↓ navegar · ↵ abrir",
+  treeKeys: "↑↓ navegar · ←→ contraer o expandir",
+  loadingList: "Cargando lista…",
+  renameNamedWorkspace: "Cambiar el nombre de {name}",
 }
 
 const fr: LabelDict = {
@@ -343,7 +469,28 @@ const fr: LabelDict = {
   "count.other": "{n} espaces de travail",
   "countResults": "{n} résultats",
   "sessions.one": "1 session",
-  "sessions.other": "{n} sessions"
+  "sessions.other": "{n} sessions",
+  sessionSearch: "Rechercher des sessions",
+  workspaceTree: "Arborescence des espaces de travail",
+  searchWorkspaceTree: "Rechercher des espaces de travail et des sessions",
+  untitledSession: "Session sans titre",
+  ungrouped: "Sans groupe",
+  noSessions: "Aucune session pour l’instant",
+  noMatches: "Aucun résultat",
+  listUnavailable: "La liste est peut-être indisponible ou obsolète.",
+  searching: "Recherche dans le contenu des messages…",
+  refineSearch: "Affinez la recherche pour voir plus de résultats",
+  contentSearchFailed: "Impossible de rechercher dans le contenu des messages",
+  openFailed: "Impossible d’ouvrir la session",
+  renameWorkspace: "Renommer l’espace de travail",
+  renameFailed: "Impossible de renommer l’espace de travail",
+  save: "Enregistrer",
+  expandBranch: "Développer",
+  collapseBranch: "Replier",
+  sessionKeys: "↑↓ naviguer · ↵ ouvrir",
+  treeKeys: "↑↓ naviguer · ←→ replier ou développer",
+  loadingList: "Chargement de la liste…",
+  renameNamedWorkspace: "Renommer {name}",
 }
 
 const pt: LabelDict = {
@@ -390,7 +537,28 @@ const pt: LabelDict = {
   "count.other": "{n} áreas de trabalho",
   "countResults": "{n} resultados",
   "sessions.one": "1 sessão",
-  "sessions.other": "{n} sessões"
+  "sessions.other": "{n} sessões",
+  sessionSearch: "Pesquisar sessões",
+  workspaceTree: "Árvore de áreas de trabalho",
+  searchWorkspaceTree: "Pesquisar áreas de trabalho e sessões",
+  untitledSession: "Sessão sem título",
+  ungrouped: "Sem grupo",
+  noSessions: "Ainda não há sessões",
+  noMatches: "Nenhum resultado correspondente",
+  listUnavailable: "A lista pode estar indisponível ou desatualizada.",
+  searching: "Pesquisando o conteúdo das mensagens…",
+  refineSearch: "Refine a pesquisa para ver mais resultados",
+  contentSearchFailed: "Não foi possível pesquisar o conteúdo das mensagens",
+  openFailed: "Não foi possível abrir a sessão",
+  renameWorkspace: "Renomear área de trabalho",
+  renameFailed: "Não foi possível renomear a área de trabalho",
+  save: "Salvar",
+  expandBranch: "Expandir",
+  collapseBranch: "Recolher",
+  sessionKeys: "↑↓ navegar · ↵ abrir",
+  treeKeys: "↑↓ navegar · ←→ recolher ou expandir",
+  loadingList: "Carregando lista…",
+  renameNamedWorkspace: "Renomear {name}",
 }
 
 const ru: LabelDict = {
@@ -437,7 +605,28 @@ const ru: LabelDict = {
   "count.other": "Рабочих пространств: {n}",
   "countResults": "Результатов: {n}",
   "sessions.one": "1 сеанс",
-  "sessions.other": "Сеансов: {n}"
+  "sessions.other": "Сеансов: {n}",
+  sessionSearch: "Поиск сеансов",
+  workspaceTree: "Дерево рабочих пространств",
+  searchWorkspaceTree: "Поиск рабочих пространств и сеансов",
+  untitledSession: "Сеанс без названия",
+  ungrouped: "Без группы",
+  noSessions: "Сеансов пока нет",
+  noMatches: "Совпадений нет",
+  listUnavailable: "Список может быть недоступен или устареть.",
+  searching: "Поиск по содержимому сообщений…",
+  refineSearch: "Уточните запрос, чтобы увидеть больше результатов",
+  contentSearchFailed: "Не удалось выполнить поиск по содержимому сообщений",
+  openFailed: "Не удалось открыть сеанс",
+  renameWorkspace: "Переименовать рабочее пространство",
+  renameFailed: "Не удалось переименовать рабочее пространство",
+  save: "Сохранить",
+  expandBranch: "Развернуть",
+  collapseBranch: "Свернуть",
+  sessionKeys: "↑↓ перемещение · ↵ открыть",
+  treeKeys: "↑↓ перемещение · ←→ свернуть или развернуть",
+  loadingList: "Загрузка списка…",
+  renameNamedWorkspace: "Переименовать «{name}»",
 }
 
 /** The runtime dictionaries: every locale this bundle ships. */

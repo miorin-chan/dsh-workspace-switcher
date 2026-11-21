@@ -2,29 +2,28 @@
 
 [简体中文](README.zh.md)
 
-**Active workspace choice for the New Session screen.**
-
-The built-in picker is a flat registry-order menu: you find a Workspace by scanning it.
-This bundle moves the choice from passive traversal to active retrieval: recent activity first,
-type-to-filter, and a short list on the hero so everyday choice is one click away.
-The expanded dialog covers long lists.
+**Search sessions and browse the workspace tree from a shared dialog.**
 
 Requires DeepSeek Harness 0.2.2-rc.3 or newer.
 
 ## Use
 
-- Click the Workspace chip above the composer on a New Session screen.
-- Type a name or path to filter; the list starts with the five most recently used Workspaces.
-- **All N** opens the full chooser; arrow keys move, Enter chooses, Escape returns.
-- **Add workspace** picks a folder through the Host and selects it for this session.
+- **Mod+K** opens recent sessions.
+  Search by title, workspace, path, ID, or message content, then open a result.
+- **Mod+Shift+K** opens the workspace tree.
+  Expand a workspace to open one of its sessions, or select a workspace to rename it.
+  On a New Session screen, choosing a workspace switches the draft to that workspace.
+- The workspace chip on a New Session screen opens the searchable five-row shortlist.
+  **All N** expands it.
 
-Recent order is computed at render time from Session activity; it never rewrites the sidebar's Workspace order.
+Use ↑ and ↓ to move, ← and → to collapse or expand a focused tree row, Enter to activate, and Esc to dismiss.
+Mod is Command on macOS and Ctrl elsewhere.
 
 ## Limits
 
-- **Add workspace** needs the local Host's native folder chooser; it hides on remote or SSH-forwarded Hosts.
-- The compact list shows at most five rows.
-- The picker appears only on the blank New Session hero.
+- **Add workspace** uses the local Host’s native folder chooser.
+- Browsers can reserve key combinations.
+  On macOS and Windows Web, the default session-search command also opens the dialog with **Mod+Alt+K**.
 
 ## Install
 

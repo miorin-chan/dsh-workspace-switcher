@@ -3,7 +3,10 @@ import { test } from 'node:test'
 
 /** Capture the module registration the browser module loader would receive. */
 let registration
+globalThis.HTMLElement = class HTMLElement {}
+globalThis.document = { activeElement: null }
 globalThis.window = {
+  requestAnimationFrame: callback => callback(),
   __ModuleLoader__: {
     load(entry) {
       registration = entry
@@ -29,7 +32,10 @@ const ReactDOMStub = { createPortal: () => null }
 const plugin = registration.factory(name => (
   name === 'react' ? ReactStub : name === 'react-dom' ? { default: ReactDOMStub } : undefined
 ))
-const { buildRows, filterRows, shortenPath, relativeTime, toMillis, SHORTLIST } = plugin.__test
+const {
+  buildRows, filterRows, shortenPath, relativeTime, toMillis, SHORTLIST,
+  buildNavigation, filterTree, initialExpansion, searchSessions,
+} = plugin.__test
 
 /** A minimal host: recorded effects, a locale service, and a slot registry. */
 function fakeContext() {
@@ -37,6 +43,16 @@ function fakeContext() {
   const dictionaries = new Map()
   const entries = { 'conversation.hero.workspace.directoryFlow': [] }
   const registrations = []
+  const catalogListeners = new Set()
+  const commands = new Map()
+  const register = command => {
+    commands.set(command.id, command)
+    for (const listener of catalogListeners) listener()
+    return () => {
+      commands.delete(command.id)
+      for (const listener of catalogListeners) listener()
+    }
+  }
   const ctx = {
     effect(install, label) {
       const dispose = install()
@@ -44,6 +60,7 @@ function fakeContext() {
       return dispose
     },
     locale: {
+      bind: () => key => key,
       register(namespace, labels) {
         dictionaries.set(namespace, labels)
         return () => {
@@ -69,15 +86,22 @@ function fakeContext() {
         return () => { record.disposed = true }
       },
     },
+    shortcuts: {
+      runtime: 'desktop', platform: 'macos', registry: { commands }, register,
+      catalog: { subscribe: listener => {
+        catalogListeners.add(listener)
+        return () => { catalogListeners.delete(listener) }
+      } },
+    },
     remote: { $host: { home: '/Users/tester', isLoopback: true } },
     uiWorkspace: { pickDirectory: async () => null },
     workspaces: { create: async input => ({ workspaceId: 'ws-created', path: input.path }) },
   }
-  return { ctx, effects, dictionaries, registrations }
+  return { ctx, effects, dictionaries, registrations, commands }
 }
 
 test('declares the services it injects', () => {
-  assert.deepEqual(plugin.inject, ['slots', 'locale', 'uiWorkspace', 'workspaces', 'remote'])
+  assert.deepEqual(plugin.inject, ['slots', 'locale', 'uiWorkspace', 'workspaces', 'remote', 'sessions', 'shortcuts'])
 })
 
 test('registers the eight locale dictionaries and releases them on unload', () => {
@@ -100,13 +124,15 @@ test('shadows the shipped hero picker at a lower priority', () => {
   const { ctx, effects, registrations } = fakeContext()
   plugin.apply(ctx)
 
-  assert.equal(registrations.length, 1)
-  const { options, component } = registrations[0]
+  assert.equal(registrations.length, 2)
+  const hero = registrations.find(record => record.options.name === 'conversation.hero.workspace')
+  const { options, component } = hero
+  assert.ok(registrations.some(record => record.options.name === 'shell.overlay'))
   assert.equal(options.name, 'conversation.hero.workspace')
   assert.equal(options.priority, -1)
   assert.equal(options.locale, 'dsh-workspace-welcome-switcher')
   assert.equal(typeof component, 'function')
-  assert.equal(registrations[0].disposed, false)
+  assert.equal(hero.disposed, false)
 
   const injected = options.inject()
   assert.equal(typeof injected.pickDirectory, 'function')
@@ -116,14 +142,14 @@ test('shadows the shipped hero picker at a lower priority', () => {
   assert.equal(typeof injected.hooks.directoryFlow.subscribe, 'function')
 
   for (const effect of effects) effect.dispose()
-  assert.equal(registrations[0].disposed, true)
+  assert.ok(registrations.every(record => record.disposed))
 })
 
 test('marks a remote carrier as unable to add workspaces', () => {
   const { ctx, registrations } = fakeContext()
   ctx.remote.$host.isLoopback = false
   plugin.apply(ctx)
-  const injected = registrations[0].options.inject()
+  const injected = registrations.find(record => record.options.name === 'conversation.hero.workspace').options.inject()
   assert.equal(injected.localHost, false)
 })
 
@@ -232,4 +258,125 @@ test('formats relative time with the caller locale seat', () => {
 
 test('keeps the compact shortlist at five rows', () => {
   assert.equal(SHORTLIST, 5)
+})
+
+test('routes sidebar search to the switcher and restores the owner on reload and unload', () => {
+  const { ctx, effects, registrations, commands } = fakeContext()
+  let sidebarCalls = 0
+  const original = () => ({ status: 'handled', run: () => { sidebarCalls++ } })
+  const search = { id: 'session.search', modals: ['sidebar'], resolve: original }
+  const unregister = ctx.shortcuts.register(search)
+  plugin.apply(ctx)
+  const { controls } = registrations.find(record => record.options.name === 'shell.overlay').options.inject()
+  const tree = commands.get('workspace.switcher')
+  const page = { modal: null, region: 'editable' }
+
+  assert.deepEqual(tree.defaults['desktop:macos'], { code: 'KeyK', modifiers: ['primary', 'shift'] })
+  search.resolve(page).run()
+  assert.equal(controls.getSnapshot(), 'sessions')
+  assert.equal(sidebarCalls, 0)
+  assert.ok(search.modals.includes('workspace-switcher'))
+  tree.resolve({ ...page, modal: 'workspace-switcher' }).run()
+  assert.equal(controls.getSnapshot(), 'workspaces')
+  assert.equal(tree.resolve({ ...page, modal: 'other' }).status, 'pass')
+  assert.equal(tree.resolve({ ...page, region: 'terminal' }).status, 'pass')
+
+  unregister()
+  assert.equal(search.resolve, original)
+  const updated = { id: 'session.search', modals: ['sidebar'], resolve: original }
+  ctx.shortcuts.register(updated)
+  assert.notEqual(updated.resolve, original)
+  for (const { dispose } of effects.reverse()) dispose()
+  assert.equal(updated.resolve, original)
+  assert.deepEqual(updated.modals, ['sidebar'])
+  assert.equal(commands.has('workspace.switcher'), false)
+})
+
+test('web routes the primary key when delivered and leaves composing or consumed events alone', () => {
+  const { ctx, effects, registrations } = fakeContext()
+  let receive
+  ctx.shortcuts.runtime = 'web'
+  ctx.shortcuts.observeFixedInput = listener => {
+    receive = listener
+    return () => { receive = undefined }
+  }
+  plugin.apply(ctx)
+  const { controls } = registrations.find(record => record.options.name === 'shell.overlay').options.inject()
+  let consumed = 0
+  const gesture = { code: 'KeyK', meta: true, control: false, alt: false, shift: false, composing: false, repeat: false }
+  const input = { type: 'keydown', gesture, context: { modal: null, region: 'editable' }, consume: () => { consumed++ } }
+  receive({ ...input, gesture: { ...gesture, composing: true } })
+  receive({ ...input, gesture: { ...gesture, defaultPrevented: true } })
+  assert.equal(controls.getSnapshot(), null)
+  assert.equal(consumed, 0)
+  receive(input)
+  assert.equal(controls.getSnapshot(), 'sessions')
+  receive({ ...input, gesture: { ...gesture, repeat: true } })
+  assert.equal(controls.getSnapshot(), 'sessions')
+  receive(input)
+  assert.equal(controls.getSnapshot(), null)
+  assert.equal(consumed, 3)
+  for (const { dispose } of effects.reverse()) dispose()
+  assert.equal(receive, undefined)
+})
+
+test('the workspace chooser delegates selection to the live New Session owner', () => {
+  const { ctx, registrations } = fakeContext()
+  plugin.apply(ctx)
+  const { controls } = registrations.find(record => record.options.name === 'shell.overlay').options.inject()
+  const picked = []
+  const unbind = controls.bindHero(() => ({ selectedId: 'old', onPick: id => picked.push(id) }))
+  assert.equal(controls.hero().selectedId, 'old')
+  controls.pickWorkspace('new')
+  unbind()
+  controls.pickWorkspace('ignored')
+  assert.deepEqual(picked, ['new'])
+})
+
+function navigationFixture() {
+  const items = [
+    { workspaceId: 'project', path: '/project', title: 'Project', sessionIds: ['root-session'] },
+    { workspaceId: 'nested', path: '/project/app/src', title: 'Code', sessionIds: ['code', 'archived', 'draft', 'subagent'] },
+    { workspaceId: 'near', path: '/project-copy', title: 'Copy', sessionIds: [] },
+    { workspaceId: 'drive', path: 'D:\\', title: 'Drive', sessionIds: [] },
+    { workspaceId: 'windows', path: 'D:\\project', title: 'Windows', sessionIds: [] },
+  ]
+  const list = [
+    ['code', { title: 'Fix checkout', updatedAt: 30, retainedBy: { mainView: 1 } }],
+    ['root-session', { title: 'Start release', updatedAt: 10 }],
+    ['loose', { title: 'Personal', updatedAt: 20 }],
+    ['archived', { updatedAt: 40 }],
+    ['draft', { blank: true }],
+    ['subagent', { origin: 'subagent' }],
+  ].map(([id, fields]) => [id, { id, blank: false, retainedBy: {}, ...fields }])
+  return buildNavigation({ items, archivedSessionIds: ['archived'] },
+    { ids: list.map(([id]) => id), byId: Object.fromEntries(list) }, 'Default workspace', 'Untitled session')
+}
+
+test('nests registered directories, preserves ancestors in search, and omits drafts and archives', () => {
+  const { roots, sessions, currentId } = navigationFixture()
+  const project = roots.find(root => root.key === 'workspace:project')
+  assert.deepEqual(project.children.map(child => child.key), ['workspace:nested'])
+  assert.ok(roots.some(root => root.key === 'workspace:near'))
+  assert.equal(roots.find(root => root.key === 'workspace:drive').children[0].key, 'workspace:windows')
+  assert.equal(currentId, 'code')
+  assert.deepEqual(initialExpansion(roots, undefined, currentId), ['workspace:project', 'workspace:nested'])
+  assert.deepEqual(sessions.map(row => row.id), ['code', 'loose', 'root-session'])
+  const [match] = filterTree(roots, 'fix checkout', false, 'Ungrouped')
+  assert.equal(match.branch.key, 'workspace:project')
+  assert.deepEqual(match.children[0].sessions.map(session => session.id), ['code'])
+  assert.deepEqual(filterTree(roots, 'fix checkout', true, 'Ungrouped'), [])
+  assert.ok(filterTree(roots, '', true, 'Ungrouped').every(result => result.branch.workspace !== undefined))
+})
+
+test('merges metadata and content hits without duplicate or non-openable rows', () => {
+  const { sessions } = navigationFixture()
+  const results = searchSessions(sessions, 'fix project', [
+    { sessionId: 'root-session', snippet: 'body-only match' },
+    { sessionId: 'archived', snippet: 'hidden' },
+    { sessionId: 'code', snippet: 'metadata plus content' },
+  ])
+  assert.deepEqual(results.map(({ id, snippet }) => [id, snippet]), [
+    ['code', 'metadata plus content'], ['root-session', 'body-only match'],
+  ])
 })

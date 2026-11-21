@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "Verbesserte Arbeitsbereichsauswahl",
-    "description": "Verbessert die Arbeitsbereichsauswahl auf dem Bildschirm für neue Sitzungen: zuletzt verwendete zuerst, Suche, eine kurze Liste mit fünf Einträgen und ein erweiterter Dialog für große Listen. Beim Ausschalten erscheint wieder das eingebaute Menü."
+    "title": "Arbeitsbereichswechsel",
+    "description": "Sitzungen suchen und öffnen, den Arbeitsbereichsbaum durchsuchen oder einen Arbeitsbereich für eine neue Sitzung auswählen."
   }
 }

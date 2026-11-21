@@ -7,7 +7,7 @@ import type { ReactNode, RefObject } from 'react'
 import * as React from 'react'
 
 import {
-  CheckGlyph, CloseGlyph, FolderGlyph, SearchGlyph,
+  CheckGlyph, CloseGlyph, FolderGlyph, PlusGlyph, SearchGlyph,
 } from './glyphs'
 import type { TranslateSeat } from './labels'
 import { relativeTime, shortenPath, type WorkspaceRow } from './model'
@@ -24,6 +24,8 @@ export interface SearchFieldProps {
   readonly listId: string | undefined
   /** The keyboard-highlighted option id, if any. */
   readonly activeOptionId: string | undefined
+  readonly label?: string
+  readonly tree?: boolean
 }
 
 /**
@@ -32,7 +34,7 @@ export interface SearchFieldProps {
  * @returns the field element.
  */
 export function SearchField({
-  t, value, onChange, inputRef, listId, activeOptionId,
+  t, value, onChange, inputRef, listId, activeOptionId, label, tree,
 }: SearchFieldProps): ReactNode {
   return h('div', {
     className: 'wsp-search',
@@ -44,11 +46,12 @@ export function SearchField({
       className: 'wsp-search-input',
       type: 'search',
       value,
-      placeholder: t('search.placeholder'),
-      'aria-label': t('search.label'),
+      placeholder: label ?? t('search.placeholder'),
+      'aria-label': label ?? t('search.label'),
+      'aria-haspopup': tree ? 'tree' : undefined,
       role: 'combobox',
       'aria-autocomplete': 'list',
-      'aria-expanded': true,
+      'aria-expanded': listId !== undefined,
       'aria-controls': listId,
       'aria-activedescendant': activeOptionId,
       autoComplete: 'off',
@@ -67,6 +70,20 @@ export function SearchField({
           inputRef.current?.focus()
         },
       }, h(CloseGlyph, { size: 11 })),
+  )
+}
+
+export function AddWorkspaceButton({ t, busy, onClick }: {
+  readonly t: TranslateSeat
+  readonly busy: boolean
+  readonly onClick: () => void
+}): ReactNode {
+  return h('button', {
+    type: 'button', className: 'wsp-foot-action', title: t('addHint'),
+    'aria-disabled': busy || undefined, onClick,
+  },
+    busy ? h('span', { className: 'wsp-spinner' }) : h(PlusGlyph, { size: 14 }),
+    h('span', null, t(busy ? 'adding' : 'add')),
   )
 }
 

@@ -3,7 +3,7 @@
   "version": "0.1.1",
   "private": true,
   "license": "MIT",
-  "description": "Active search and recents instead of scanning a list, with a short list for everyday choice.",
+  "description": "Search sessions and navigate the workspace tree from a shared switcher dialog.",
   "type": "module",
   "keywords": [
     "deepseek-harness",
@@ -49,6 +49,7 @@
       "immediately": true,
       "inject": [
         "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-shortcuts",
         "@deepseek-ai/dsh-client-ui-renderer",
         "@deepseek-ai/dsh-client-ui-conversation",
         "@deepseek-ai/dsh-client-ui-workspace",
@@ -66,9 +67,12 @@
   "devDependencies": {
     "@deepseek-ai/cordis": "4.1.0",
     "@deepseek-ai/dsh-api-remotes": "0.2.2-rc.5",
+    "@deepseek-ai/dsh-api-session-controller": "0.2.2-rc.5",
     "@deepseek-ai/dsh-api-workspace-controller": "0.2.2-rc.5",
     "@deepseek-ai/dsh-client-locale": "0.2.2-rc.5",
+    "@deepseek-ai/dsh-client-shortcuts": "0.2.2-rc.5",
     "@deepseek-ai/dsh-client-ui-conversation": "0.2.2-rc.5",
+    "@deepseek-ai/dsh-client-ui-layout": "0.2.2-rc.5",
     "@deepseek-ai/dsh-client-ui-renderer": "0.2.2-rc.5",
     "@deepseek-ai/dsh-client-ui-slots": "0.2.2-rc.5",
     "@deepseek-ai/dsh-client-ui-workspace": "0.2.2-rc.5",

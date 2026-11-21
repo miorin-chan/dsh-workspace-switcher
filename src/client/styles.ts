@@ -306,6 +306,19 @@ export const CSS = `
   font-size: 12px; line-height: 18px;
 }
 .wsp-dialog-foot .wsp-foot-action svg { color: inherit; }
+.wsp-tree-option, .wsp-navigation-actions, .wsp-rename { display: flex; align-items: center; gap: 6px; }
+.wsp-tree-option > .wsp-row, .wsp-rename > .wsp-search { flex: 1; min-width: 0; }
+.wsp-tree-chevron { display: inline-flex; align-items: center; justify-content: center; }
+.wsp-tree-chevron svg { transition: transform 120ms ease; }
+.wsp-tree-chevron[data-expanded='true'] svg { transform: rotate(90deg); }
+.wsp-tree-chevron:dir(rtl) svg { transform: rotate(180deg); }
+.wsp-tree-chevron[data-expanded='true']:dir(rtl) svg { transform: rotate(90deg); }
+.wsp-navigation-row:focus-visible { outline: 1px solid var(--dsw-focus-ring-color); outline-offset: -1px; }
+.wsp-navigation-actions { min-width: 0; flex-wrap: wrap; }
+.wsp-rename-action { min-width: 0; max-width: 100%; }
+.wsp-rename-action span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wsp-dialog .wsp-foot-action:disabled { opacity: .45; cursor: default; }
+@media (prefers-reduced-motion: reduce) { .wsp-tree-chevron svg { transition: none; } }
 .wsp-hints { display: flex; align-items: center; gap: 12px; min-width: 0; margin-left: auto; }
 .wsp-hint {
   font-size: 11px; line-height: 16px; color: var(--dsw-alias-label-tertiary);

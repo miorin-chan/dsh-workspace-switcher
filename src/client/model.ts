@@ -100,7 +100,7 @@ export function shortenPath(value: unknown): string {
  */
 export function buildRows(
   items: readonly WorkspaceItem[] | undefined,
-  byId: Readonly<Record<string, SessionSummary>> | undefined,
+  byId: Readonly<Record<string, SessionSummary | undefined>> | undefined,
   defaultName: string,
 ): WorkspaceRow[] {
   const rows: WorkspaceRow[] = []

@@ -15,13 +15,14 @@ import type { TranslateSeat } from './labels'
 import {
   SHORTLIST, buildRows, filterRows, type SessionSummary, type WorkspaceRow,
 } from './model'
+import { SwitcherDialog, trapTab } from './dialog'
 import { createPortal } from './portal'
 import { CSS } from './styles'
 import {
-  EmptyState, ErrorBanner, SearchField, SectionHeader, Skeleton, WorkspaceRowButton,
+  AddWorkspaceButton, EmptyState, ErrorBanner, SearchField, SectionHeader, Skeleton, WorkspaceRowButton,
 } from './components'
 import {
-  ChevronLeftGlyph, ChevronRightGlyph, CloseGlyph, GridGlyph, PlusGlyph,
+  ChevronRightGlyph, GridGlyph,
 } from './glyphs'
 
 const h = React.createElement
@@ -156,7 +157,6 @@ export function WorkspacePicker(props: WorkspacePickerProps): ReactNode {
   const closedRef = useRef(false)
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, '')
   const listId = 'wsp-list-' + uid
-  const titleId = 'wsp-title-' + uid
 
   const rows = useMemo(
     () => buildRows(snapshot.items, sessionState.byId, t('defaultName')),
@@ -226,15 +226,6 @@ export function WorkspacePicker(props: WorkspacePickerProps): ReactNode {
       if (input) input.focus({ preventScroll: true })
     })
     return () => window.cancelAnimationFrame(frame)
-  }, [open, expanded])
-
-  // The expanded chooser is modal: keep the page behind it still.
-  useEffect(() => {
-    if (!open || !expanded) return undefined
-    const body = document.body
-    const previous = body.style.overflow
-    body.style.overflow = 'hidden'
-    return () => { body.style.overflow = previous }
   }, [open, expanded])
 
   // Anchor the compact popover under the chip, clamped to the viewport, and
@@ -354,22 +345,7 @@ export function WorkspacePicker(props: WorkspacePickerProps): ReactNode {
       choose(activeRow)
       return
     }
-    if (event.key !== 'Tab') return
-    const root = panelRef.current
-    if (!root) return
-    const items = root.querySelectorAll<HTMLElement>(
-      'button:not([disabled]):not([tabindex="-1"]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
-    )
-    if (items.length === 0) return
-    const first = items[0]
-    const last = items[items.length - 1]
-    if (event.shiftKey && document.activeElement === first) {
-      event.preventDefault()
-      last.focus()
-    } else if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault()
-      first.focus()
-    }
+    trapTab(event, panelRef.current)
   }
 
   if (!open) return null
@@ -455,75 +431,24 @@ export function WorkspacePicker(props: WorkspacePickerProps): ReactNode {
     activeOptionId: activeRow === undefined ? undefined : optionId(activeIndex),
   })
 
+  const addAction = canAdd ? h(AddWorkspaceButton, { t, busy, onClick: addWorkspace })
+    : h('span', { className: 'wsp-foot-note' }, t('sorted'))
   if (expanded) {
-    return createPortal(h(React.Fragment, null,
-      h('style', null, CSS),
-      h('div', {
-        className: 'wsp-modal-layer',
-        onMouseDown: (event: React.MouseEvent<HTMLDivElement>) => {
-          if (event.target === event.currentTarget) requestClose()
-        },
-      },
-        h('div', {
-          ref: panelRef,
-          className: 'wsp-dialog',
-          role: 'dialog',
-          'aria-modal': 'true',
-          'aria-labelledby': titleId,
-          'aria-busy': busy || pending || undefined,
-          onMouseDown: (event: React.MouseEvent<HTMLDivElement>) => event.stopPropagation(),
-          onKeyDown,
-        },
-          h('div', { className: 'wsp-dialog-head' },
-            h('button', {
-              type: 'button',
-              className: 'wsp-icon-btn wsp-back',
-              'aria-label': t('back'),
-              title: t('back'),
-              onClick: () => setExpanded(false),
-            }, h(ChevronLeftGlyph, { size: 14 })),
-            h('div', { className: 'wsp-dialog-heading' },
-              h('h2', { className: 'wsp-dialog-title', id: titleId }, t('dialog.title')),
-              h('p', { className: 'wsp-dialog-subtitle' }, t('dialog.subtitle')),
-            ),
-            h('button', {
-              type: 'button',
-              className: 'wsp-icon-btn',
-              'aria-label': t('close'),
-              title: t('close'),
-              onClick: requestClose,
-            }, h(CloseGlyph, { size: 14 })),
-          ),
-          h('div', { className: 'wsp-dialog-search' }, search),
-          h('div', { className: 'wsp-dialog-body' }, body),
-          staleWarning,
-          banner,
-          h('div', { className: 'wsp-dialog-foot' },
-            canAdd
-              ? h('button', {
-                type: 'button',
-                className: 'wsp-foot-action',
-                title: t('addHint'),
-                'aria-disabled': busy || undefined,
-                onClick: addWorkspace,
-              },
-                busy ? h('span', { className: 'wsp-spinner' }) : h(PlusGlyph, { size: 14 }),
-                h('span', null, t(busy ? 'adding' : 'add')),
-              )
-              : h('span', { className: 'wsp-foot-note' }, t('sorted')),
-            h('div', { className: 'wsp-hints' },
-              h('span', { className: 'wsp-hint' }, t('dialog.hint')),
-              h('span', { className: 'wsp-dialog-count' },
-                query.trim() === ''
-                  ? (filtered.length === 1
-                    ? t('count.one')
-                    : t('count.other', { n: filtered.length }))
-                  : t('countResults', { n: filtered.length })),
-            ),
-          ),
+    return h(SwitcherDialog, {
+      title: t('dialog.title'), subtitle: t('dialog.subtitle'), panelRef, search, body,
+      busy: busy || pending, t, onClose: requestClose, onBack: () => setExpanded(false), onKeyDown,
+      status: h(React.Fragment, null, staleWarning, banner),
+      footer: h(React.Fragment, null,
+        addAction,
+        h('div', { className: 'wsp-hints' },
+          h('span', { className: 'wsp-hint' }, t('dialog.hint')),
+          h('span', { className: 'wsp-dialog-count' },
+            query.trim() === ''
+              ? (filtered.length === 1 ? t('count.one') : t('count.other', { n: filtered.length }))
+              : t('countResults', { n: filtered.length })),
         ),
       ),
-    ), document.body)
+    })
   }
 
   if (placement === null) return null
@@ -558,18 +483,7 @@ export function WorkspacePicker(props: WorkspacePickerProps): ReactNode {
         staleWarning,
         banner,
         h('div', { className: 'wsp-foot' },
-          canAdd
-            ? h('button', {
-              type: 'button',
-              className: 'wsp-foot-action',
-              title: t('addHint'),
-              'aria-disabled': busy || undefined,
-              onClick: addWorkspace,
-            },
-              busy ? h('span', { className: 'wsp-spinner' }) : h(PlusGlyph, { size: 14 }),
-              h('span', null, t(busy ? 'adding' : 'add')),
-            )
-            : h('span', { className: 'wsp-foot-note' }, t('sorted')),
+          addAction,
           expandable
             ? h('button', {
               type: 'button',

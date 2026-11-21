@@ -1,11 +1,9 @@
 /**
  * Browser half of `dsh-workspace-welcome-switcher`.
  *
- * A more capable performer of the blank-session Workspace chooser. The shipped
- * picker is one flat menu in Host order; this entry shadows it (a single slot,
- * lowest priority renders) with recently-used ordering, a search field, a
- * five-row shortlist, and a focused chooser dialog for users with many
- * Workspaces.
+ * The New Session chooser keeps its five-row shortlist. Its expanded dialog
+ * shares its controls and theme with the frame-wide Session search and Workspace
+ * tree. The tree delegates New Session picks to the currently mounted Hero.
  *
  * `client.js` is generated from `src/client/` by `scripts/build.mjs` and is
  * committed; edit the sources, never the artifact. The module loader envelope
@@ -33,32 +31,65 @@
  *
  * Runtime internals this bundle depends on, verified against 0.2.2-rc.5: the
  * hero slot key and its published child directory-flow hole, the `locale`
- * namespace registration form that takes all dictionaries in one call, and the
- * `react-dom` module-table shape `portal.ts` accepts. The `/client` entries of
- * the owning packages are imported as types only; the built artifact carries no
- * `@deepseek-ai/*` runtime import.
+ * namespace registration form, the Desktop `session.search` command resolver
+ * (`shortcuts.ts`), and the `react-dom` module-table shape (`portal.ts`). If the
+ * command is absent or inaccessible, the shipped action remains untouched.
+ * The `/client` entries of the owning packages are imported as types only.
  */
 
 import type { Context } from '@deepseek-ai/cordis'
+import type {} from '@deepseek-ai/dsh-api-session-controller/client'
+import type {} from '@deepseek-ai/dsh-client-ui-layout/client'
+import * as React from 'react'
 
-import { LABELS, NS } from './labels'
+import { NS } from './labels'
 import { buildRows, filterRows, relativeTime, shortenPath, toMillis, SHORTLIST } from './model'
+import { SwitcherOverlay, type NavigationActions } from './navigation'
+import { buildNavigation, filterTree, initialExpansion, searchSessions } from './navigation-model'
 import { HERO_SLOT, heroInjection, registerLocale } from './remote'
-import { WorkspacePicker } from './view'
+import { createSwitcherControls, installSwitcherShortcuts } from './shortcuts'
+import { WorkspacePicker, type WorkspacePickerProps } from './view'
 
 /** Services this module needs before `apply` runs. */
-export const inject = ['slots', 'locale', 'uiWorkspace', 'workspaces', 'remote']
+export const inject = ['slots', 'locale', 'uiWorkspace', 'workspaces', 'remote', 'sessions', 'shortcuts']
 
 /**
- * Register the locale dictionaries and shadow the shipped hero picker at a
- * lower priority. Both live in `ctx.effect`, so the plugin unload restores
- * DSH's own menu and drops the dictionaries.
+ * Register the shared picker UI and shortcuts for this Client lifetime.
  * @param ctx - client root context.
  */
 export function apply(ctx: Context): void {
   ctx.effect(() => registerLocale(ctx), `${NS}: locale`)
 
+  const controls = createSwitcherControls()
   const injected = heroInjection(ctx)
+  const actions: NavigationActions = {
+    controls,
+    searchContent: (query, signal) => ctx.sessions.search(query, signal),
+    openSession: id => ctx.uiWorkspace.openSession(id),
+    renameWorkspace: (id, title) => ctx.workspaces.rename(id, title),
+  }
+  ctx.effect(() => ctx.slots.inject('shell.overlay', () => ctx.slots.register({
+    name: 'shell.overlay', id: NS, locale: NS,
+    inject: () => {
+      const { localHost, pickDirectory, createWorkspace } = injected()
+      if (!localHost) return actions
+      return {
+        ...actions,
+        addWorkspace: async (signal: AbortSignal) => {
+          const path = await pickDirectory()
+          return path && !signal.aborted ? (await createWorkspace({ path })).workspaceId : undefined
+        },
+      }
+    },
+  }, SwitcherOverlay)), `${NS}: shortcut overlay`)
+  ctx.effect(() => installSwitcherShortcuts(ctx, controls), `${NS}: shortcuts`)
+
+  function HeroPicker(props: WorkspacePickerProps) {
+    const current = React.useRef(props)
+    React.useLayoutEffect(() => { current.current = props }, [props])
+    React.useLayoutEffect(() => controls.bindHero(() => current.current), [])
+    return React.createElement(WorkspacePicker, props)
+  }
   // Priority -1 shadows the shipped picker: in a single slot the lowest
   // priority renders. Disabling this bundle restores the shipped menu.
   ctx.effect(() => ctx.slots.inject(HERO_SLOT, () => ctx.slots.register({
@@ -66,13 +97,17 @@ export function apply(ctx: Context): void {
     priority: -1,
     locale: NS,
     inject: injected,
-  }, WorkspacePicker)), `${NS}: hero picker`)
+  }, HeroPicker)), `${NS}: hero picker`)
 }
 
 /** Pure model helpers the offline tests drive directly. */
 export const __test = {
   SHORTLIST,
   buildRows,
+  buildNavigation,
+  filterTree,
+  initialExpansion,
+  searchSessions,
   filterRows,
   shortenPath,
   relativeTime,
