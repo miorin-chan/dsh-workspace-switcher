@@ -63,6 +63,8 @@ The aggregate and this bundle insert the same row id, so do not install both.
   If the expected structure is missing, leave DSH behavior intact and log a single `console.warn`.
 - Keep the factory free of side effects.
   Register resources in `apply` with `ctx.effect` or `ctx.on` and return cleanup functions.
+- Prefer recognizable icons for common action buttons, and use visible text only
+  when an icon alone would leave the action unclear.
 - Replace the placeholder icon with original artwork and update the title and description
   in all eight locale files before release.
 - Resolve every scaffold placeholder before release.
