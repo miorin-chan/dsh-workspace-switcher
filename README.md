@@ -16,6 +16,7 @@ Requires DeepSeek Harness 0.2.2-rc.3 or newer.
 - **Ctrl+Tab** selects the previous session you visited.
   Hold Ctrl and tap Tab to cycle, or add Shift to cycle backward.
   Release Ctrl or press Enter to open the highlighted session, or press Esc to cancel.
+  On macOS Desktop, pausing for about 650 ms also opens it if the release event is missing.
   The list tracks sessions you open in this window since the plugin loaded.
   Visit at least two eligible sessions to switch back and forth.
 - The workspace chip on a New Session screen opens the searchable five-row shortlist.

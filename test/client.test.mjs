@@ -10,6 +10,8 @@ function sendKeyEvent(type, event = {}) {
   for (const listener of keyboardListeners.get(type) ?? []) listener(event)
 }
 globalThis.window = {
+  setTimeout: (...args) => setTimeout(...args),
+  clearTimeout: timer => clearTimeout(timer),
   addEventListener(type, listener) {
     if (!keyboardListeners.has(type)) keyboardListeners.set(type, new Set())
     keyboardListeners.get(type).add(listener)
@@ -613,24 +615,24 @@ test('snapshots actual visits, preserves order when moving the highlight and ski
   observe('c')
   observe('b')
   observe('b')
-  recent.step(1, true)
+  recent.step(1, 'control-release')
   assert.deepEqual(recent.getSnapshot().ids, ['b', 'c', 'a'])
   assert.equal(recent.getSnapshot().index, 1)
-  recent.step(1, true)
+  recent.step(1, 'control-release')
   assert.equal(recent.getSnapshot().index, 2)
   assert.deepEqual(opened, [])
   recent.cancel()
-  recent.step(-1, true)
+  recent.step(-1, 'control-release')
   assert.equal(recent.getSnapshot().index, 2)
   available.delete('a')
   observe('b')
   assert.equal(recent.getSnapshot().ids[recent.getSnapshot().index], 'c')
-  assert.equal(recent.getSnapshot().confirmOnControlRelease, false)
+  assert.equal(recent.getSnapshot().confirmation, 'explicit')
   assert.deepEqual(opened, [])
   recent.confirm()
   assert.deepEqual(opened, ['c'])
   observe('c')
-  recent.step(1, true)
+  recent.step(1, 'control-release')
   recent.confirm()
   assert.deepEqual(opened, ['c', 'b'])
 })
@@ -678,4 +680,48 @@ test('registers both Desktop bindings and confirms on Control release, with blur
   assert.equal(commands.has(next.id), false)
   assert.equal(commands.has(reverse.id), false)
   assert.deepEqual(listenerCounts(), before)
+})
+
+
+test('macOS confirms after a pause without keyup and drops stale timers', ({ mock }) => {
+  mock.timers.enable({ apis: ['setTimeout'] })
+  const { ctx, effects, registrations, commands } = fakeContext()
+  const opened = []
+  ctx.uiWorkspace.openSession = id => { opened.push(id) }
+  plugin.apply(ctx)
+  const { recent } = registrations.find(record => record.options.name === 'shell.overlay').options.inject()
+  const page = { modal: null, region: 'editable' }
+  const next = () => commands.get('workspace.recentSession').resolve(page).run()
+  for (const id of ['a', 'b', 'c']) recent.observe(id, () => true)
+
+  next()
+  mock.timers.tick(500)
+  next()
+  mock.timers.tick(500)
+  assert.deepEqual(opened, [])
+  mock.timers.tick(150)
+  assert.deepEqual(opened, ['a'])
+
+  next()
+  sendKeyEvent('keyup', { key: 'Unidentified', code: 'ControlLeft', ctrlKey: false })
+  assert.deepEqual(opened, ['a', 'b'])
+  mock.timers.tick(650)
+  assert.deepEqual(opened, ['a', 'b'])
+
+  next()
+  recent.cancel()
+  mock.timers.tick(650)
+  assert.deepEqual(opened, ['a', 'b'])
+
+  next()
+  recent.step(1, 'explicit')
+  mock.timers.tick(650)
+  assert.deepEqual(opened, ['a', 'b'])
+  recent.confirm()
+  assert.deepEqual(opened, ['a', 'b', 'a'])
+
+  next()
+  for (const { dispose } of effects.reverse()) dispose()
+  mock.timers.tick(650)
+  assert.deepEqual(opened, ['a', 'b', 'a'])
 })

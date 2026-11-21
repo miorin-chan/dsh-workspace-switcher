@@ -39,12 +39,17 @@ export function RecentSessionDialog({ recent, t, useSessions, useWorkspaces }: R
   if (selection === null) return null
   const rowsById = new Map(rows.map(row => [row.id, row]))
   const optionId = (index: number) => `${listId}-${index}`
+  const instructions = {
+    explicit: 'recentSession.confirm',
+    'control-release': 'recentSession.release',
+    'control-or-pause': 'recentSession.pause',
+  } as const
   const onKeyDown: React.KeyboardEventHandler<HTMLDivElement> = event => {
     if (event.defaultPrevented || event.nativeEvent.isComposing) return
     if (event.key === 'Escape') recent.cancel()
     else if (event.target === list.current && event.key === 'Enter') recent.confirm()
     else if (event.target === list.current && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
-      recent.step(event.key === 'ArrowDown' ? 1 : -1, selection.confirmOnControlRelease)
+      recent.step(event.key === 'ArrowDown' ? 1 : -1, 'explicit')
     } else {
       if (!event.ctrlKey && !event.altKey && !event.metaKey) trapTab(event, panel.current)
       return
@@ -78,6 +83,6 @@ export function RecentSessionDialog({ recent, t, useSessions, useWorkspaces }: R
     })),
     status: selection.failed ? h('div', { className: 'wsp-error', role: 'alert' }, t('openFailed')) : undefined,
     footer: h('span', { id: instructionsId },
-      t(selection.confirmOnControlRelease ? 'recentSession.release' : 'recentSession.confirm')),
+      t(instructions[selection.confirmation])),
   })
 }

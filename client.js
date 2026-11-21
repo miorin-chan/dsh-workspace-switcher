@@ -131,6 +131,7 @@ function createGroupingPreferences(storage = () => localStorage) {
 // src/client/labels.ts
 var NS = "dsh-workspace-switcher";
 var en = {
+  "recentSession.pause": "Repeat the shortcut to cycle \xB7 Pause or press Enter to open \xB7 Esc to cancel",
   "recentSession.title": "Recently visited sessions",
   "recentSession.next": "Switch to next recently visited session",
   "recentSession.previous": "Switch to previous recently visited session",
@@ -210,6 +211,7 @@ var en = {
   loadingList: "Loading list\u2026"
 };
 var zh = {
+  "recentSession.pause": "\u91CD\u590D\u6309\u5FEB\u6377\u952E\u9009\u62E9 \xB7 \u505C\u987F\u6216\u6309 Enter \u6253\u5F00 \xB7 Esc \u53D6\u6D88",
   "recentSession.title": "\u6700\u8FD1\u8BBF\u95EE\u7684\u4F1A\u8BDD",
   "recentSession.next": "\u5207\u6362\u5230\u4E0B\u4E00\u4E2A\u6700\u8FD1\u8BBF\u95EE\u7684\u4F1A\u8BDD",
   "recentSession.previous": "\u5207\u6362\u5230\u4E0A\u4E00\u4E2A\u6700\u8FD1\u8BBF\u95EE\u7684\u4F1A\u8BDD",
@@ -289,6 +291,7 @@ var zh = {
   loadingList: "\u6B63\u5728\u52A0\u8F7D\u5217\u8868\u2026"
 };
 var ja = {
+  "recentSession.pause": "\u30B7\u30E7\u30FC\u30C8\u30AB\u30C3\u30C8\u3092\u7E70\u308A\u8FD4\u3057\u3066\u5207\u308A\u66FF\u3048 \xB7 \u5C11\u3057\u5F85\u3064\u304B Enter \u3067\u958B\u304F \xB7 Esc \u3067\u30AD\u30E3\u30F3\u30BB\u30EB",
   "recentSession.title": "\u6700\u8FD1\u958B\u3044\u305F\u30BB\u30C3\u30B7\u30E7\u30F3",
   "recentSession.next": "\u6700\u8FD1\u958B\u3044\u305F\u6B21\u306E\u30BB\u30C3\u30B7\u30E7\u30F3\u306B\u5207\u308A\u66FF\u3048",
   "recentSession.previous": "\u6700\u8FD1\u958B\u3044\u305F\u524D\u306E\u30BB\u30C3\u30B7\u30E7\u30F3\u306B\u5207\u308A\u66FF\u3048",
@@ -368,6 +371,7 @@ var ja = {
   loadingList: "\u4E00\u89A7\u3092\u8AAD\u307F\u8FBC\u3093\u3067\u3044\u307E\u3059\u2026"
 };
 var de = {
+  "recentSession.pause": "Zum Wechseln Tastenk\xFCrzel wiederholen \xB7 Kurz warten oder Enter zum \xD6ffnen \xB7 Esc zum Abbrechen",
   "recentSession.title": "Zuletzt ge\xF6ffnete Sitzungen",
   "recentSession.next": "Zur n\xE4chsten zuletzt ge\xF6ffneten Sitzung wechseln",
   "recentSession.previous": "Zur vorherigen zuletzt ge\xF6ffneten Sitzung wechseln",
@@ -447,6 +451,7 @@ var de = {
   loadingList: "Liste wird geladen\u2026"
 };
 var es = {
+  "recentSession.pause": "Repite el atajo para recorrer \xB7 Espera o pulsa Intro para abrir \xB7 Esc para cancelar",
   "recentSession.title": "Sesiones visitadas recientemente",
   "recentSession.next": "Cambiar a la siguiente sesi\xF3n visitada recientemente",
   "recentSession.previous": "Cambiar a la anterior sesi\xF3n visitada recientemente",
@@ -526,6 +531,7 @@ var es = {
   loadingList: "Cargando lista\u2026"
 };
 var fr = {
+  "recentSession.pause": "R\xE9p\xE9ter le raccourci pour parcourir \xB7 Attendre ou appuyer sur Entr\xE9e pour ouvrir \xB7 \xC9chap pour annuler",
   "recentSession.title": "Sessions r\xE9cemment consult\xE9es",
   "recentSession.next": "Passer \xE0 la session r\xE9cemment consult\xE9e suivante",
   "recentSession.previous": "Passer \xE0 la session r\xE9cemment consult\xE9e pr\xE9c\xE9dente",
@@ -605,6 +611,7 @@ var fr = {
   loadingList: "Chargement de la liste\u2026"
 };
 var pt = {
+  "recentSession.pause": "Repita o atalho para percorrer \xB7 Aguarde ou pressione Enter para abrir \xB7 Esc para cancelar",
   "recentSession.title": "Sess\xF5es visitadas recentemente",
   "recentSession.next": "Alternar para a pr\xF3xima sess\xE3o visitada recentemente",
   "recentSession.previous": "Alternar para a sess\xE3o visitada recentemente anterior",
@@ -684,6 +691,7 @@ var pt = {
   loadingList: "Carregando lista\u2026"
 };
 var ru = {
+  "recentSession.pause": "\u041F\u043E\u0432\u0442\u043E\u0440\u0438\u0442\u0435 \u0441\u043E\u0447\u0435\u0442\u0430\u043D\u0438\u0435 \u0434\u043B\u044F \u0432\u044B\u0431\u043E\u0440\u0430 \xB7 \u041F\u043E\u0434\u043E\u0436\u0434\u0438\u0442\u0435 \u0438\u043B\u0438 \u043D\u0430\u0436\u043C\u0438\u0442\u0435 Enter, \u0447\u0442\u043E\u0431\u044B \u043E\u0442\u043A\u0440\u044B\u0442\u044C \xB7 Esc \u2014 \u043E\u0442\u043C\u0435\u043D\u0438\u0442\u044C",
   "recentSession.title": "\u041D\u0435\u0434\u0430\u0432\u043D\u043E \u043E\u0442\u043A\u0440\u044B\u0442\u044B\u0435 \u0441\u0435\u0430\u043D\u0441\u044B",
   "recentSession.next": "\u041F\u0435\u0440\u0435\u0439\u0442\u0438 \u043A \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C\u0443 \u043D\u0435\u0434\u0430\u0432\u043D\u043E \u043E\u0442\u043A\u0440\u044B\u0442\u043E\u043C\u0443 \u0441\u0435\u0430\u043D\u0441\u0443",
   "recentSession.previous": "\u041F\u0435\u0440\u0435\u0439\u0442\u0438 \u043A \u043F\u0440\u0435\u0434\u044B\u0434\u0443\u0449\u0435\u043C\u0443 \u043D\u0435\u0434\u0430\u0432\u043D\u043E \u043E\u0442\u043A\u0440\u044B\u0442\u043E\u043C\u0443 \u0441\u0435\u0430\u043D\u0441\u0443",
@@ -2018,12 +2026,17 @@ function RecentSessionDialog({ recent, t, useSessions, useWorkspaces }) {
   if (selection === null) return null;
   const rowsById = new Map(rows.map((row) => [row.id, row]));
   const optionId = (index) => `${listId}-${index}`;
+  const instructions = {
+    explicit: "recentSession.confirm",
+    "control-release": "recentSession.release",
+    "control-or-pause": "recentSession.pause"
+  };
   const onKeyDown = (event) => {
     if (event.defaultPrevented || event.nativeEvent.isComposing) return;
     if (event.key === "Escape") recent.cancel();
     else if (event.target === list.current && event.key === "Enter") recent.confirm();
     else if (event.target === list.current && (event.key === "ArrowDown" || event.key === "ArrowUp")) {
-      recent.step(event.key === "ArrowDown" ? 1 : -1, selection.confirmOnControlRelease);
+      recent.step(event.key === "ArrowDown" ? 1 : -1, "explicit");
     } else {
       if (!event.ctrlKey && !event.altKey && !event.metaKey) trapTab(event, panel.current);
       return;
@@ -2075,7 +2088,7 @@ function RecentSessionDialog({ recent, t, useSessions, useWorkspaces }) {
     footer: h5(
       "span",
       { id: instructionsId },
-      t(selection.confirmOnControlRelease ? "recentSession.release" : "recentSession.confirm")
+      t(instructions[selection.confirmation])
     )
   });
 }
@@ -2993,11 +3006,11 @@ function createRecentSessions(openSession) {
       const nextIndex = selection.ids.findIndex((candidate) => candidate !== current && available(candidate));
       if (nextIndex < 0) cancel();
       else if (!available(selection.ids[selection.index])) {
-        publish({ ...selection, index: nextIndex, confirmOnControlRelease: false });
+        publish({ ...selection, index: nextIndex, confirmation: "explicit" });
       }
     },
     canStep: () => visits.some((id) => id !== current && available(id)),
-    step(direction, confirmOnControlRelease) {
+    step(direction, confirmation) {
       const ids = selection?.ids ?? visits.filter(available);
       if (ids.length === 0) return;
       const start = selection?.index ?? (current === void 0 ? -1 : ids.indexOf(current));
@@ -3005,7 +3018,7 @@ function createRecentSessions(openSession) {
       for (let offset = 1; offset <= ids.length; offset++) {
         const index = (initial + direction * offset + ids.length * 2) % ids.length;
         if (available(ids[index])) {
-          publish({ ids, index, confirmOnControlRelease, failed: false });
+          publish({ ids, index, confirmation, failed: false });
           return;
         }
       }
@@ -3021,7 +3034,7 @@ function createRecentSessions(openSession) {
         openSession(id);
         cancel();
       } catch {
-        if (selection === pending) publish({ ...pending, confirmOnControlRelease: false, failed: true });
+        if (selection === pending) publish({ ...pending, confirmation: "explicit", failed: true });
       }
     },
     cancel
@@ -3030,6 +3043,7 @@ function createRecentSessions(openSession) {
 
 // src/client/shortcuts.ts
 var SWITCHER_MODAL = "workspace-switcher";
+var RECENT_SWITCH_PAUSE_MS = 650;
 function createSwitcherControls() {
   let mode = null;
   let origin = null;
@@ -3165,22 +3179,38 @@ function installSwitcherShortcuts(ctx, controls) {
 function installRecentShortcuts(ctx, controls, recent) {
   const { shortcuts } = ctx;
   const t = ctx.locale.bind(NS);
+  const needsPauseFallback = shortcuts.runtime === "desktop" && shortcuts.platform === "macos";
+  let pauseTimer;
+  const clearPause = () => {
+    if (pauseTimer !== void 0) window.clearTimeout(pauseTimer);
+    pauseTimer = void 0;
+  };
   const dispose = [
     recent.subscribe(() => {
-      if (recent.getSnapshot() === null && controls.getSnapshot() === "recent") controls.close();
+      clearPause();
+      const selection = recent.getSnapshot();
+      if (selection?.confirmation === "control-or-pause") {
+        pauseTimer = window.setTimeout(() => {
+          if (recent.getSnapshot() === selection) recent.confirm();
+        }, RECENT_SWITCH_PAUSE_MS);
+      }
+      if (selection === null && controls.getSnapshot() === "recent") controls.close();
     }),
     controls.subscribe(() => {
       if (controls.getSnapshot() !== "recent") recent.cancel();
     })
   ];
   const confirmOnRelease = (event) => {
-    if (event.key === "Control" && !event.ctrlKey && recent.getSnapshot()?.confirmOnControlRelease) recent.confirm();
+    const selection = recent.getSnapshot();
+    const releasedControl = event.key === "Control" || event.code === "ControlLeft" || event.code === "ControlRight";
+    if (releasedControl && !event.ctrlKey && selection !== null && selection.confirmation !== "explicit") recent.confirm();
   };
   window.addEventListener("keyup", confirmOnRelease, true);
   window.addEventListener("blur", recent.cancel);
   dispose.push(() => {
     window.removeEventListener("keyup", confirmOnRelease, true);
     window.removeEventListener("blur", recent.cancel);
+    clearPause();
     recent.cancel();
   });
   for (const direction of [1, -1]) {
@@ -3199,9 +3229,10 @@ function installRecentShortcuts(ctx, controls, recent) {
           if (mode !== null && mode !== "recent" || modal !== null && modal !== SWITCHER_MODAL || region === "terminal" || !recent.canStep()) return { status: "pass" };
           const effective = shortcuts.catalog.getSnapshot().find((row) => row.id === id)?.binding;
           const release = source !== "menu" && effective?.modifiers.includes("control") === true;
+          const confirmation = !release ? "explicit" : needsPauseFallback ? "control-or-pause" : "control-release";
           return { status: "handled", run: () => {
             controls.openRecent();
-            recent.step(direction, release);
+            recent.step(direction, confirmation);
           } };
         }
       }));

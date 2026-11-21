@@ -2,10 +2,12 @@ import type { SessionId } from './navigation-model'
 
 const HISTORY_LIMIT = 32
 
+export type RecentConfirmation = 'explicit' | 'control-release' | 'control-or-pause'
+
 export interface RecentSelection {
   readonly ids: readonly SessionId[]
   readonly index: number
-  readonly confirmOnControlRelease: boolean
+  readonly confirmation: RecentConfirmation
   readonly failed: boolean
 }
 
@@ -39,11 +41,11 @@ export function createRecentSessions(openSession: (id: SessionId) => void) {
       if (nextIndex < 0) cancel()
       else if (!available(selection.ids[selection.index])) {
         // Keep the surviving rows in place and require an explicit choice after a target disappears.
-        publish({ ...selection, index: nextIndex, confirmOnControlRelease: false })
+        publish({ ...selection, index: nextIndex, confirmation: 'explicit' })
       }
     },
     canStep: () => visits.some(id => id !== current && available(id)),
-    step(direction: 1 | -1, confirmOnControlRelease: boolean) {
+    step(direction: 1 | -1, confirmation: RecentConfirmation) {
       const ids = selection?.ids ?? visits.filter(available)
       if (ids.length === 0) return
       const start = selection?.index ?? (current === undefined ? -1 : ids.indexOf(current))
@@ -51,7 +53,7 @@ export function createRecentSessions(openSession: (id: SessionId) => void) {
       for (let offset = 1; offset <= ids.length; offset++) {
         const index = (initial + direction * offset + ids.length * 2) % ids.length
         if (available(ids[index])) {
-          publish({ ids, index, confirmOnControlRelease, failed: false })
+          publish({ ids, index, confirmation, failed: false })
           return
         }
       }
@@ -68,7 +70,7 @@ export function createRecentSessions(openSession: (id: SessionId) => void) {
         openSession(id)
         cancel()
       } catch {
-        if (selection === pending) publish({ ...pending, confirmOnControlRelease: false, failed: true })
+        if (selection === pending) publish({ ...pending, confirmation: 'explicit', failed: true })
       }
     },
     cancel,

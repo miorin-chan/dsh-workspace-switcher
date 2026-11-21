@@ -3,11 +3,12 @@ import type { ShortcutBinding, ShortcutCatalogEntry } from '@deepseek-ai/dsh-cli
 import { NS } from './labels'
 import type { WorkspaceId } from '@deepseek-ai/dsh-api-workspace-controller/client'
 import type { WorkspacePickerProps } from './view'
-import type { createRecentSessions } from './recent-sessions'
+import type { createRecentSessions, RecentConfirmation } from './recent-sessions'
 
 export const SWITCHER_MODAL = 'workspace-switcher'
 export type SwitcherMode = 'sessions' | 'workspaces'
 type OverlayMode = SwitcherMode | 'recent'
+const RECENT_SWITCH_PAUSE_MS = 650
 type HeroPicker = Pick<WorkspacePickerProps, 'onPick' | 'onClose' | 'selectedId'>
 
 export function createSwitcherControls() {
@@ -147,20 +148,36 @@ export function installRecentShortcuts(ctx: Context, controls: ReturnType<typeof
   recent: ReturnType<typeof createRecentSessions>): () => void {
   const { shortcuts } = ctx
   const t = ctx.locale.bind(NS)
+  const needsPauseFallback = shortcuts.runtime === 'desktop' && shortcuts.platform === 'macos'
+  let pauseTimer: number | undefined
+  const clearPause = () => {
+    if (pauseTimer !== undefined) window.clearTimeout(pauseTimer)
+    pauseTimer = undefined
+  }
   const dispose = [
     recent.subscribe(() => {
-      if (recent.getSnapshot() === null && controls.getSnapshot() === 'recent') controls.close()
+      clearPause()
+      const selection = recent.getSnapshot()
+      if (selection?.confirmation === 'control-or-pause') {
+        pauseTimer = window.setTimeout(() => {
+          if (recent.getSnapshot() === selection) recent.confirm()
+        }, RECENT_SWITCH_PAUSE_MS)
+      }
+      if (selection === null && controls.getSnapshot() === 'recent') controls.close()
     }),
     controls.subscribe(() => { if (controls.getSnapshot() !== 'recent') recent.cancel() }),
   ]
   const confirmOnRelease = (event: KeyboardEvent) => {
-    if (event.key === 'Control' && !event.ctrlKey && recent.getSnapshot()?.confirmOnControlRelease) recent.confirm()
+    const selection = recent.getSnapshot()
+    const releasedControl = event.key === 'Control' || event.code === 'ControlLeft' || event.code === 'ControlRight'
+    if (releasedControl && !event.ctrlKey && selection !== null && selection.confirmation !== 'explicit') recent.confirm()
   }
   window.addEventListener('keyup', confirmOnRelease, true)
   window.addEventListener('blur', recent.cancel)
   dispose.push(() => {
     window.removeEventListener('keyup', confirmOnRelease, true)
     window.removeEventListener('blur', recent.cancel)
+    clearPause()
     recent.cancel()
   })
   for (const direction of [1, -1] as const) {
@@ -180,7 +197,9 @@ export function installRecentShortcuts(ctx: Context, controls: ReturnType<typeof
             || region === 'terminal' || !recent.canStep()) return { status: 'pass' }
           const effective = shortcuts.catalog.getSnapshot().find((row: ShortcutCatalogEntry) => row.id === id)?.binding
           const release = source !== 'menu' && effective?.modifiers.includes('control') === true
-          return { status: 'handled', run: () => { controls.openRecent(); recent.step(direction, release) } }
+          const confirmation: RecentConfirmation = !release ? 'explicit'
+            : needsPauseFallback ? 'control-or-pause' : 'control-release'
+          return { status: 'handled', run: () => { controls.openRecent(); recent.step(direction, confirmation) } }
         },
       }))
     } catch (error) {
