@@ -41,6 +41,19 @@ export const FolderGlyph = (props: GlyphProps): ReactNode => h(Glyph, {
   paths: ['M2.25 4.6c0-.75.6-1.35 1.35-1.35h3.1l1.35 1.5h5.6c.74 0 1.35.6 1.35 1.35v5.7c0 .75-.6 1.35-1.35 1.35H3.6c-.75 0-1.35-.6-1.35-1.35z'],
 })
 
+/** The open folder and disclosure triangle share the sidebar's icon cell. */
+export const OpenFolderGlyph = (props: GlyphProps): ReactNode => h(Glyph, {
+  ...props,
+  paths: ['M2 12.75V4.5A1.5 1.5 0 0 1 3.5 3h3l1.4 1.5h4.6A1.5 1.5 0 0 1 14 6v.75', 'M2 12.75l1.65-5a1.25 1.25 0 0 1 1.2-.85h9.2a.75.75 0 0 1 .72.97l-1.45 4.65a1.25 1.25 0 0 1-1.2.88H3a1 1 0 0 1-1-.65Z'],
+})
+
+export function DisclosureGlyph({ size = 16, className }: GlyphProps): ReactNode {
+  return h('svg', {
+    width: size, height: size, viewBox: '0 0 16 16', fill: 'currentColor',
+    'aria-hidden': true, focusable: false, className,
+  }, h('path', { d: 'M6 4.3a.5.5 0 0 0-.8.4v6.6a.5.5 0 0 0 .8.4l4.5-3.3a.5.5 0 0 0 0-.8Z' }))
+}
+
 /** A magnifier: the search field's leading icon. */
 export const SearchGlyph = (props: GlyphProps): ReactNode => h(Glyph, {
   ...props,

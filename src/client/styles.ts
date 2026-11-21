@@ -306,25 +306,46 @@ export const CSS = `
   font-size: 12px; line-height: 18px;
 }
 .wsp-dialog-foot .wsp-foot-action svg { color: inherit; }
-.wsp-tree-option, .wsp-navigation-actions, .wsp-rename { display: flex; align-items: center; gap: 6px; }
-.wsp-tree-option > .wsp-row, .wsp-rename > .wsp-search { flex: 1; min-width: 0; }
-.wsp-tree-chevron { display: inline-flex; align-items: center; justify-content: center; }
-.wsp-tree-chevron svg { transition: transform 120ms ease; }
-.wsp-tree-chevron[data-expanded='true'] svg { transform: rotate(90deg); }
-.wsp-tree-chevron:dir(rtl) svg { transform: rotate(180deg); }
-.wsp-tree-chevron[data-expanded='true']:dir(rtl) svg { transform: rotate(90deg); }
+.wsp-navigation-list, .wsp-tree-children { gap: 2px; }
+.wsp-tree-children {
+  display: grid; grid-template-columns: minmax(0, 1fr); margin-block-start: 2px;
+  margin-inline-start: 8px; padding-inline-start: 3px;
+  border-inline-start: 1px solid var(--dsw-alias-border-l3);
+}
+.wsp-dialog-body .wsp-navigation-row { min-height: 32px; padding: 0 8px; gap: 6px; text-align: start; }
+.wsp-dialog-body .wsp-navigation-row[data-search-meta='true'] { min-height: 48px; padding-block: 4px; }
+.wsp-navigation-row .wsp-row-title { font-size: 14px; }
+.wsp-navigation-row[data-selected='true'] { background-color: var(--dsw-alias-interactive-bg-hover); }
 .wsp-navigation-row:focus-visible { outline: 1px solid var(--dsw-focus-ring-color); outline-offset: -1px; }
+.wsp-search-meta { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
+.wsp-search-meta .wsp-row-path { font-size: 12px; line-height: 17px; }
+.wsp-search-meta .wsp-row-path:first-child:not(:only-child) { max-width: 40%; }
+.wsp-search-meta .wsp-session-snippet { color: var(--dsw-alias-label-secondary); }
+.wsp-tree-option, .wsp-navigation-actions, .wsp-rename { display: flex; align-items: center; gap: 6px; }
+.wsp-tree-option { gap: 0; }
+.wsp-tree-option > .wsp-row, .wsp-rename > .wsp-search { flex: 1; min-width: 0; }
+.wsp-tree-icon { color: var(--dsw-alias-label-tertiary); }
+.wsp-tree-icon[data-current='true'] { color: var(--dsw-alias-state-business-primary); }
+.wsp-tree-arrow { color: var(--dsw-alias-label-caption); transition: transform 150ms var(--ds-ease-in-out, ease); }
+.wsp-tree-icon > .wsp-tree-arrow { display: none; }
+.wsp-tree-disclosure { margin-inline-end: 4px; }
+.wsp-tree-disclosure:dir(rtl) .wsp-tree-arrow, .wsp-tree-icon:dir(rtl) > .wsp-tree-arrow { transform: rotate(180deg); }
+.wsp-tree-disclosure[data-expanded='true'] .wsp-tree-arrow,
+.wsp-tree-icon[data-expanded='true'] > .wsp-tree-arrow { transform: rotate(90deg); }
+@media (hover: hover) {
+  .wsp-navigation-row:hover .wsp-tree-icon[data-swap='true'] > .wsp-tree-folder { display: none; }
+  .wsp-navigation-row:hover .wsp-tree-icon[data-swap='true'] > .wsp-tree-arrow { display: block; }
+}
+.wsp-session-dot { width: 6px; height: 6px; border-radius: 50%; }
+.wsp-session-dot[data-state='running'] { background: var(--dsw-alias-state-business-primary); }
+.wsp-session-dot[data-state='waiting'] { background: var(--dsw-alias-state-warn-label); }
+.wsp-session-dot[data-state='done'] { background: var(--dsw-alias-state-success-primary); }
 .wsp-navigation-actions { min-width: 0; flex-wrap: wrap; }
 .wsp-rename-action { min-width: 0; max-width: 100%; }
 .wsp-rename-action span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .wsp-dialog .wsp-foot-action:disabled { opacity: .45; cursor: default; }
-@media (prefers-reduced-motion: reduce) { .wsp-tree-chevron svg { transition: none; } }
-.wsp-hints { display: flex; align-items: center; gap: 12px; min-width: 0; margin-left: auto; }
-.wsp-hint {
-  font-size: 11px; line-height: 16px; color: var(--dsw-alias-label-tertiary);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.wsp-dialog-count { flex: none; font-size: 12px; line-height: 18px; color: var(--dsw-alias-label-tertiary); white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) { .wsp-tree-arrow { transition: none; } }
+.wsp-dialog-count { margin-inline-start: auto; font-size: 12px; line-height: 18px; color: var(--dsw-alias-label-tertiary); }
 .wsp-spinner {
   width: 12px; height: 12px; border-radius: 50%;
   border: 1.5px solid currentColor; border-right-color: transparent;
@@ -358,6 +379,5 @@ export const CSS = `
   .wsp-dialog-body { padding: 0 16px 10px; }
   .wsp-dialog .wsp-error, .wsp-dialog .wsp-warning { margin: 0 16px 10px; }
   .wsp-dialog-foot { padding: 12px 16px; }
-  .wsp-hint { display: none; }
 }
 `

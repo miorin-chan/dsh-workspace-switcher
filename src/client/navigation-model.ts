@@ -12,11 +12,13 @@ export interface SessionRow {
   readonly workspace: string
   readonly workspaceId: WorkspaceId | undefined
   readonly latest: number
+  readonly running: boolean
 }
 
 export interface WorkspaceBranch {
   readonly key: string
   readonly workspace: WorkspaceRow | undefined
+  readonly directory?: { readonly title: string; readonly path: string }
   readonly sessions: SessionRow[]
   readonly children: WorkspaceBranch[]
 }
@@ -28,14 +30,54 @@ function directoryKey(path: string): string {
   return (windows ? path.replaceAll('\\', '/') : path).replace(/\/+$/, '')
 }
 
-function parentBranch(path: string, byPath: ReadonlyMap<string, WorkspaceBranch>): WorkspaceBranch | undefined {
-  let separator = path.lastIndexOf('/')
-  while (separator >= 0) {
-    const parent = byPath.get(path.slice(0, separator))
-    if (parent !== undefined || separator === 0) return parent
-    separator = path.lastIndexOf('/', separator - 1)
+function parentPath(path: string): string | undefined {
+  const separator = path.lastIndexOf('/')
+  if (separator < 0 || (path.startsWith('//') && separator <= path.indexOf('/', 2))) return undefined
+  return path.slice(0, separator)
+}
+
+function workspaceRoots(branches: readonly WorkspaceBranch[]): WorkspaceBranch[] {
+  const byPath = new Map<string, WorkspaceBranch>()
+  const childPaths = new Map<string, Set<string>>()
+  for (const branch of branches) {
+    const path = branch.workspace?.path
+    if (!path) continue
+    const key = directoryKey(path)
+    if (!byPath.has(key)) byPath.set(key, branch)
+    for (let child = key, parent = parentPath(child); parent !== undefined; child = parent, parent = parentPath(child)) {
+      const siblings = childPaths.get(parent) ?? new Set<string>()
+      siblings.add(child)
+      childPaths.set(parent, siblings)
+    }
   }
-  return undefined
+
+  const roots: WorkspaceBranch[] = []
+  const attached = new Set<WorkspaceBranch>()
+  const attach = (branch: WorkspaceBranch, path: string | undefined): void => {
+    if (attached.has(branch)) return
+    attached.add(branch)
+    for (let parent = path === undefined ? undefined : parentPath(path); parent !== undefined; parent = parentPath(parent)) {
+      let owner = byPath.get(parent)
+      if (owner === undefined && parent !== '' && (childPaths.get(parent)?.size ?? 0) > 1) {
+        owner = {
+          key: `directory:${parent}`, directory: { title: parent.split('/').at(-1) || parent, path: parent },
+          workspace: undefined, children: [], sessions: [],
+        }
+        byPath.set(parent, owner)
+      }
+      if (owner !== undefined) {
+        attach(owner, parent)
+        owner.children.push(branch)
+        return
+      }
+    }
+    roots.push(branch)
+  }
+  for (const branch of branches) {
+    const path = branch.workspace?.path
+    attach(branch, path ? directoryKey(path) : undefined)
+  }
+  return roots
 }
 
 export function buildNavigation(
@@ -67,22 +109,12 @@ export function buildNavigation(
     sessions.push({
       id: session.id, title: session.title?.trim() || untitled,
       path: workspace?.path || session.cwd || '', workspace: workspace?.title ?? '',
-      workspaceId: workspace?.id, latest: toMillis(session.updatedAt),
+      workspaceId: workspace?.id, latest: toMillis(session.updatedAt), running: session.running === true,
     })
   }
   sessions.sort((a, b) => b.latest - a.latest || a.id.localeCompare(b.id))
 
-  const branches: WorkspaceBranch[] = [...branchById.values()]
-  const byPath = new Map(branches.flatMap(branch => {
-    const path = branch.workspace?.path
-    return path ? [[directoryKey(path), branch] as const] : []
-  }))
-  const roots = branches.filter(branch => {
-    const path = branch.workspace?.path
-    const parent = path ? parentBranch(directoryKey(path), byPath) : undefined
-    parent?.children.push(branch)
-    return parent === undefined
-  })
+  const roots = workspaceRoots([...branchById.values()])
   const ungrouped: WorkspaceBranch = { key: 'ungrouped', workspace: undefined, children: [], sessions: [] }
   for (const session of sessions) {
     const branch = session.workspaceId === undefined ? ungrouped : branchById.get(session.workspaceId) ?? ungrouped
@@ -115,8 +147,8 @@ export function filterTree(
   roots: readonly WorkspaceBranch[], query: string, choosing: boolean, ungrouped: string,
 ): TreeMatch[] {
   return roots.flatMap(branch => {
-    if (choosing && branch.workspace === undefined) return []
-    const matches = filterRows([branch.workspace ?? { title: ungrouped, path: '' }], query).length > 0
+    if (choosing && branch.workspace === undefined && branch.directory === undefined) return []
+    const matches = filterRows([branch.workspace ?? branch.directory ?? { title: ungrouped, path: '' }], query).length > 0
     const children = filterTree(branch.children, matches ? '' : query, choosing, ungrouped)
     const sessions = choosing ? [] : filterRows(branch.sessions, matches ? '' : query)
     return matches || children.length > 0 || sessions.length > 0 ? [{ branch, children, sessions }] : []

@@ -3,9 +3,9 @@ import type { ReactNode } from 'react'
 import type { WorkspaceId, WorkspaceSnapshot } from '@deepseek-ai/dsh-api-workspace-controller/client'
 import { AddWorkspaceButton, ErrorBanner, SearchField, Skeleton } from './components'
 import { SwitcherDialog, trapTab } from './dialog'
-import { CheckGlyph, ChevronRightGlyph, FolderGlyph } from './glyphs'
+import { CheckGlyph, DisclosureGlyph, FolderGlyph, OpenFolderGlyph } from './glyphs'
 import type { TranslateSeat } from './labels'
-import { relativeTime } from './model'
+import { filterRows, relativeTime, shortenPath } from './model'
 import {
   buildNavigation, filterTree, initialExpansion, searchSessions,
   type NavigationCatalog, type SearchHit, type SessionId, type SessionRow, type TreeMatch,
@@ -17,6 +17,9 @@ const h = React.createElement
 const { useEffect, useId, useMemo, useRef, useState, useSyncExternalStore } = React
 const NO_HITS: readonly SearchHit[] = []
 
+type StatusLabel = 'status.running' | 'status.completed' | 'status.waitingApproval' | 'status.planReview' | 'status.waitingAnswer'
+type SessionStatus = { running: boolean | undefined; completionUnread: boolean; pendingInteraction: { kind: string } | undefined }
+
 type Controls = ReturnType<typeof createSwitcherControls>
 type Search = (query: string, signal: AbortSignal) => Promise<{
   readonly ok: true
@@ -25,6 +28,7 @@ type Search = (query: string, signal: AbortSignal) => Promise<{
 
 export interface NavigationActions {
   readonly controls: Controls
+  readonly statusLabel: (key: StatusLabel) => string
   readonly searchContent: Search
   readonly openSession: (id: SessionId) => void
   readonly renameWorkspace: (id: WorkspaceId, title: string) => Promise<unknown>
@@ -35,6 +39,7 @@ interface OverlayProps extends NavigationActions {
   readonly t: TranslateSeat
   readonly useWorkspaces: SnapshotHook<WorkspaceSnapshot>
   readonly useSessions: SnapshotHook<NavigationCatalog>
+  readonly useSessionStatus: SnapshotHook<ReadonlyMap<SessionId, SessionStatus>>
   readonly usePanelInfo: SnapshotHook<{ readonly activePanelId: string | null }>
   readonly useWorkspaceAccess: (id: WorkspaceId, action: 'workspace/rename') => boolean
   readonly useRemoteAccess: (action: 'workspace/create') => boolean
@@ -46,7 +51,7 @@ export function SwitcherOverlay(props: OverlayProps): ReactNode {
 }
 
 function NavigationDialog({ mode, controls, t, useWorkspaces, useSessions, usePanelInfo,
-  useWorkspaceAccess, useRemoteAccess, searchContent, openSession, renameWorkspace, addWorkspace,
+  useWorkspaceAccess, useRemoteAccess, useSessionStatus, statusLabel, searchContent, openSession, renameWorkspace, addWorkspace,
 }: OverlayProps & { mode: SwitcherMode }): ReactNode {
   const workspaces = useWorkspaces(state => state)
   const sessions = useSessions(state => state)
@@ -80,6 +85,8 @@ function NavigationDialog({ mode, controls, t, useWorkspaces, useSessions, usePa
   const workspaceToReveal = addedWorkspaceId ?? hero?.selectedId
   const autoExpanded = useMemo(() => new Set(initialExpansion(roots, workspaceToReveal,
     workspaceToReveal === undefined ? currentId : undefined)), [roots, workspaceToReveal, currentId])
+  const currentBranches = useMemo(() => new Set(initialExpansion(roots, hero?.selectedId, currentId)),
+    [roots, hero?.selectedId, currentId])
   const matches = tree ? filterTree(roots, trimmed, choosing, t('ungrouped')) : []
   const treeRows = tree ? flattenTree(matches, expanded, autoExpanded, trimmed !== '', t) : []
   const flatRows = tree ? [] : searchSessions(sessionRows, trimmed, remote.hits)
@@ -90,7 +97,11 @@ function NavigationDialog({ mode, controls, t, useWorkspaces, useSessions, usePa
   const selectedIndex = rows.findIndex(row => row.kind === 'branch'
     ? row.match.branch.workspace?.id !== undefined && row.match.branch.workspace.id === hero?.selectedId
     : row.session.id === currentId)
-  const index = activeIndex >= 0 ? activeIndex : trimmed !== '' && rows.length > 0 ? 0 : -1
+  const firstChoice = choosing && trimmed !== '' ? rows.findIndex(row => {
+    const workspace = row.kind === 'branch' ? row.match.branch.workspace : undefined
+    return workspace !== undefined && filterRows([workspace], trimmed).length > 0
+  }) : 0
+  const index = activeIndex >= 0 ? activeIndex : trimmed !== '' && rows.length > 0 ? Math.max(firstChoice, 0) : -1
   const active = rows[index]
   const optionId = (i: number) => `${listId}-${i}`
   const title = t(tree ? choosing ? 'dialog.title' : 'workspaceTree' : 'sessionSearch')
@@ -210,6 +221,34 @@ function NavigationDialog({ mode, controls, t, useWorkspaces, useSessions, usePa
     : h('div', { className: 'wsp-empty', role: 'status' }, t(catalogError ? 'listUnavailable'
       : trimmed !== '' ? 'noMatches' : tree ? 'empty.noWorkspacesTitle' : 'noSessions'))
 
+  function renderRows() {
+    const children = new Map<string | undefined, number[]>()
+    for (const [i, row] of rows.entries()) {
+      const siblings = children.get(row.parentKey)
+      if (siblings === undefined) children.set(row.parentKey, [i])
+      else siblings.push(i)
+    }
+    const renderGroup = (parentKey?: string): ReactNode[] => (children.get(parentKey) ?? []).map(i => {
+      const row = rows[i]
+      const id = optionId(i)
+      const groupId = children.has(row.key) ? `${id}-children` : undefined
+      const option = h(ResultRow, {
+        key: row.key, row, id, groupId, t, now, choosing, active: i === index,
+        selected: row.kind === 'session' ? row.session.id === currentId
+          : row.match.branch.workspace?.id !== undefined && row.match.branch.workspace.id === hero?.selectedId,
+        currentBranch: currentBranches.has(row.key), useSessionStatus, statusLabel,
+        tree, busy, onChoose: () => choose(row), onFocus: () => setActiveKey(row.key),
+        onToggle: row.kind === 'branch' ? () => { setActiveKey(row.key); toggle(row) } : undefined,
+      })
+      if (row.kind === 'session') return option
+      return h('div', { key: row.key, role: 'presentation' }, option,
+        groupId === undefined ? null
+          : h('div', { id: groupId, role: 'group', className: 'wsp-tree-children' }, renderGroup(row.key)),
+      )
+    })
+    return renderGroup()
+  }
+
   return h(SwitcherDialog, {
     title, panelRef, busy: busy || pending, t, onClose: controls.close, onKeyDown,
     ...(choosing ? { subtitle: t('dialog.subtitle') } : {}),
@@ -236,15 +275,9 @@ function NavigationDialog({ mode, controls, t, useWorkspaces, useSessions, usePa
       h('button', { type: 'submit', className: 'wsp-foot-action', disabled: !canSaveRename }, t('save')),
       h('button', { type: 'button', className: 'wsp-foot-action', onClick: () => setRenaming(undefined) }, t('back')),
     ),
-    body: rows.length === 0 ? empty : h('div', { className: 'wsp-list', role: tree ? 'tree' : 'listbox', id: listId, 'aria-label': title },
-      rows.map((row, i) => h(ResultRow, {
-        key: row.key, row, id: optionId(i), t, now, choosing, active: i === index,
-        selected: row.kind === 'session' ? row.session.id === currentId
-          : row.match.branch.workspace?.id !== undefined && row.match.branch.workspace.id === hero?.selectedId,
-        tree, busy, onChoose: () => choose(row), onFocus: () => setActiveKey(row.key),
-        onToggle: row.kind === 'branch' ? () => { setActiveKey(row.key); toggle(row) } : undefined,
-      })),
-    ),
+    body: rows.length === 0 ? empty : h('div', {
+      className: 'wsp-list wsp-navigation-list', role: tree ? 'tree' : 'listbox', id: listId, 'aria-label': title,
+    }, renderRows()),
     status: h(React.Fragment, null,
       catalogError && rows.length > 0 ? h('div', { className: 'wsp-warning', role: 'status' }, t('listUnavailable')) : null,
       status === undefined ? null : h(ErrorBanner, {
@@ -275,12 +308,9 @@ function NavigationDialog({ mode, controls, t, useWorkspaces, useSessions, usePa
           onClick: () => setRenaming({ id: focusedWorkspace.id, title: focusedWorkspace.title, original: focusedWorkspace.title }),
         }),
       ),
-      h('div', { className: 'wsp-hints' },
-        h('span', { className: 'wsp-hint' }, t(tree ? 'treeKeys' : 'sessionKeys')),
-        h('span', { className: 'wsp-dialog-count', role: 'status' },
-          remote.pending ? t('searching') : remote.hasMore ? t('refineSearch')
-            : pending ? t('loadingList') : trimmed === '' && tree ? null : t('countResults', { n: rows.length })),
-      ),
+      h('span', { className: 'wsp-dialog-count', role: 'status' },
+        remote.pending ? t('searching') : remote.hasMore ? t('refineSearch')
+          : pending ? t('loadingList') : trimmed === '' && tree ? null : t('countResults', { n: rows.length })),
     ),
   })
 }
@@ -310,62 +340,94 @@ function flattenTree(matches: readonly TreeMatch[], expanded: ReadonlyMap<string
   return matches.flatMap(match => {
     const { key, workspace } = match.branch
     const expandable = match.children.length + match.sessions.length > 0
-    const open = expandable && (expanded.get(key) ?? (filtering || auto.has(key)))
+    const open = expandable && (expanded.get(key) ?? (filtering || auto.has(key) || match.branch.directory !== undefined))
     const row: BranchRow = { kind: 'branch', key, depth, ...(parentKey === undefined ? {} : { parentKey }),
-      match, title: workspace?.title ?? t('ungrouped'), expandable, expanded: open }
+      match, title: workspace?.title ?? match.branch.directory?.title ?? t('ungrouped'), expandable, expanded: open }
     if (!open) return [row]
     return [row,
+      ...flattenTree(match.children, expanded, auto, filtering, t, depth + 1, key),
       ...match.sessions.map((session): NavigationRow => ({ kind: 'session', key: `session:${session.id}`,
         depth: depth + 1, parentKey: key, session })),
-      ...flattenTree(match.children, expanded, auto, filtering, t, depth + 1, key),
     ]
   })
 }
 
-function ResultRow({ row, id, t, now, choosing, active, selected, tree, busy, onChoose, onFocus, onToggle }: {
-  row: NavigationRow; id: string; t: TranslateSeat; now: number; choosing: boolean; active: boolean;
-  selected: boolean; tree: boolean; busy: boolean; onChoose: () => void; onFocus: () => void;
-  onToggle?: (() => void) | undefined
+function ResultRow({ row, id, groupId, t, now, choosing, active, selected, currentBranch,
+  useSessionStatus, statusLabel, tree, busy, onChoose, onFocus, onToggle,
+}: {
+  row: NavigationRow; id: string; groupId: string | undefined; t: TranslateSeat; now: number;
+  choosing: boolean; active: boolean; selected: boolean; currentBranch: boolean; tree: boolean; busy: boolean;
+  useSessionStatus: OverlayProps['useSessionStatus']; statusLabel: NavigationActions['statusLabel'];
+  onChoose: () => void; onFocus: () => void; onToggle?: (() => void) | undefined
 }): ReactNode {
   const branch = row.kind === 'branch' ? row : undefined
   const session = row.kind === 'session' ? row.session : undefined
   const workspace = branch?.match.branch.workspace
+  const directory = branch?.match.branch.directory
   const title = branch?.title ?? session?.title
-  const path = workspace?.path || (tree ? undefined : session?.workspace || session?.path)
-  const disclosure = branch?.expandable ? h(ChevronRightGlyph, { size: 14 }) : null
+  const path = workspace?.path ?? directory?.path ?? session?.path
+  const splitDisclosure = choosing && workspace !== undefined && branch?.expandable === true
+  const hasSearchMeta = !tree && Boolean(session?.workspace || session?.path || session?.snippet)
   const option = h('button', {
     id, type: 'button', role: tree ? 'treeitem' : 'option', tabIndex: -1,
-    'aria-level': tree ? row.depth + 1 : undefined,
+    'aria-level': tree ? row.depth + 1 : undefined, 'aria-owns': groupId,
     'aria-expanded': branch?.expandable ? branch.expanded : undefined,
     'aria-selected': selected, 'aria-disabled': busy || undefined, 'data-wsp-navigation-row': true,
     'data-active': active || undefined, 'data-selected': selected || undefined,
-    className: 'wsp-row wsp-navigation-row', style: { paddingInlineStart: 8 + Math.min(row.depth, 10) * 16 },
-    title: path || title, onClick: onChoose, onFocus,
+    'data-search-meta': hasSearchMeta || undefined,
+    className: 'wsp-row wsp-navigation-row', title: path || title, onClick: onChoose, onFocus,
   },
-    branch === undefined ? null : h('span', { className: 'wsp-row-icon' },
-      !choosing && disclosure !== null ? h('span', { className: 'wsp-tree-chevron', 'data-expanded': branch.expanded }, disclosure)
-        : h(FolderGlyph, { size: 16 })),
+    branch === undefined ? (session && h(SessionMarker, { session, useSessionStatus, statusLabel }))
+      : h('span', {
+        className: 'wsp-row-icon wsp-tree-icon', 'data-current': currentBranch || undefined,
+        'data-swap': branch.expandable && !splitDisclosure || undefined, 'data-expanded': branch.expanded,
+      },
+        h(branch.expanded ? OpenFolderGlyph : FolderGlyph, { className: 'wsp-tree-folder' }),
+        branch.expandable && !splitDisclosure ? h(DisclosureGlyph, { className: 'wsp-tree-arrow' }) : null,
+      ),
     h('span', { className: 'wsp-row-text' },
-      h('span', { className: 'wsp-row-title' }, title),
-      path ? h('span', { className: 'wsp-row-path' }, path) : null,
-      session?.snippet ? h('span', { className: 'wsp-row-path' }, session.snippet) : null,
+      workspace?.showPath ? h('span', { className: 'wsp-row-line' },
+        h('span', { className: 'wsp-row-title' }, title),
+        h('span', { className: 'wsp-row-suffix' }, shortenPath(workspace.path)),
+      ) : h('span', { className: 'wsp-row-title' }, title),
+      hasSearchMeta ? h('span', { className: 'wsp-search-meta' },
+        h('span', { className: 'wsp-row-path' }, session?.workspace || session?.path),
+        session?.snippet ? h('span', { className: 'wsp-row-path wsp-session-snippet' }, session.snippet) : null,
+      ) : null,
     ),
-    branch !== undefined && branch.match.sessions.length > 0 && !choosing ? h('span', { className: 'wsp-row-count' },
-      t(branch.match.sessions.length === 1 ? 'sessions.one' : 'sessions.other', { n: branch.match.sessions.length })) : null,
     session === undefined ? null : h('span', { className: 'wsp-row-time' }, relativeTime(session.latest, now, t)),
-    selected ? h('span', { className: 'wsp-row-check', 'aria-hidden': true }, h(CheckGlyph, { size: 14 })) : null,
+    choosing && selected ? h('span', { className: 'wsp-row-check', 'aria-hidden': true }, h(CheckGlyph, { size: 14 })) : null,
   )
-  if (!choosing || branch === undefined || disclosure === null) return option
+  if (!splitDisclosure) return option
   const action = t(branch.expanded ? 'collapseBranch' : 'expandBranch')
   return h('div', { className: 'wsp-tree-option', role: 'presentation' },
     option,
     h('button', {
-      type: 'button', className: 'wsp-icon-btn wsp-tree-chevron', tabIndex: -1,
+      type: 'button', className: 'wsp-icon-btn wsp-tree-disclosure', tabIndex: -1,
       'aria-label': `${action} ${title}`, 'aria-expanded': branch.expanded,
       'data-expanded': branch.expanded, disabled: busy,
       onClick: () => { onToggle?.(); document.getElementById(id)?.focus({ preventScroll: true }) },
-    }, disclosure),
+    }, h(DisclosureGlyph, { className: 'wsp-tree-arrow' })),
   )
+}
+
+function SessionMarker({ session, useSessionStatus, statusLabel }: {
+  session: SessionRow; useSessionStatus: OverlayProps['useSessionStatus']; statusLabel: NavigationActions['statusLabel']
+}): ReactNode {
+  const label = useSessionStatus(statuses => {
+    const status = statuses.get(session.id)
+    switch (status?.pendingInteraction?.kind) {
+      case 'approval': return 'status.waitingApproval'
+      case 'plan-review': return 'status.planReview'
+      case 'question': return 'status.waitingAnswer'
+    }
+    if (status?.running ?? session.running) return 'status.running'
+    return status?.completionUnread ? 'status.completed' : undefined
+  })
+  return h('span', { className: 'wsp-row-icon' }, label === undefined ? null : h('span', {
+    className: 'wsp-session-dot', role: 'img', 'aria-label': statusLabel(label), title: statusLabel(label),
+    'data-state': label === 'status.running' ? 'running' : label === 'status.completed' ? 'done' : 'waiting',
+  }))
 }
 
 function errorMessage(error: unknown): string {

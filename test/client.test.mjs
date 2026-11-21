@@ -369,6 +369,36 @@ test('nests registered directories, preserves ancestors in search, and omits dra
   assert.ok(filterTree(roots, '', true, 'Ungrouped').every(result => result.branch.workspace !== undefined))
 })
 
+test('creates expandable shared directories even when their paths are not registered', () => {
+  const items = [
+    { workspaceId: 'app', path: '/dev/project/apps/mobile', title: 'Mobile', sessionIds: [] },
+    { workspaceId: 'web', path: '/dev/project/apps/web', title: 'Web', sessionIds: [] },
+    { workspaceId: 'docs', path: '/dev/project/docs', title: 'Docs', sessionIds: [] },
+    { workspaceId: 'other', path: '/dev/project-copy', title: 'Copy', sessionIds: [] },
+  ]
+  const { roots } = buildNavigation({ items, archivedSessionIds: [] }, { ids: [], byId: {} }, 'Default', 'Untitled')
+  const [dev] = roots
+  assert.equal(dev.directory.path, '/dev')
+  const project = dev.children.find(branch => branch.directory?.title === 'project')
+  const apps = project.children.find(branch => branch.directory?.title === 'apps')
+  assert.deepEqual(apps.children.map(branch => branch.workspace.id), ['app', 'web'])
+  assert.ok(dev.children.some(branch => branch.workspace?.id === 'other'))
+  assert.deepEqual(initialExpansion(roots, 'web', undefined), [dev.key, project.key, apps.key, 'workspace:web'])
+  const [match] = filterTree(roots, 'web', true, 'Ungrouped')
+  assert.equal(match.children[0].children[0].children[0].branch.workspace.id, 'web')
+  assert.equal(match.children.length, 1)
+})
+
+test('nests UNC workspaces within a share and keeps different shares separate', () => {
+  const items = [String.raw`\\host\one\a`, String.raw`\\host\one\b`, String.raw`\\host\two\c`]
+    .map((path, i) => ({ workspaceId: `ws-${i}`, path, title: `Workspace ${i}`, sessionIds: [] }))
+  const { roots } = buildNavigation({ items, archivedSessionIds: [] }, { ids: [], byId: {} }, 'Default', 'Untitled')
+  const shared = roots.find(branch => branch.directory !== undefined)
+  assert.equal(shared.directory.path, '//host/one')
+  assert.deepEqual(shared.children.map(branch => branch.workspace.id), ['ws-0', 'ws-1'])
+  assert.ok(roots.some(branch => branch.workspace?.id === 'ws-2'))
+})
+
 test('merges metadata and content hits without duplicate or non-openable rows', () => {
   const { sessions } = navigationFixture()
   const results = searchSessions(sessions, 'fix project', [

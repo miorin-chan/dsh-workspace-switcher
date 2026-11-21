@@ -74,7 +74,6 @@ var en = {
   "dismiss": "Dismiss",
   "dialog.title": "Choose a workspace",
   "dialog.subtitle": "The new session will start in this folder.",
-  "dialog.hint": "\u2191\u2193 to navigate \xB7 \u21B5 to open \xB7 Esc to go back",
   "sorted": "Sorted by recent use",
   "time.now": "Just now",
   "time.minutes": "{n} min ago",
@@ -111,8 +110,6 @@ var en = {
   save: "Save",
   expandBranch: "Expand",
   collapseBranch: "Collapse",
-  sessionKeys: "\u2191\u2193 to navigate \xB7 \u21B5 to open",
-  treeKeys: "\u2191\u2193 to move \xB7 \u2190\u2192 to collapse or expand",
   loadingList: "Loading list\u2026",
   renameNamedWorkspace: "Rename {name}"
 };
@@ -141,7 +138,6 @@ var zh = {
   "dismiss": "\u5173\u95ED\u63D0\u793A",
   "dialog.title": "\u9009\u62E9\u5DE5\u4F5C\u533A",
   "dialog.subtitle": "\u65B0\u4F1A\u8BDD\u5C06\u5728\u6240\u9009\u76EE\u5F55\u4E2D\u5F00\u59CB\u3002",
-  "dialog.hint": "\u2191\u2193 \u9009\u62E9 \xB7 \u21B5 \u6253\u5F00 \xB7 Esc \u8FD4\u56DE",
   "sorted": "\u6309\u6700\u8FD1\u4F7F\u7528\u6392\u5E8F",
   "time.now": "\u521A\u521A",
   "time.minutes": "{n} \u5206\u949F\u524D",
@@ -178,8 +174,6 @@ var zh = {
   save: "\u4FDD\u5B58",
   expandBranch: "\u5C55\u5F00",
   collapseBranch: "\u6298\u53E0",
-  sessionKeys: "\u2191\u2193 \u79FB\u52A8 \xB7 \u21B5 \u6253\u5F00",
-  treeKeys: "\u2191\u2193 \u79FB\u52A8 \xB7 \u2190\u2192 \u6298\u53E0\u6216\u5C55\u5F00",
   loadingList: "\u6B63\u5728\u52A0\u8F7D\u5217\u8868\u2026",
   renameNamedWorkspace: "\u91CD\u547D\u540D\u300C{name}\u300D"
 };
@@ -208,7 +202,6 @@ var ja = {
   "dismiss": "\u9589\u3058\u308B",
   "dialog.title": "\u30EF\u30FC\u30AF\u30B9\u30DA\u30FC\u30B9\u3092\u9078\u629E",
   "dialog.subtitle": "\u65B0\u3057\u3044\u30BB\u30C3\u30B7\u30E7\u30F3\u306F\u3053\u306E\u30D5\u30A9\u30EB\u30C0\u30FC\u3067\u958B\u59CB\u3055\u308C\u307E\u3059\u3002",
-  "dialog.hint": "\u2191\u2193 \u79FB\u52D5 \xB7 \u21B5 \u958B\u304F \xB7 Esc \u623B\u308B",
   "sorted": "\u6700\u8FD1\u306E\u4F7F\u7528\u9806",
   "time.now": "\u305F\u3063\u305F\u4ECA",
   "time.minutes": "{n} \u5206\u524D",
@@ -245,8 +238,6 @@ var ja = {
   save: "\u4FDD\u5B58",
   expandBranch: "\u5C55\u958B",
   collapseBranch: "\u6298\u308A\u305F\u305F\u3080",
-  sessionKeys: "\u2191\u2193 \u79FB\u52D5 \xB7 \u21B5 \u958B\u304F",
-  treeKeys: "\u2191\u2193 \u79FB\u52D5 \xB7 \u2190\u2192 \u6298\u308A\u305F\u305F\u3080\uFF0F\u5C55\u958B\u3059\u308B",
   loadingList: "\u4E00\u89A7\u3092\u8AAD\u307F\u8FBC\u3093\u3067\u3044\u307E\u3059\u2026",
   renameNamedWorkspace: "\u300C{name}\u300D\u306E\u540D\u524D\u3092\u5909\u66F4"
 };
@@ -275,7 +266,6 @@ var de = {
   "dismiss": "Schlie\xDFen",
   "dialog.title": "Arbeitsbereich ausw\xE4hlen",
   "dialog.subtitle": "Die neue Sitzung startet in diesem Ordner.",
-  "dialog.hint": "\u2191\u2193 Navigieren \xB7 \u21B5 \xD6ffnen \xB7 Esc Zur\xFCck",
   "sorted": "Nach letzter Verwendung sortiert",
   "time.now": "Gerade eben",
   "time.minutes": "Vor {n} Min.",
@@ -312,8 +302,6 @@ var de = {
   save: "Speichern",
   expandBranch: "Ausklappen",
   collapseBranch: "Einklappen",
-  sessionKeys: "\u2191\u2193 Navigieren \xB7 \u21B5 \xD6ffnen",
-  treeKeys: "\u2191\u2193 Navigieren \xB7 \u2190\u2192 Ein- oder Ausklappen",
   loadingList: "Liste wird geladen\u2026",
   renameNamedWorkspace: "{name} umbenennen"
 };
@@ -342,7 +330,6 @@ var es = {
   "dismiss": "Cerrar",
   "dialog.title": "Elegir un espacio de trabajo",
   "dialog.subtitle": "La nueva sesi\xF3n se iniciar\xE1 en esta carpeta.",
-  "dialog.hint": "\u2191\u2193 navegar \xB7 \u21B5 abrir \xB7 Esc volver",
   "sorted": "Ordenado por uso reciente",
   "time.now": "Ahora mismo",
   "time.minutes": "Hace {n} min",
@@ -379,8 +366,6 @@ var es = {
   save: "Guardar",
   expandBranch: "Expandir",
   collapseBranch: "Contraer",
-  sessionKeys: "\u2191\u2193 navegar \xB7 \u21B5 abrir",
-  treeKeys: "\u2191\u2193 navegar \xB7 \u2190\u2192 contraer o expandir",
   loadingList: "Cargando lista\u2026",
   renameNamedWorkspace: "Cambiar el nombre de {name}"
 };
@@ -409,7 +394,6 @@ var fr = {
   "dismiss": "Fermer",
   "dialog.title": "Choisir un espace de travail",
   "dialog.subtitle": "La nouvelle session d\xE9marrera dans ce dossier.",
-  "dialog.hint": "\u2191\u2193 naviguer \xB7 \u21B5 ouvrir \xB7 Esc revenir",
   "sorted": "Tri\xE9s par utilisation r\xE9cente",
   "time.now": "\xC0 l\u2019instant",
   "time.minutes": "Il y a {n} min",
@@ -446,8 +430,6 @@ var fr = {
   save: "Enregistrer",
   expandBranch: "D\xE9velopper",
   collapseBranch: "Replier",
-  sessionKeys: "\u2191\u2193 naviguer \xB7 \u21B5 ouvrir",
-  treeKeys: "\u2191\u2193 naviguer \xB7 \u2190\u2192 replier ou d\xE9velopper",
   loadingList: "Chargement de la liste\u2026",
   renameNamedWorkspace: "Renommer {name}"
 };
@@ -476,7 +458,6 @@ var pt = {
   "dismiss": "Fechar",
   "dialog.title": "Escolher uma \xE1rea de trabalho",
   "dialog.subtitle": "A nova sess\xE3o ser\xE1 iniciada nesta pasta.",
-  "dialog.hint": "\u2191\u2193 navegar \xB7 \u21B5 abrir \xB7 Esc voltar",
   "sorted": "Ordenadas pelo uso recente",
   "time.now": "Agora mesmo",
   "time.minutes": "H\xE1 {n} min",
@@ -513,8 +494,6 @@ var pt = {
   save: "Salvar",
   expandBranch: "Expandir",
   collapseBranch: "Recolher",
-  sessionKeys: "\u2191\u2193 navegar \xB7 \u21B5 abrir",
-  treeKeys: "\u2191\u2193 navegar \xB7 \u2190\u2192 recolher ou expandir",
   loadingList: "Carregando lista\u2026",
   renameNamedWorkspace: "Renomear {name}"
 };
@@ -543,7 +522,6 @@ var ru = {
   "dismiss": "\u0417\u0430\u043A\u0440\u044B\u0442\u044C",
   "dialog.title": "\u0412\u044B\u0431\u043E\u0440 \u0440\u0430\u0431\u043E\u0447\u0435\u0433\u043E \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u0430",
   "dialog.subtitle": "\u041D\u043E\u0432\u044B\u0439 \u0441\u0435\u0430\u043D\u0441 \u043D\u0430\u0447\u043D\u0451\u0442\u0441\u044F \u0432 \u044D\u0442\u043E\u0439 \u043F\u0430\u043F\u043A\u0435.",
-  "dialog.hint": "\u2191\u2193 \u0432\u044B\u0431\u043E\u0440 \xB7 \u21B5 \u043E\u0442\u043A\u0440\u044B\u0442\u044C \xB7 Esc \u043D\u0430\u0437\u0430\u0434",
   "sorted": "\u0421\u043E\u0440\u0442\u0438\u0440\u043E\u0432\u043A\u0430 \u043F\u043E \u043D\u0435\u0434\u0430\u0432\u043D\u0435\u043C\u0443 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u043D\u0438\u044E",
   "time.now": "\u0422\u043E\u043B\u044C\u043A\u043E \u0447\u0442\u043E",
   "time.minutes": "{n} \u043C\u0438\u043D \u043D\u0430\u0437\u0430\u0434",
@@ -580,8 +558,6 @@ var ru = {
   save: "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C",
   expandBranch: "\u0420\u0430\u0437\u0432\u0435\u0440\u043D\u0443\u0442\u044C",
   collapseBranch: "\u0421\u0432\u0435\u0440\u043D\u0443\u0442\u044C",
-  sessionKeys: "\u2191\u2193 \u043F\u0435\u0440\u0435\u043C\u0435\u0449\u0435\u043D\u0438\u0435 \xB7 \u21B5 \u043E\u0442\u043A\u0440\u044B\u0442\u044C",
-  treeKeys: "\u2191\u2193 \u043F\u0435\u0440\u0435\u043C\u0435\u0449\u0435\u043D\u0438\u0435 \xB7 \u2190\u2192 \u0441\u0432\u0435\u0440\u043D\u0443\u0442\u044C \u0438\u043B\u0438 \u0440\u0430\u0437\u0432\u0435\u0440\u043D\u0443\u0442\u044C",
   loadingList: "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430 \u0441\u043F\u0438\u0441\u043A\u0430\u2026",
   renameNamedWorkspace: "\u041F\u0435\u0440\u0435\u0438\u043C\u0435\u043D\u043E\u0432\u0430\u0442\u044C \xAB{name}\xBB"
 };
@@ -700,6 +676,21 @@ var FolderGlyph = (props) => h(Glyph, {
   ...props,
   paths: ["M2.25 4.6c0-.75.6-1.35 1.35-1.35h3.1l1.35 1.5h5.6c.74 0 1.35.6 1.35 1.35v5.7c0 .75-.6 1.35-1.35 1.35H3.6c-.75 0-1.35-.6-1.35-1.35z"]
 });
+var OpenFolderGlyph = (props) => h(Glyph, {
+  ...props,
+  paths: ["M2 12.75V4.5A1.5 1.5 0 0 1 3.5 3h3l1.4 1.5h4.6A1.5 1.5 0 0 1 14 6v.75", "M2 12.75l1.65-5a1.25 1.25 0 0 1 1.2-.85h9.2a.75.75 0 0 1 .72.97l-1.45 4.65a1.25 1.25 0 0 1-1.2.88H3a1 1 0 0 1-1-.65Z"]
+});
+function DisclosureGlyph({ size = 16, className }) {
+  return h("svg", {
+    width: size,
+    height: size,
+    viewBox: "0 0 16 16",
+    fill: "currentColor",
+    "aria-hidden": true,
+    focusable: false,
+    className
+  }, h("path", { d: "M6 4.3a.5.5 0 0 0-.8.4v6.6a.5.5 0 0 0 .8.4l4.5-3.3a.5.5 0 0 0 0-.8Z" }));
+}
 var SearchGlyph = (props) => h(Glyph, {
   ...props,
   paths: ["M7.2 2.75a4.45 4.45 0 1 0 0 8.9 4.45 4.45 0 0 0 0-8.9Z", "m10.5 10.5 2.75 2.75"]
@@ -1205,25 +1196,46 @@ var CSS = `
   font-size: 12px; line-height: 18px;
 }
 .wsp-dialog-foot .wsp-foot-action svg { color: inherit; }
-.wsp-tree-option, .wsp-navigation-actions, .wsp-rename { display: flex; align-items: center; gap: 6px; }
-.wsp-tree-option > .wsp-row, .wsp-rename > .wsp-search { flex: 1; min-width: 0; }
-.wsp-tree-chevron { display: inline-flex; align-items: center; justify-content: center; }
-.wsp-tree-chevron svg { transition: transform 120ms ease; }
-.wsp-tree-chevron[data-expanded='true'] svg { transform: rotate(90deg); }
-.wsp-tree-chevron:dir(rtl) svg { transform: rotate(180deg); }
-.wsp-tree-chevron[data-expanded='true']:dir(rtl) svg { transform: rotate(90deg); }
+.wsp-navigation-list, .wsp-tree-children { gap: 2px; }
+.wsp-tree-children {
+  display: grid; grid-template-columns: minmax(0, 1fr); margin-block-start: 2px;
+  margin-inline-start: 8px; padding-inline-start: 3px;
+  border-inline-start: 1px solid var(--dsw-alias-border-l3);
+}
+.wsp-dialog-body .wsp-navigation-row { min-height: 32px; padding: 0 8px; gap: 6px; text-align: start; }
+.wsp-dialog-body .wsp-navigation-row[data-search-meta='true'] { min-height: 48px; padding-block: 4px; }
+.wsp-navigation-row .wsp-row-title { font-size: 14px; }
+.wsp-navigation-row[data-selected='true'] { background-color: var(--dsw-alias-interactive-bg-hover); }
 .wsp-navigation-row:focus-visible { outline: 1px solid var(--dsw-focus-ring-color); outline-offset: -1px; }
+.wsp-search-meta { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
+.wsp-search-meta .wsp-row-path { font-size: 12px; line-height: 17px; }
+.wsp-search-meta .wsp-row-path:first-child:not(:only-child) { max-width: 40%; }
+.wsp-search-meta .wsp-session-snippet { color: var(--dsw-alias-label-secondary); }
+.wsp-tree-option, .wsp-navigation-actions, .wsp-rename { display: flex; align-items: center; gap: 6px; }
+.wsp-tree-option { gap: 0; }
+.wsp-tree-option > .wsp-row, .wsp-rename > .wsp-search { flex: 1; min-width: 0; }
+.wsp-tree-icon { color: var(--dsw-alias-label-tertiary); }
+.wsp-tree-icon[data-current='true'] { color: var(--dsw-alias-state-business-primary); }
+.wsp-tree-arrow { color: var(--dsw-alias-label-caption); transition: transform 150ms var(--ds-ease-in-out, ease); }
+.wsp-tree-icon > .wsp-tree-arrow { display: none; }
+.wsp-tree-disclosure { margin-inline-end: 4px; }
+.wsp-tree-disclosure:dir(rtl) .wsp-tree-arrow, .wsp-tree-icon:dir(rtl) > .wsp-tree-arrow { transform: rotate(180deg); }
+.wsp-tree-disclosure[data-expanded='true'] .wsp-tree-arrow,
+.wsp-tree-icon[data-expanded='true'] > .wsp-tree-arrow { transform: rotate(90deg); }
+@media (hover: hover) {
+  .wsp-navigation-row:hover .wsp-tree-icon[data-swap='true'] > .wsp-tree-folder { display: none; }
+  .wsp-navigation-row:hover .wsp-tree-icon[data-swap='true'] > .wsp-tree-arrow { display: block; }
+}
+.wsp-session-dot { width: 6px; height: 6px; border-radius: 50%; }
+.wsp-session-dot[data-state='running'] { background: var(--dsw-alias-state-business-primary); }
+.wsp-session-dot[data-state='waiting'] { background: var(--dsw-alias-state-warn-label); }
+.wsp-session-dot[data-state='done'] { background: var(--dsw-alias-state-success-primary); }
 .wsp-navigation-actions { min-width: 0; flex-wrap: wrap; }
 .wsp-rename-action { min-width: 0; max-width: 100%; }
 .wsp-rename-action span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .wsp-dialog .wsp-foot-action:disabled { opacity: .45; cursor: default; }
-@media (prefers-reduced-motion: reduce) { .wsp-tree-chevron svg { transition: none; } }
-.wsp-hints { display: flex; align-items: center; gap: 12px; min-width: 0; margin-left: auto; }
-.wsp-hint {
-  font-size: 11px; line-height: 16px; color: var(--dsw-alias-label-tertiary);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.wsp-dialog-count { flex: none; font-size: 12px; line-height: 18px; color: var(--dsw-alias-label-tertiary); white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) { .wsp-tree-arrow { transition: none; } }
+.wsp-dialog-count { margin-inline-start: auto; font-size: 12px; line-height: 18px; color: var(--dsw-alias-label-tertiary); }
 .wsp-spinner {
   width: 12px; height: 12px; border-radius: 50%;
   border: 1.5px solid currentColor; border-right-color: transparent;
@@ -1257,7 +1269,6 @@ var CSS = `
   .wsp-dialog-body { padding: 0 16px 10px; }
   .wsp-dialog .wsp-error, .wsp-dialog .wsp-warning { margin: 0 16px 10px; }
   .wsp-dialog-foot { padding: 12px 16px; }
-  .wsp-hint { display: none; }
 }
 `;
 
@@ -1368,14 +1379,55 @@ function directoryKey(path) {
   const windows = /^[A-Za-z]:[/\\]/.test(path) || path.startsWith("\\\\");
   return (windows ? path.replaceAll("\\", "/") : path).replace(/\/+$/, "");
 }
-function parentBranch(path, byPath) {
-  let separator = path.lastIndexOf("/");
-  while (separator >= 0) {
-    const parent = byPath.get(path.slice(0, separator));
-    if (parent !== void 0 || separator === 0) return parent;
-    separator = path.lastIndexOf("/", separator - 1);
+function parentPath(path) {
+  const separator = path.lastIndexOf("/");
+  if (separator < 0 || path.startsWith("//") && separator <= path.indexOf("/", 2)) return void 0;
+  return path.slice(0, separator);
+}
+function workspaceRoots(branches) {
+  const byPath = /* @__PURE__ */ new Map();
+  const childPaths = /* @__PURE__ */ new Map();
+  for (const branch of branches) {
+    const path = branch.workspace?.path;
+    if (!path) continue;
+    const key = directoryKey(path);
+    if (!byPath.has(key)) byPath.set(key, branch);
+    for (let child = key, parent = parentPath(child); parent !== void 0; child = parent, parent = parentPath(child)) {
+      const siblings = childPaths.get(parent) ?? /* @__PURE__ */ new Set();
+      siblings.add(child);
+      childPaths.set(parent, siblings);
+    }
   }
-  return void 0;
+  const roots = [];
+  const attached = /* @__PURE__ */ new Set();
+  const attach = (branch, path) => {
+    if (attached.has(branch)) return;
+    attached.add(branch);
+    for (let parent = path === void 0 ? void 0 : parentPath(path); parent !== void 0; parent = parentPath(parent)) {
+      let owner = byPath.get(parent);
+      if (owner === void 0 && parent !== "" && (childPaths.get(parent)?.size ?? 0) > 1) {
+        owner = {
+          key: `directory:${parent}`,
+          directory: { title: parent.split("/").at(-1) || parent, path: parent },
+          workspace: void 0,
+          children: [],
+          sessions: []
+        };
+        byPath.set(parent, owner);
+      }
+      if (owner !== void 0) {
+        attach(owner, parent);
+        owner.children.push(branch);
+        return;
+      }
+    }
+    roots.push(branch);
+  };
+  for (const branch of branches) {
+    const path = branch.workspace?.path;
+    attach(branch, path ? directoryKey(path) : void 0);
+  }
+  return roots;
 }
 function buildNavigation(snapshot, catalog, defaultName, untitled) {
   const { byId } = catalog;
@@ -1408,21 +1460,12 @@ function buildNavigation(snapshot, catalog, defaultName, untitled) {
       path: workspace?.path || session.cwd || "",
       workspace: workspace?.title ?? "",
       workspaceId: workspace?.id,
-      latest: toMillis(session.updatedAt)
+      latest: toMillis(session.updatedAt),
+      running: session.running === true
     });
   }
   sessions.sort((a, b) => b.latest - a.latest || a.id.localeCompare(b.id));
-  const branches = [...branchById.values()];
-  const byPath = new Map(branches.flatMap((branch) => {
-    const path = branch.workspace?.path;
-    return path ? [[directoryKey(path), branch]] : [];
-  }));
-  const roots = branches.filter((branch) => {
-    const path = branch.workspace?.path;
-    const parent = path ? parentBranch(directoryKey(path), byPath) : void 0;
-    parent?.children.push(branch);
-    return parent === void 0;
-  });
+  const roots = workspaceRoots([...branchById.values()]);
   const ungrouped = { key: "ungrouped", workspace: void 0, children: [], sessions: [] };
   for (const session of sessions) {
     const branch = session.workspaceId === void 0 ? ungrouped : branchById.get(session.workspaceId) ?? ungrouped;
@@ -1448,8 +1491,8 @@ function searchSessions(rows, query, hits) {
 }
 function filterTree(roots, query, choosing, ungrouped) {
   return roots.flatMap((branch) => {
-    if (choosing && branch.workspace === void 0) return [];
-    const matches = filterRows([branch.workspace ?? { title: ungrouped, path: "" }], query).length > 0;
+    if (choosing && branch.workspace === void 0 && branch.directory === void 0) return [];
+    const matches = filterRows([branch.workspace ?? branch.directory ?? { title: ungrouped, path: "" }], query).length > 0;
     const children = filterTree(branch.children, matches ? "" : query, choosing, ungrouped);
     const sessions = choosing ? [] : filterRows(branch.sessions, matches ? "" : query);
     return matches || children.length > 0 || sessions.length > 0 ? [{ branch, children, sessions }] : [];
@@ -1481,6 +1524,8 @@ function NavigationDialog({
   usePanelInfo,
   useWorkspaceAccess,
   useRemoteAccess,
+  useSessionStatus,
+  statusLabel,
   searchContent,
   openSession,
   renameWorkspace,
@@ -1521,6 +1566,10 @@ function NavigationDialog({
     workspaceToReveal,
     workspaceToReveal === void 0 ? currentId : void 0
   )), [roots, workspaceToReveal, currentId]);
+  const currentBranches = useMemo(
+    () => new Set(initialExpansion(roots, hero?.selectedId, currentId)),
+    [roots, hero?.selectedId, currentId]
+  );
   const matches = tree ? filterTree(roots, trimmed, choosing, t("ungrouped")) : [];
   const treeRows = tree ? flattenTree(matches, expanded, autoExpanded, trimmed !== "", t) : [];
   const flatRows = tree ? [] : searchSessions(sessionRows, trimmed, remote.hits);
@@ -1532,7 +1581,11 @@ function NavigationDialog({
   }));
   const activeIndex = rows.findIndex((row) => row.key === activeKey);
   const selectedIndex = rows.findIndex((row) => row.kind === "branch" ? row.match.branch.workspace?.id !== void 0 && row.match.branch.workspace.id === hero?.selectedId : row.session.id === currentId);
-  const index = activeIndex >= 0 ? activeIndex : trimmed !== "" && rows.length > 0 ? 0 : -1;
+  const firstChoice = choosing && trimmed !== "" ? rows.findIndex((row) => {
+    const workspace = row.kind === "branch" ? row.match.branch.workspace : void 0;
+    return workspace !== void 0 && filterRows([workspace], trimmed).length > 0;
+  }) : 0;
+  const index = activeIndex >= 0 ? activeIndex : trimmed !== "" && rows.length > 0 ? Math.max(firstChoice, 0) : -1;
   const active = rows[index];
   const optionId = (i) => `${listId}-${i}`;
   const title = t(tree ? choosing ? "dialog.title" : "workspaceTree" : "sessionSearch");
@@ -1641,6 +1694,49 @@ function NavigationDialog({
   const canSaveRename = renameTitle !== void 0 && renameTitle !== "" && renameTitle !== renaming?.original && !busy;
   const catalogError = workspaces.state === "error";
   const empty = pending ? h4(Skeleton, { rows: 5 }) : h4("div", { className: "wsp-empty", role: "status" }, t(catalogError ? "listUnavailable" : trimmed !== "" ? "noMatches" : tree ? "empty.noWorkspacesTitle" : "noSessions"));
+  function renderRows() {
+    const children = /* @__PURE__ */ new Map();
+    for (const [i, row] of rows.entries()) {
+      const siblings = children.get(row.parentKey);
+      if (siblings === void 0) children.set(row.parentKey, [i]);
+      else siblings.push(i);
+    }
+    const renderGroup = (parentKey) => (children.get(parentKey) ?? []).map((i) => {
+      const row = rows[i];
+      const id = optionId(i);
+      const groupId = children.has(row.key) ? `${id}-children` : void 0;
+      const option = h4(ResultRow, {
+        key: row.key,
+        row,
+        id,
+        groupId,
+        t,
+        now,
+        choosing,
+        active: i === index,
+        selected: row.kind === "session" ? row.session.id === currentId : row.match.branch.workspace?.id !== void 0 && row.match.branch.workspace.id === hero?.selectedId,
+        currentBranch: currentBranches.has(row.key),
+        useSessionStatus,
+        statusLabel,
+        tree,
+        busy,
+        onChoose: () => choose(row),
+        onFocus: () => setActiveKey(row.key),
+        onToggle: row.kind === "branch" ? () => {
+          setActiveKey(row.key);
+          toggle(row);
+        } : void 0
+      });
+      if (row.kind === "session") return option;
+      return h4(
+        "div",
+        { key: row.key, role: "presentation" },
+        option,
+        groupId === void 0 ? null : h4("div", { id: groupId, role: "group", className: "wsp-tree-children" }, renderGroup(row.key))
+      );
+    });
+    return renderGroup();
+  }
   return h4(SwitcherDialog, {
     title,
     panelRef,
@@ -1682,28 +1778,12 @@ function NavigationDialog({
       h4("button", { type: "submit", className: "wsp-foot-action", disabled: !canSaveRename }, t("save")),
       h4("button", { type: "button", className: "wsp-foot-action", onClick: () => setRenaming(void 0) }, t("back"))
     ),
-    body: rows.length === 0 ? empty : h4(
-      "div",
-      { className: "wsp-list", role: tree ? "tree" : "listbox", id: listId, "aria-label": title },
-      rows.map((row, i) => h4(ResultRow, {
-        key: row.key,
-        row,
-        id: optionId(i),
-        t,
-        now,
-        choosing,
-        active: i === index,
-        selected: row.kind === "session" ? row.session.id === currentId : row.match.branch.workspace?.id !== void 0 && row.match.branch.workspace.id === hero?.selectedId,
-        tree,
-        busy,
-        onChoose: () => choose(row),
-        onFocus: () => setActiveKey(row.key),
-        onToggle: row.kind === "branch" ? () => {
-          setActiveKey(row.key);
-          toggle(row);
-        } : void 0
-      }))
-    ),
+    body: rows.length === 0 ? empty : h4("div", {
+      className: "wsp-list wsp-navigation-list",
+      role: tree ? "tree" : "listbox",
+      id: listId,
+      "aria-label": title
+    }, renderRows()),
     status: h4(
       React4.Fragment,
       null,
@@ -1747,14 +1827,9 @@ function NavigationDialog({
         })
       ),
       h4(
-        "div",
-        { className: "wsp-hints" },
-        h4("span", { className: "wsp-hint" }, t(tree ? "treeKeys" : "sessionKeys")),
-        h4(
-          "span",
-          { className: "wsp-dialog-count", role: "status" },
-          remote.pending ? t("searching") : remote.hasMore ? t("refineSearch") : pending ? t("loadingList") : trimmed === "" && tree ? null : t("countResults", { n: rows.length })
-        )
+        "span",
+        { className: "wsp-dialog-count", role: "status" },
+        remote.pending ? t("searching") : remote.hasMore ? t("refineSearch") : pending ? t("loadingList") : trimmed === "" && tree ? null : t("countResults", { n: rows.length })
       )
     )
   });
@@ -1772,38 +1847,57 @@ function flattenTree(matches, expanded, auto, filtering, t, depth = 0, parentKey
   return matches.flatMap((match) => {
     const { key, workspace } = match.branch;
     const expandable = match.children.length + match.sessions.length > 0;
-    const open = expandable && (expanded.get(key) ?? (filtering || auto.has(key)));
+    const open = expandable && (expanded.get(key) ?? (filtering || auto.has(key) || match.branch.directory !== void 0));
     const row = {
       kind: "branch",
       key,
       depth,
       ...parentKey === void 0 ? {} : { parentKey },
       match,
-      title: workspace?.title ?? t("ungrouped"),
+      title: workspace?.title ?? match.branch.directory?.title ?? t("ungrouped"),
       expandable,
       expanded: open
     };
     if (!open) return [row];
     return [
       row,
+      ...flattenTree(match.children, expanded, auto, filtering, t, depth + 1, key),
       ...match.sessions.map((session) => ({
         kind: "session",
         key: `session:${session.id}`,
         depth: depth + 1,
         parentKey: key,
         session
-      })),
-      ...flattenTree(match.children, expanded, auto, filtering, t, depth + 1, key)
+      }))
     ];
   });
 }
-function ResultRow({ row, id, t, now, choosing, active, selected, tree, busy, onChoose, onFocus, onToggle }) {
+function ResultRow({
+  row,
+  id,
+  groupId,
+  t,
+  now,
+  choosing,
+  active,
+  selected,
+  currentBranch,
+  useSessionStatus,
+  statusLabel,
+  tree,
+  busy,
+  onChoose,
+  onFocus,
+  onToggle
+}) {
   const branch = row.kind === "branch" ? row : void 0;
   const session = row.kind === "session" ? row.session : void 0;
   const workspace = branch?.match.branch.workspace;
+  const directory = branch?.match.branch.directory;
   const title = branch?.title ?? session?.title;
-  const path = workspace?.path || (tree ? void 0 : session?.workspace || session?.path);
-  const disclosure = branch?.expandable ? h4(ChevronRightGlyph, { size: 14 }) : null;
+  const path = workspace?.path ?? directory?.path ?? session?.path;
+  const splitDisclosure = choosing && workspace !== void 0 && branch?.expandable === true;
+  const hasSearchMeta = !tree && Boolean(session?.workspace || session?.path || session?.snippet);
   const option = h4(
     "button",
     {
@@ -1812,39 +1906,50 @@ function ResultRow({ row, id, t, now, choosing, active, selected, tree, busy, on
       role: tree ? "treeitem" : "option",
       tabIndex: -1,
       "aria-level": tree ? row.depth + 1 : void 0,
+      "aria-owns": groupId,
       "aria-expanded": branch?.expandable ? branch.expanded : void 0,
       "aria-selected": selected,
       "aria-disabled": busy || void 0,
       "data-wsp-navigation-row": true,
       "data-active": active || void 0,
       "data-selected": selected || void 0,
+      "data-search-meta": hasSearchMeta || void 0,
       className: "wsp-row wsp-navigation-row",
-      style: { paddingInlineStart: 8 + Math.min(row.depth, 10) * 16 },
       title: path || title,
       onClick: onChoose,
       onFocus
     },
-    branch === void 0 ? null : h4(
+    branch === void 0 ? session && h4(SessionMarker, { session, useSessionStatus, statusLabel }) : h4(
       "span",
-      { className: "wsp-row-icon" },
-      !choosing && disclosure !== null ? h4("span", { className: "wsp-tree-chevron", "data-expanded": branch.expanded }, disclosure) : h4(FolderGlyph, { size: 16 })
+      {
+        className: "wsp-row-icon wsp-tree-icon",
+        "data-current": currentBranch || void 0,
+        "data-swap": branch.expandable && !splitDisclosure || void 0,
+        "data-expanded": branch.expanded
+      },
+      h4(branch.expanded ? OpenFolderGlyph : FolderGlyph, { className: "wsp-tree-folder" }),
+      branch.expandable && !splitDisclosure ? h4(DisclosureGlyph, { className: "wsp-tree-arrow" }) : null
     ),
     h4(
       "span",
       { className: "wsp-row-text" },
-      h4("span", { className: "wsp-row-title" }, title),
-      path ? h4("span", { className: "wsp-row-path" }, path) : null,
-      session?.snippet ? h4("span", { className: "wsp-row-path" }, session.snippet) : null
+      workspace?.showPath ? h4(
+        "span",
+        { className: "wsp-row-line" },
+        h4("span", { className: "wsp-row-title" }, title),
+        h4("span", { className: "wsp-row-suffix" }, shortenPath(workspace.path))
+      ) : h4("span", { className: "wsp-row-title" }, title),
+      hasSearchMeta ? h4(
+        "span",
+        { className: "wsp-search-meta" },
+        h4("span", { className: "wsp-row-path" }, session?.workspace || session?.path),
+        session?.snippet ? h4("span", { className: "wsp-row-path wsp-session-snippet" }, session.snippet) : null
+      ) : null
     ),
-    branch !== void 0 && branch.match.sessions.length > 0 && !choosing ? h4(
-      "span",
-      { className: "wsp-row-count" },
-      t(branch.match.sessions.length === 1 ? "sessions.one" : "sessions.other", { n: branch.match.sessions.length })
-    ) : null,
     session === void 0 ? null : h4("span", { className: "wsp-row-time" }, relativeTime(session.latest, now, t)),
-    selected ? h4("span", { className: "wsp-row-check", "aria-hidden": true }, h4(CheckGlyph, { size: 14 })) : null
+    choosing && selected ? h4("span", { className: "wsp-row-check", "aria-hidden": true }, h4(CheckGlyph, { size: 14 })) : null
   );
-  if (!choosing || branch === void 0 || disclosure === null) return option;
+  if (!splitDisclosure) return option;
   const action = t(branch.expanded ? "collapseBranch" : "expandBranch");
   return h4(
     "div",
@@ -1852,7 +1957,7 @@ function ResultRow({ row, id, t, now, choosing, active, selected, tree, busy, on
     option,
     h4("button", {
       type: "button",
-      className: "wsp-icon-btn wsp-tree-chevron",
+      className: "wsp-icon-btn wsp-tree-disclosure",
       tabIndex: -1,
       "aria-label": `${action} ${title}`,
       "aria-expanded": branch.expanded,
@@ -1862,8 +1967,30 @@ function ResultRow({ row, id, t, now, choosing, active, selected, tree, busy, on
         onToggle?.();
         document.getElementById(id)?.focus({ preventScroll: true });
       }
-    }, disclosure)
+    }, h4(DisclosureGlyph, { className: "wsp-tree-arrow" }))
   );
+}
+function SessionMarker({ session, useSessionStatus, statusLabel }) {
+  const label = useSessionStatus((statuses) => {
+    const status = statuses.get(session.id);
+    switch (status?.pendingInteraction?.kind) {
+      case "approval":
+        return "status.waitingApproval";
+      case "plan-review":
+        return "status.planReview";
+      case "question":
+        return "status.waitingAnswer";
+    }
+    if (status?.running ?? session.running) return "status.running";
+    return status?.completionUnread ? "status.completed" : void 0;
+  });
+  return h4("span", { className: "wsp-row-icon" }, label === void 0 ? null : h4("span", {
+    className: "wsp-session-dot",
+    role: "img",
+    "aria-label": statusLabel(label),
+    title: statusLabel(label),
+    "data-state": label === "status.running" ? "running" : label === "status.completed" ? "done" : "waiting"
+  }));
 }
 function errorMessage(error) {
   return error instanceof Error ? error.message : String(error);
@@ -2354,14 +2481,9 @@ function WorkspacePicker(props) {
         null,
         addAction,
         h5(
-          "div",
-          { className: "wsp-hints" },
-          h5("span", { className: "wsp-hint" }, t("dialog.hint")),
-          h5(
-            "span",
-            { className: "wsp-dialog-count" },
-            query.trim() === "" ? filtered.length === 1 ? t("count.one") : t("count.other", { n: filtered.length }) : t("countResults", { n: filtered.length })
-          )
+          "span",
+          { className: "wsp-dialog-count" },
+          query.trim() === "" ? filtered.length === 1 ? t("count.one") : t("count.other", { n: filtered.length }) : t("countResults", { n: filtered.length })
         )
       )
     });
@@ -2434,6 +2556,7 @@ function apply(ctx) {
   const injected = heroInjection(ctx);
   const actions = {
     controls,
+    statusLabel: ctx.locale.bind("workspace"),
     searchContent: (query, signal) => ctx.sessions.search(query, signal),
     openSession: (id) => ctx.uiWorkspace.openSession(id),
     renameWorkspace: (id, title) => ctx.workspaces.rename(id, title)

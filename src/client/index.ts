@@ -64,6 +64,7 @@ export function apply(ctx: Context): void {
   const injected = heroInjection(ctx)
   const actions: NavigationActions = {
     controls,
+    statusLabel: ctx.locale.bind('workspace'),
     searchContent: (query, signal) => ctx.sessions.search(query, signal),
     openSession: id => ctx.uiWorkspace.openSession(id),
     renameWorkspace: (id, title) => ctx.workspaces.rename(id, title),

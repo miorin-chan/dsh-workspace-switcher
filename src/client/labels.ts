@@ -37,7 +37,6 @@ export type LabelKey =
   | 'dismiss'
   | 'dialog.title'
   | 'dialog.subtitle'
-  | 'dialog.hint'
   | 'sorted'
   | 'time.now'
   | 'time.minutes'
@@ -74,8 +73,6 @@ export type LabelKey =
   | 'save'
   | 'expandBranch'
   | 'collapseBranch'
-  | 'sessionKeys'
-  | 'treeKeys'
   | 'loadingList'
   | 'renameNamedWorkspace'
 
@@ -110,7 +107,6 @@ const en: LabelDict = {
   "dismiss": "Dismiss",
   "dialog.title": "Choose a workspace",
   "dialog.subtitle": "The new session will start in this folder.",
-  "dialog.hint": "↑↓ to navigate · ↵ to open · Esc to go back",
   "sorted": "Sorted by recent use",
   "time.now": "Just now",
   "time.minutes": "{n} min ago",
@@ -147,8 +143,6 @@ const en: LabelDict = {
   save: "Save",
   expandBranch: "Expand",
   collapseBranch: "Collapse",
-  sessionKeys: "↑↓ to navigate · ↵ to open",
-  treeKeys: "↑↓ to move · ←→ to collapse or expand",
   loadingList: "Loading list…",
   renameNamedWorkspace: "Rename {name}",
 }
@@ -178,7 +172,6 @@ const zh: LabelDict = {
   "dismiss": "关闭提示",
   "dialog.title": "选择工作区",
   "dialog.subtitle": "新会话将在所选目录中开始。",
-  "dialog.hint": "↑↓ 选择 · ↵ 打开 · Esc 返回",
   "sorted": "按最近使用排序",
   "time.now": "刚刚",
   "time.minutes": "{n} 分钟前",
@@ -215,8 +208,6 @@ const zh: LabelDict = {
   save: "保存",
   expandBranch: "展开",
   collapseBranch: "折叠",
-  sessionKeys: "↑↓ 移动 · ↵ 打开",
-  treeKeys: "↑↓ 移动 · ←→ 折叠或展开",
   loadingList: "正在加载列表…",
   renameNamedWorkspace: "重命名「{name}」",
 }
@@ -246,7 +237,6 @@ const ja: LabelDict = {
   "dismiss": "閉じる",
   "dialog.title": "ワークスペースを選択",
   "dialog.subtitle": "新しいセッションはこのフォルダーで開始されます。",
-  "dialog.hint": "↑↓ 移動 · ↵ 開く · Esc 戻る",
   "sorted": "最近の使用順",
   "time.now": "たった今",
   "time.minutes": "{n} 分前",
@@ -283,8 +273,6 @@ const ja: LabelDict = {
   save: "保存",
   expandBranch: "展開",
   collapseBranch: "折りたたむ",
-  sessionKeys: "↑↓ 移動 · ↵ 開く",
-  treeKeys: "↑↓ 移動 · ←→ 折りたたむ／展開する",
   loadingList: "一覧を読み込んでいます…",
   renameNamedWorkspace: "「{name}」の名前を変更",
 }
@@ -314,7 +302,6 @@ const de: LabelDict = {
   "dismiss": "Schließen",
   "dialog.title": "Arbeitsbereich auswählen",
   "dialog.subtitle": "Die neue Sitzung startet in diesem Ordner.",
-  "dialog.hint": "↑↓ Navigieren · ↵ Öffnen · Esc Zurück",
   "sorted": "Nach letzter Verwendung sortiert",
   "time.now": "Gerade eben",
   "time.minutes": "Vor {n} Min.",
@@ -351,8 +338,6 @@ const de: LabelDict = {
   save: "Speichern",
   expandBranch: "Ausklappen",
   collapseBranch: "Einklappen",
-  sessionKeys: "↑↓ Navigieren · ↵ Öffnen",
-  treeKeys: "↑↓ Navigieren · ←→ Ein- oder Ausklappen",
   loadingList: "Liste wird geladen…",
   renameNamedWorkspace: "{name} umbenennen",
 }
@@ -382,7 +367,6 @@ const es: LabelDict = {
   "dismiss": "Cerrar",
   "dialog.title": "Elegir un espacio de trabajo",
   "dialog.subtitle": "La nueva sesión se iniciará en esta carpeta.",
-  "dialog.hint": "↑↓ navegar · ↵ abrir · Esc volver",
   "sorted": "Ordenado por uso reciente",
   "time.now": "Ahora mismo",
   "time.minutes": "Hace {n} min",
@@ -419,8 +403,6 @@ const es: LabelDict = {
   save: "Guardar",
   expandBranch: "Expandir",
   collapseBranch: "Contraer",
-  sessionKeys: "↑↓ navegar · ↵ abrir",
-  treeKeys: "↑↓ navegar · ←→ contraer o expandir",
   loadingList: "Cargando lista…",
   renameNamedWorkspace: "Cambiar el nombre de {name}",
 }
@@ -450,7 +432,6 @@ const fr: LabelDict = {
   "dismiss": "Fermer",
   "dialog.title": "Choisir un espace de travail",
   "dialog.subtitle": "La nouvelle session démarrera dans ce dossier.",
-  "dialog.hint": "↑↓ naviguer · ↵ ouvrir · Esc revenir",
   "sorted": "Triés par utilisation récente",
   "time.now": "À l’instant",
   "time.minutes": "Il y a {n} min",
@@ -487,8 +468,6 @@ const fr: LabelDict = {
   save: "Enregistrer",
   expandBranch: "Développer",
   collapseBranch: "Replier",
-  sessionKeys: "↑↓ naviguer · ↵ ouvrir",
-  treeKeys: "↑↓ naviguer · ←→ replier ou développer",
   loadingList: "Chargement de la liste…",
   renameNamedWorkspace: "Renommer {name}",
 }
@@ -518,7 +497,6 @@ const pt: LabelDict = {
   "dismiss": "Fechar",
   "dialog.title": "Escolher uma área de trabalho",
   "dialog.subtitle": "A nova sessão será iniciada nesta pasta.",
-  "dialog.hint": "↑↓ navegar · ↵ abrir · Esc voltar",
   "sorted": "Ordenadas pelo uso recente",
   "time.now": "Agora mesmo",
   "time.minutes": "Há {n} min",
@@ -555,8 +533,6 @@ const pt: LabelDict = {
   save: "Salvar",
   expandBranch: "Expandir",
   collapseBranch: "Recolher",
-  sessionKeys: "↑↓ navegar · ↵ abrir",
-  treeKeys: "↑↓ navegar · ←→ recolher ou expandir",
   loadingList: "Carregando lista…",
   renameNamedWorkspace: "Renomear {name}",
 }
@@ -586,7 +562,6 @@ const ru: LabelDict = {
   "dismiss": "Закрыть",
   "dialog.title": "Выбор рабочего пространства",
   "dialog.subtitle": "Новый сеанс начнётся в этой папке.",
-  "dialog.hint": "↑↓ выбор · ↵ открыть · Esc назад",
   "sorted": "Сортировка по недавнему использованию",
   "time.now": "Только что",
   "time.minutes": "{n} мин назад",
@@ -623,8 +598,6 @@ const ru: LabelDict = {
   save: "Сохранить",
   expandBranch: "Развернуть",
   collapseBranch: "Свернуть",
-  sessionKeys: "↑↓ перемещение · ↵ открыть",
-  treeKeys: "↑↓ перемещение · ←→ свернуть или развернуть",
   loadingList: "Загрузка списка…",
   renameNamedWorkspace: "Переименовать «{name}»",
 }

@@ -440,13 +440,10 @@ export function WorkspacePicker(props: WorkspacePickerProps): ReactNode {
       status: h(React.Fragment, null, staleWarning, banner),
       footer: h(React.Fragment, null,
         addAction,
-        h('div', { className: 'wsp-hints' },
-          h('span', { className: 'wsp-hint' }, t('dialog.hint')),
-          h('span', { className: 'wsp-dialog-count' },
-            query.trim() === ''
-              ? (filtered.length === 1 ? t('count.one') : t('count.other', { n: filtered.length }))
-              : t('countResults', { n: filtered.length })),
-        ),
+        h('span', { className: 'wsp-dialog-count' },
+          query.trim() === ''
+            ? (filtered.length === 1 ? t('count.one') : t('count.other', { n: filtered.length }))
+            : t('countResults', { n: filtered.length })),
       ),
     })
   }
