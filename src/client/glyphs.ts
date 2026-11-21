@@ -83,3 +83,25 @@ export const GridGlyph = (props: GlyphProps): ReactNode => h(Glyph, {
     'M2.6 9.3h4.1v4.1H2.6z', 'M9.3 9.3h4.1v4.1H9.3z',
   ],
 })
+
+/** View controls for the switcher's grouping menu. */
+export const SlidersGlyph = (props: GlyphProps): ReactNode => h(Glyph, {
+  ...props, paths: ['M2 5h5m4 0h3M2 11h2m4 0h6', 'M7 5a2 2 0 1 0 4 0 2 2 0 1 0-4 0ZM4 11a2 2 0 1 0 4 0 2 2 0 1 0-4 0Z'],
+})
+
+/** Folder with a plus badge for the add-workspace action. */
+export const FolderAddGlyph = (props: GlyphProps): ReactNode => h(Glyph, {
+  ...props, paths: ['M8 4.5 6.5 3H3a1 1 0 0 0-1 1v8.5a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V10', 'M9 6h6m-3-3v6'],
+})
+
+export const ListGlyph = (props: GlyphProps): ReactNode => h(Glyph, {
+  ...props, paths: ['M5.5 4h8m-8 4h8m-8 4h8M2.5 4h.05m-.05 4h.05m-.05 4h.05'],
+})
+
+export const WorkspaceTreeGlyph = (props: GlyphProps): ReactNode => h(Glyph, {
+  ...props, paths: ['M2 5a1 1 0 0 1 1-1h3l1 1.5h6a1 1 0 0 1 1 1V12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1Z', 'M6 7.5v3h4m-1-3h2'],
+})
+
+export const DirectoryTreeGlyph = (props: GlyphProps): ReactNode => h(Glyph, {
+  ...props, paths: ['M3 3v10m0-5h4m-4 5h4', 'M7 2h3l1 1h3v3H7zM7 8h3l1 1h3v4H7z'],
+})

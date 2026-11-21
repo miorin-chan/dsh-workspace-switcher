@@ -1,9 +1,10 @@
 import * as React from 'react'
 import type { ReactNode } from 'react'
 import type { WorkspaceId, WorkspaceSnapshot } from '@deepseek-ai/dsh-api-workspace-controller/client'
-import { AddWorkspaceButton, ErrorBanner, SearchField, Skeleton } from './components'
+import { ErrorBanner, SearchField, Skeleton } from './components'
 import { SwitcherDialog, trapTab } from './dialog'
-import { CheckGlyph, DisclosureGlyph, FolderGlyph, OpenFolderGlyph } from './glyphs'
+import { CheckGlyph, DisclosureGlyph, FolderAddGlyph, FolderGlyph, OpenFolderGlyph } from './glyphs'
+import { GroupingMenu } from './grouping-menu'
 import { activeGrouping, FLAT, WORKSPACES, WORKSPACE_TREE, type createGroupingPreferences, type createGroupingRegistry } from './grouping'
 import type { TranslateSeat } from './labels'
 import { filterRows, relativeTime, shortenPath } from './model'
@@ -335,18 +336,19 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, t, u
       }),
     ),
     toolbar: renaming === undefined ? h('div', { className: 'wsp-navigation-toolbar' },
-      h('label', { className: 'wsp-group-label' }, t('group.options'),
-        h('select', {
-          className: 'wsp-group-select', value: displayedGroup, disabled: busy,
-          onChange: (event: React.ChangeEvent<HTMLSelectElement>) => {
-            const id = event.currentTarget.value
-            preferenceChoice.current = id
-            setGroupId(id)
-            setActiveKey(undefined)
-          },
-        }, choices.map(choice => h('option', { key: choice.id, value: choice.id }, choice.label))),
-      ),
-      canAdd && addWorkspace !== undefined ? h(AddWorkspaceButton, { busy: writeKind === 'add', t, onClick: add }) : null,
+      h(GroupingMenu, {
+        label: t('group.options'), heading: t('group.heading'), selected: displayedGroup, choices, disabled: busy,
+        onSelect: (id: string) => {
+          preferenceChoice.current = id
+          setGroupId(id)
+          setActiveKey(undefined)
+        },
+      }),
+      canAdd && addWorkspace !== undefined ? h('button', {
+        type: 'button', className: 'wsp-icon-btn wsp-tool-button',
+        title: t(writeKind === 'add' ? 'adding' : 'add'), 'aria-label': t('add'),
+        'aria-busy': writeKind === 'add' || undefined, 'aria-disabled': busy || undefined, onClick: add,
+      }, h(FolderAddGlyph)) : null,
     ) : null,
     footer: h(React.Fragment, null,
       h('div', { className: 'wsp-navigation-actions' },

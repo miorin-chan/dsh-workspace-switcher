@@ -59,6 +59,7 @@ export type LabelKey =
   | 'sessionSearch'
   | 'workspaceTree'
   | 'group.options'
+  | 'group.heading'
   | 'group.flat'
   | 'group.failed'
   | 'searchWorkspaceTree'
@@ -87,6 +88,7 @@ export type TranslateSeat = (key: LabelKey, params?: Record<string, unknown>) =>
 
 const en: LabelDict = {
   "group.options": "View options",
+  "group.heading": "Group by",
   "group.flat": "Flat sessions",
   "group.failed": "Could not apply this grouping. Showing the workspace tree.",
   "defaultName": "Default workspace",
@@ -155,6 +157,7 @@ const en: LabelDict = {
 
 const zh: LabelDict = {
   "group.options": "视图选项",
+  "group.heading": "分组方式",
   "group.flat": "平铺会话",
   "group.failed": "无法应用此分组，已显示工作区树",
   "defaultName": "默认工作区",
@@ -223,6 +226,7 @@ const zh: LabelDict = {
 
 const ja: LabelDict = {
   "group.options": "表示オプション",
+  "group.heading": "グループ化",
   "group.flat": "セッション一覧",
   "group.failed": "このグループ化を適用できなかったため、ワークスペースツリーを表示しています。",
   "defaultName": "デフォルトのワークスペース",
@@ -291,6 +295,7 @@ const ja: LabelDict = {
 
 const de: LabelDict = {
   "group.options": "Ansichtsoptionen",
+  "group.heading": "Gruppieren nach",
   "group.flat": "Flache Sitzungsliste",
   "group.failed": "Die Gruppierung konnte nicht angewendet werden. Der Arbeitsbereichsbaum wird angezeigt.",
   "defaultName": "Standardarbeitsbereich",
@@ -359,6 +364,7 @@ const de: LabelDict = {
 
 const es: LabelDict = {
   "group.options": "Opciones de vista",
+  "group.heading": "Agrupar por",
   "group.flat": "Lista de sesiones",
   "group.failed": "No se pudo aplicar la agrupación. Se muestra el árbol de espacios de trabajo.",
   "defaultName": "Espacio de trabajo predeterminado",
@@ -427,6 +433,7 @@ const es: LabelDict = {
 
 const fr: LabelDict = {
   "group.options": "Options d’affichage",
+  "group.heading": "Regrouper par",
   "group.flat": "Liste des sessions",
   "group.failed": "Impossible d’appliquer ce regroupement. L’arborescence des espaces de travail est affichée.",
   "defaultName": "Espace de travail par défaut",
@@ -495,6 +502,7 @@ const fr: LabelDict = {
 
 const pt: LabelDict = {
   "group.options": "Opções de visualização",
+  "group.heading": "Agrupar por",
   "group.flat": "Lista de sessões",
   "group.failed": "Não foi possível aplicar este agrupamento. A árvore de espaços de trabalho está sendo exibida.",
   "defaultName": "Área de trabalho padrão",
@@ -563,6 +571,7 @@ const pt: LabelDict = {
 
 const ru: LabelDict = {
   "group.options": "Параметры вида",
+  "group.heading": "Группировка",
   "group.flat": "Список сессий",
   "group.failed": "Не удалось применить группировку. Показано дерево рабочих областей.",
   "defaultName": "Рабочее пространство по умолчанию",

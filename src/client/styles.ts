@@ -263,17 +263,23 @@ export const CSS = `
   padding: 0 24px 12px;
   border-bottom: .5px solid var(--dsw-alias-border-l3);
 }
-.wsp-navigation-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
-.wsp-group-label {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
-  color: var(--dsw-alias-label-secondary); font-size: 12px;
+.wsp-dialog-search-tools { display: flex; align-items: center; gap: 6px; position: relative; --wsp-menu-inset: 24px; }
+.wsp-dialog-search-tools > .wsp-search { flex: 1; min-width: 0; }
+.wsp-navigation-toolbar { display: flex; align-items: center; gap: 4px; flex: none; }
+.wsp-tool-button:focus-visible { outline: 2px solid var(--dsw-alias-state-business-primary); outline-offset: 1px; }
+.wsp-tool-button[aria-expanded='true'] { background: var(--dsw-alias-interactive-bg-hover); color: var(--dsw-alias-label-primary); }
+.wsp-tool-button:disabled, .wsp-tool-button[aria-disabled='true'] { opacity: .45; cursor: default; }
+.wsp-group-menu {
+  position: absolute; z-index: 2; inset-block-start: calc(100% - 6px); inset-inline-end: var(--wsp-menu-inset);
+  width: min(248px, calc(100% - 2 * var(--wsp-menu-inset)));
+  max-height: min(220px, max(66px, calc(100dvh - 220px)));
+  overflow: auto; overscroll-behavior: contain;
 }
-.wsp-group-select {
-  max-width: 100%; min-width: 0; min-height: 28px; padding: 3px 8px; border-radius: var(--dsw-radius-xs, 6px);
-  border: 1px solid var(--dsw-alias-border-l3);
-  color: var(--dsw-alias-label-primary); background: var(--dsw-alias-interactive-bg-hover); font: inherit;
-}
-.wsp-group-select:focus-visible { outline: 2px solid var(--dsw-alias-state-business-primary); outline-offset: 1px; }
+.wsp-group-heading { padding: 5px 8px; font-size: 12px; color: var(--dsw-alias-label-tertiary); }
+.wsp-group-item { flex: none; text-align: start; }
+.wsp-group-item:focus { background: var(--dsw-alias-interactive-bg-hover); }
+.wsp-group-item:focus-visible { outline: 2px solid var(--dsw-alias-state-business-primary); outline-offset: -2px; }
+.wsp-group-item-name { flex: 1; min-width: 0; overflow-wrap: anywhere; }
 .wsp-dialog-search .wsp-search {
   height: 32px; margin: 0; padding: 0 8px;
   border: .5px solid var(--dsw-alias-border-l4);
@@ -373,7 +379,7 @@ export const CSS = `
   .wsp-skeleton-bar, .wsp-spinner { animation: none; }
 }
 @media (max-width: 640px) {
-  .wsp-popover {
+  .wsp-popover:not(.wsp-group-menu) {
     left: 12px !important; right: 12px !important;
     top: auto !important;
     bottom: max(12px, env(safe-area-inset-bottom)) !important;
@@ -387,6 +393,7 @@ export const CSS = `
   }
   .wsp-dialog-head { padding: 14px 12px 6px 16px; }
   .wsp-dialog-search { padding: 0 16px 10px; }
+  .wsp-dialog-search-tools { --wsp-menu-inset: 16px; }
   .wsp-dialog-body { padding: 0 16px 10px; }
   .wsp-dialog .wsp-error, .wsp-dialog .wsp-warning { margin: 0 16px 10px; }
   .wsp-dialog-foot { padding: 12px 16px; }

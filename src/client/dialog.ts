@@ -10,7 +10,7 @@ const h = React.createElement
 export function trapTab(event: { key: string; shiftKey: boolean; preventDefault(): void }, panel: HTMLElement | null): void {
   if (event.key !== 'Tab' || panel === null) return
   const items = panel.querySelectorAll<HTMLElement>(
-    'button:not([disabled]):not([tabindex="-1"]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    'button:not([disabled]):not([tabindex="-1"]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
   )
   const first = items[0]
   const last = items[items.length - 1]
@@ -87,7 +87,7 @@ export function SwitcherDialog({
             'aria-label': t('close'), title: t('close'), onClick: onClose,
           }, h(CloseGlyph, { size: 14 })),
         ),
-        h('div', { className: 'wsp-dialog-search' }, search, toolbar),
+        h('div', { className: toolbar ? 'wsp-dialog-search wsp-dialog-search-tools' : 'wsp-dialog-search' }, search, toolbar),
         h('div', { className: 'wsp-dialog-body' }, body),
         status,
         h('div', { className: 'wsp-dialog-foot' }, footer),

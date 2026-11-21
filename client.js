@@ -45,7 +45,7 @@ __export(index_exports, {
   inject: () => inject
 });
 module.exports = __toCommonJS(index_exports);
-var React6 = __toESM(require("react"), 1);
+var React7 = __toESM(require("react"), 1);
 
 // src/client/grouping.ts
 var FLAT = "flat";
@@ -109,6 +109,7 @@ function createGroupingPreferences(storage = () => localStorage) {
 var NS = "dsh-workspace-welcome-switcher";
 var en = {
   "group.options": "View options",
+  "group.heading": "Group by",
   "group.flat": "Flat sessions",
   "group.failed": "Could not apply this grouping. Showing the workspace tree.",
   "defaultName": "Default workspace",
@@ -176,6 +177,7 @@ var en = {
 };
 var zh = {
   "group.options": "\u89C6\u56FE\u9009\u9879",
+  "group.heading": "\u5206\u7EC4\u65B9\u5F0F",
   "group.flat": "\u5E73\u94FA\u4F1A\u8BDD",
   "group.failed": "\u65E0\u6CD5\u5E94\u7528\u6B64\u5206\u7EC4\uFF0C\u5DF2\u663E\u793A\u5DE5\u4F5C\u533A\u6811",
   "defaultName": "\u9ED8\u8BA4\u5DE5\u4F5C\u533A",
@@ -243,6 +245,7 @@ var zh = {
 };
 var ja = {
   "group.options": "\u8868\u793A\u30AA\u30D7\u30B7\u30E7\u30F3",
+  "group.heading": "\u30B0\u30EB\u30FC\u30D7\u5316",
   "group.flat": "\u30BB\u30C3\u30B7\u30E7\u30F3\u4E00\u89A7",
   "group.failed": "\u3053\u306E\u30B0\u30EB\u30FC\u30D7\u5316\u3092\u9069\u7528\u3067\u304D\u306A\u304B\u3063\u305F\u305F\u3081\u3001\u30EF\u30FC\u30AF\u30B9\u30DA\u30FC\u30B9\u30C4\u30EA\u30FC\u3092\u8868\u793A\u3057\u3066\u3044\u307E\u3059\u3002",
   "defaultName": "\u30C7\u30D5\u30A9\u30EB\u30C8\u306E\u30EF\u30FC\u30AF\u30B9\u30DA\u30FC\u30B9",
@@ -310,6 +313,7 @@ var ja = {
 };
 var de = {
   "group.options": "Ansichtsoptionen",
+  "group.heading": "Gruppieren nach",
   "group.flat": "Flache Sitzungsliste",
   "group.failed": "Die Gruppierung konnte nicht angewendet werden. Der Arbeitsbereichsbaum wird angezeigt.",
   "defaultName": "Standardarbeitsbereich",
@@ -377,6 +381,7 @@ var de = {
 };
 var es = {
   "group.options": "Opciones de vista",
+  "group.heading": "Agrupar por",
   "group.flat": "Lista de sesiones",
   "group.failed": "No se pudo aplicar la agrupaci\xF3n. Se muestra el \xE1rbol de espacios de trabajo.",
   "defaultName": "Espacio de trabajo predeterminado",
@@ -444,6 +449,7 @@ var es = {
 };
 var fr = {
   "group.options": "Options d\u2019affichage",
+  "group.heading": "Regrouper par",
   "group.flat": "Liste des sessions",
   "group.failed": "Impossible d\u2019appliquer ce regroupement. L\u2019arborescence des espaces de travail est affich\xE9e.",
   "defaultName": "Espace de travail par d\xE9faut",
@@ -511,6 +517,7 @@ var fr = {
 };
 var pt = {
   "group.options": "Op\xE7\xF5es de visualiza\xE7\xE3o",
+  "group.heading": "Agrupar por",
   "group.flat": "Lista de sess\xF5es",
   "group.failed": "N\xE3o foi poss\xEDvel aplicar este agrupamento. A \xE1rvore de espa\xE7os de trabalho est\xE1 sendo exibida.",
   "defaultName": "\xC1rea de trabalho padr\xE3o",
@@ -578,6 +585,7 @@ var pt = {
 };
 var ru = {
   "group.options": "\u041F\u0430\u0440\u0430\u043C\u0435\u0442\u0440\u044B \u0432\u0438\u0434\u0430",
+  "group.heading": "\u0413\u0440\u0443\u043F\u043F\u0438\u0440\u043E\u0432\u043A\u0430",
   "group.flat": "\u0421\u043F\u0438\u0441\u043E\u043A \u0441\u0435\u0441\u0441\u0438\u0439",
   "group.failed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u0433\u0440\u0443\u043F\u043F\u0438\u0440\u043E\u0432\u043A\u0443. \u041F\u043E\u043A\u0430\u0437\u0430\u043D\u043E \u0434\u0435\u0440\u0435\u0432\u043E \u0440\u0430\u0431\u043E\u0447\u0438\u0445 \u043E\u0431\u043B\u0430\u0441\u0442\u0435\u0439.",
   "defaultName": "\u0420\u0430\u0431\u043E\u0447\u0435\u0435 \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E \u043F\u043E \u0443\u043C\u043E\u043B\u0447\u0430\u043D\u0438\u044E",
@@ -731,7 +739,7 @@ function relativeTime(at, now, t) {
 }
 
 // src/client/navigation.ts
-var React4 = __toESM(require("react"), 1);
+var React5 = __toESM(require("react"), 1);
 
 // src/client/components.ts
 var React2 = __toESM(require("react"), 1);
@@ -790,6 +798,26 @@ var GridGlyph = (props) => h(Glyph, {
     "M2.6 9.3h4.1v4.1H2.6z",
     "M9.3 9.3h4.1v4.1H9.3z"
   ]
+});
+var SlidersGlyph = (props) => h(Glyph, {
+  ...props,
+  paths: ["M2 5h5m4 0h3M2 11h2m4 0h6", "M7 5a2 2 0 1 0 4 0 2 2 0 1 0-4 0ZM4 11a2 2 0 1 0 4 0 2 2 0 1 0-4 0Z"]
+});
+var FolderAddGlyph = (props) => h(Glyph, {
+  ...props,
+  paths: ["M8 4.5 6.5 3H3a1 1 0 0 0-1 1v8.5a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V10", "M9 6h6m-3-3v6"]
+});
+var ListGlyph = (props) => h(Glyph, {
+  ...props,
+  paths: ["M5.5 4h8m-8 4h8m-8 4h8M2.5 4h.05m-.05 4h.05m-.05 4h.05"]
+});
+var WorkspaceTreeGlyph = (props) => h(Glyph, {
+  ...props,
+  paths: ["M2 5a1 1 0 0 1 1-1h3l1 1.5h6a1 1 0 0 1 1 1V12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1Z", "M6 7.5v3h4m-1-3h2"]
+});
+var DirectoryTreeGlyph = (props) => h(Glyph, {
+  ...props,
+  paths: ["M3 3v10m0-5h4m-4 5h4", "M7 2h3l1 1h3v3H7zM7 8h3l1 1h3v4H7z"]
 });
 
 // src/client/components.ts
@@ -1235,17 +1263,23 @@ var CSS = `
   padding: 0 24px 12px;
   border-bottom: .5px solid var(--dsw-alias-border-l3);
 }
-.wsp-navigation-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
-.wsp-group-label {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
-  color: var(--dsw-alias-label-secondary); font-size: 12px;
+.wsp-dialog-search-tools { display: flex; align-items: center; gap: 6px; position: relative; --wsp-menu-inset: 24px; }
+.wsp-dialog-search-tools > .wsp-search { flex: 1; min-width: 0; }
+.wsp-navigation-toolbar { display: flex; align-items: center; gap: 4px; flex: none; }
+.wsp-tool-button:focus-visible { outline: 2px solid var(--dsw-alias-state-business-primary); outline-offset: 1px; }
+.wsp-tool-button[aria-expanded='true'] { background: var(--dsw-alias-interactive-bg-hover); color: var(--dsw-alias-label-primary); }
+.wsp-tool-button:disabled, .wsp-tool-button[aria-disabled='true'] { opacity: .45; cursor: default; }
+.wsp-group-menu {
+  position: absolute; z-index: 2; inset-block-start: calc(100% - 6px); inset-inline-end: var(--wsp-menu-inset);
+  width: min(248px, calc(100% - 2 * var(--wsp-menu-inset)));
+  max-height: min(220px, max(66px, calc(100dvh - 220px)));
+  overflow: auto; overscroll-behavior: contain;
 }
-.wsp-group-select {
-  max-width: 100%; min-width: 0; min-height: 28px; padding: 3px 8px; border-radius: var(--dsw-radius-xs, 6px);
-  border: 1px solid var(--dsw-alias-border-l3);
-  color: var(--dsw-alias-label-primary); background: var(--dsw-alias-interactive-bg-hover); font: inherit;
-}
-.wsp-group-select:focus-visible { outline: 2px solid var(--dsw-alias-state-business-primary); outline-offset: 1px; }
+.wsp-group-heading { padding: 5px 8px; font-size: 12px; color: var(--dsw-alias-label-tertiary); }
+.wsp-group-item { flex: none; text-align: start; }
+.wsp-group-item:focus { background: var(--dsw-alias-interactive-bg-hover); }
+.wsp-group-item:focus-visible { outline: 2px solid var(--dsw-alias-state-business-primary); outline-offset: -2px; }
+.wsp-group-item-name { flex: 1; min-width: 0; overflow-wrap: anywhere; }
 .wsp-dialog-search .wsp-search {
   height: 32px; margin: 0; padding: 0 8px;
   border: .5px solid var(--dsw-alias-border-l4);
@@ -1345,7 +1379,7 @@ var CSS = `
   .wsp-skeleton-bar, .wsp-spinner { animation: none; }
 }
 @media (max-width: 640px) {
-  .wsp-popover {
+  .wsp-popover:not(.wsp-group-menu) {
     left: 12px !important; right: 12px !important;
     top: auto !important;
     bottom: max(12px, env(safe-area-inset-bottom)) !important;
@@ -1359,6 +1393,7 @@ var CSS = `
   }
   .wsp-dialog-head { padding: 14px 12px 6px 16px; }
   .wsp-dialog-search { padding: 0 16px 10px; }
+  .wsp-dialog-search-tools { --wsp-menu-inset: 16px; }
   .wsp-dialog-body { padding: 0 16px 10px; }
   .wsp-dialog .wsp-error, .wsp-dialog .wsp-warning { margin: 0 16px 10px; }
   .wsp-dialog-foot { padding: 12px 16px; }
@@ -1370,7 +1405,7 @@ var h3 = React3.createElement;
 function trapTab(event, panel) {
   if (event.key !== "Tab" || panel === null) return;
   const items = panel.querySelectorAll(
-    'button:not([disabled]):not([tabindex="-1"]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    'button:not([disabled]):not([tabindex="-1"]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
   );
   const first = items[0];
   const last = items[items.length - 1];
@@ -1459,13 +1494,135 @@ function SwitcherDialog({
             onClick: onClose
           }, h3(CloseGlyph, { size: 14 }))
         ),
-        h3("div", { className: "wsp-dialog-search" }, search, toolbar),
+        h3("div", { className: toolbar ? "wsp-dialog-search wsp-dialog-search-tools" : "wsp-dialog-search" }, search, toolbar),
         h3("div", { className: "wsp-dialog-body" }, body),
         status,
         h3("div", { className: "wsp-dialog-foot" }, footer)
       )
     )
   ), document.body);
+}
+
+// src/client/grouping-menu.ts
+var React4 = __toESM(require("react"), 1);
+var h4 = React4.createElement;
+function groupingGlyph(id) {
+  switch (id) {
+    case FLAT:
+      return ListGlyph;
+    case WORKSPACES:
+      return FolderGlyph;
+    case WORKSPACE_TREE:
+      return WorkspaceTreeGlyph;
+    default:
+      return DirectoryTreeGlyph;
+  }
+}
+function GroupingMenu({ label, heading, choices, selected, disabled, onSelect }) {
+  const [open, setOpen] = React4.useState(false);
+  const root = React4.useRef(null);
+  const trigger = React4.useRef(null);
+  const menu = React4.useRef(null);
+  const menuId = React4.useId();
+  const close = () => {
+    setOpen(false);
+    trigger.current?.focus({ preventScroll: true });
+  };
+  React4.useLayoutEffect(() => {
+    const list = menu.current;
+    if (list === null || list.contains(document.activeElement)) return;
+    const item = list.querySelector('[aria-checked="true"]') ?? list.querySelector("button");
+    item?.focus();
+  }, [open, choices, selected]);
+  React4.useEffect(() => {
+    if (!open) return;
+    const dismiss = (event) => {
+      if (!(event.target instanceof Node) || root.current?.contains(event.target)) return;
+      const dialog = root.current?.closest('[role="dialog"]');
+      if (dialog?.contains(event.target) && !dialog.contains(document.activeElement)) close();
+      else setOpen(false);
+    };
+    document.addEventListener("click", dismiss, true);
+    return () => document.removeEventListener("click", dismiss, true);
+  }, [open]);
+  return h4(
+    "div",
+    {
+      className: "wsp-group-control",
+      ref: root,
+      onBlur: (event) => {
+        if (event.relatedTarget !== null && !event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+      }
+    },
+    h4("button", {
+      type: "button",
+      className: "wsp-icon-btn wsp-tool-button",
+      ref: trigger,
+      title: label,
+      "aria-label": label,
+      "aria-haspopup": "menu",
+      "aria-expanded": open,
+      "aria-controls": open ? menuId : void 0,
+      disabled,
+      onClick: () => {
+        if (open) close();
+        else setOpen(true);
+      },
+      onKeyDown: (event) => {
+        if (event.key !== "ArrowDown" || event.nativeEvent.isComposing) return;
+        event.preventDefault();
+        setOpen(true);
+      }
+    }, h4(SlidersGlyph)),
+    open ? h4(
+      "div",
+      {
+        className: "wsp-popover wsp-group-menu",
+        role: "menu",
+        "aria-label": label,
+        id: menuId,
+        ref: menu,
+        onKeyDown: (event) => {
+          if (event.nativeEvent.isComposing) return;
+          if (event.key === "Tab") {
+            close();
+            return;
+          }
+          if (event.key === "Escape") {
+            event.preventDefault();
+            event.stopPropagation();
+            close();
+            return;
+          }
+          if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+          const items = Array.from(event.currentTarget.querySelectorAll("button"));
+          const current = items.findIndex((item) => item === event.target);
+          const next = event.key === "Home" ? 0 : event.key === "End" ? items.length - 1 : (current + (event.key === "ArrowDown" ? 1 : -1) + items.length) % items.length;
+          event.preventDefault();
+          items[next]?.focus();
+        }
+      },
+      h4("div", { className: "wsp-group-heading", "aria-hidden": true }, heading),
+      choices.map(({ id, label: name }) => h4(
+        "button",
+        {
+          key: id,
+          type: "button",
+          role: "menuitemradio",
+          tabIndex: -1,
+          className: "wsp-row wsp-group-item",
+          "aria-checked": id === selected,
+          onClick: () => {
+            onSelect(id);
+            close();
+          }
+        },
+        h4("span", { className: "wsp-row-icon" }, h4(groupingGlyph(id))),
+        h4("span", { className: "wsp-group-item-name" }, name),
+        h4("span", { className: "wsp-row-check", "aria-hidden": true }, id === selected ? h4(CheckGlyph, { size: 14 }) : null)
+      ))
+    ) : null
+  );
 }
 
 // src/client/navigation-model.ts
@@ -1613,12 +1770,12 @@ function initialExpansion(roots, workspaceId, currentId) {
 }
 
 // src/client/navigation.ts
-var h4 = React4.createElement;
-var { useEffect: useEffect2, useId: useId2, useMemo, useRef, useState, useSyncExternalStore } = React4;
+var h5 = React5.createElement;
+var { useEffect: useEffect3, useId: useId3, useMemo, useRef: useRef2, useState: useState2, useSyncExternalStore } = React5;
 var NO_HITS = [];
 function SwitcherOverlay(props) {
   const mode = useSyncExternalStore(props.controls.subscribe, props.controls.getSnapshot);
-  return mode === null ? null : h4(NavigationDialog, { ...props, key: mode, mode });
+  return mode === null ? null : h5(NavigationDialog, { ...props, key: mode, mode });
 }
 function NavigationDialog({
   mode,
@@ -1645,8 +1802,8 @@ function NavigationDialog({
   const hero = mode === "workspaces" && showMain ? controls.hero() : void 0;
   const choosing = hero !== void 0;
   const catalog = useSyncExternalStore(groupings.subscribe, groupings.getSnapshot);
-  const [groupId, setGroupId] = useState(() => groupingPreferences.initial(mode, catalog));
-  const preferenceChoice = useRef(void 0);
+  const [groupId, setGroupId] = useState2(() => groupingPreferences.initial(mode, catalog));
+  const preferenceChoice = useRef2(void 0);
   const groupBy = activeGrouping(groupId, catalog, choosing);
   const grouping = catalog.find((entry) => entry.id === groupBy);
   const tree = groupBy !== FLAT;
@@ -1655,7 +1812,7 @@ function NavigationDialog({
     [workspaces, sessions, t, groupBy, grouping]
   );
   const displayedGroup = groupingError ? WORKSPACE_TREE : groupBy;
-  useEffect2(() => {
+  useEffect3(() => {
     if (preferenceChoice.current !== groupId) return;
     preferenceChoice.current = void 0;
     if (displayedGroup === groupId) groupingPreferences.remember(groupId);
@@ -1666,22 +1823,22 @@ function NavigationDialog({
     { id: WORKSPACE_TREE, label: t("workspaceTree") },
     ...catalog.map((entry) => ({ id: entry.id, label: entry.label() }))
   ];
-  const [query, setQuery] = useState("");
-  const [activeKey, setActiveKey] = useState();
-  const [addedWorkspaceId, setAddedWorkspaceId] = useState();
-  const [expansions, setExpansions] = useState(() => /* @__PURE__ */ new Map());
+  const [query, setQuery] = useState2("");
+  const [activeKey, setActiveKey] = useState2();
+  const [addedWorkspaceId, setAddedWorkspaceId] = useState2();
+  const [expansions, setExpansions] = useState2(() => /* @__PURE__ */ new Map());
   const expanded = expansions.get(displayedGroup) ?? /* @__PURE__ */ new Map();
-  const [renaming, setRenaming] = useState();
-  const [writeKind, setWriteKind] = useState();
+  const [renaming, setRenaming] = useState2();
+  const [writeKind, setWriteKind] = useState2();
   const busy = writeKind !== void 0;
-  const pendingWrite = useRef(false);
-  const lifetime = useRef(null);
-  const mounted = useRef(false);
-  const [error, setError] = useState();
-  const [now, setNow] = useState(Date.now);
-  const inputRef = useRef(null);
-  const panelRef = useRef(null);
-  const listId = useId2();
+  const pendingWrite = useRef2(false);
+  const lifetime = useRef2(null);
+  const mounted = useRef2(false);
+  const [error, setError] = useState2();
+  const [now, setNow] = useState2(Date.now);
+  const inputRef = useRef2(null);
+  const panelRef = useRef2(null);
+  const listId = useId3();
   const trimmed = query.trim();
   const remoteQuery = choosing ? "" : trimmed.replaceAll("\0", "");
   const remote = useContentSearch(remoteQuery, searchContent);
@@ -1715,7 +1872,7 @@ function NavigationDialog({
   const optionId = (i) => `${listId}-${i}`;
   const title = choosing ? t("dialog.title") : tree ? choices.find((choice) => choice.id === displayedGroup)?.label ?? t("workspaceTree") : t("sessionSearch");
   const pending = rows.length === 0 && (remote.pending || workspaces.phase !== "ready" && workspaces.state !== "error" || !choosing && sessions.phase !== "ready");
-  React4.useLayoutEffect(() => {
+  React5.useLayoutEffect(() => {
     const abort = new AbortController();
     lifetime.current = abort;
     mounted.current = true;
@@ -1727,16 +1884,16 @@ function NavigationDialog({
     };
   }, []);
   const renameId = renaming?.id;
-  useEffect2(() => {
+  useEffect3(() => {
     const frame = window.requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
     return () => window.cancelAnimationFrame(frame);
   }, [renameId]);
-  React4.useLayoutEffect(() => {
+  React5.useLayoutEffect(() => {
     if (document.activeElement === document.body) {
       inputRef.current?.focus({ preventScroll: true });
     }
   }, [displayedGroup]);
-  useEffect2(() => {
+  useEffect3(() => {
     panelRef.current?.querySelector('[data-active="true"]')?.scrollIntoView({ block: "nearest" });
   }, [active?.key]);
   const changeQuery = (value) => {
@@ -1845,7 +2002,7 @@ function NavigationDialog({
   const renameTitle = renaming?.title.trim();
   const canSaveRename = renameTitle !== void 0 && renameTitle !== "" && renameTitle !== renaming?.original && !busy;
   const catalogError = workspaces.state === "error";
-  const empty = pending ? h4(Skeleton, { rows: 5 }) : h4("div", { className: "wsp-empty", role: "status" }, t(catalogError ? "listUnavailable" : trimmed !== "" ? "noMatches" : tree ? "empty.noWorkspacesTitle" : "noSessions"));
+  const empty = pending ? h5(Skeleton, { rows: 5 }) : h5("div", { className: "wsp-empty", role: "status" }, t(catalogError ? "listUnavailable" : trimmed !== "" ? "noMatches" : tree ? "empty.noWorkspacesTitle" : "noSessions"));
   function renderRows() {
     const children = /* @__PURE__ */ new Map();
     for (const [i, row] of rows.entries()) {
@@ -1857,7 +2014,7 @@ function NavigationDialog({
       const row = rows[i];
       const id = optionId(i);
       const groupId2 = children.has(row.key) ? `${id}-children` : void 0;
-      const option = h4(ResultRow, {
+      const option = h5(ResultRow, {
         key: row.key,
         row,
         id,
@@ -1880,16 +2037,16 @@ function NavigationDialog({
         } : void 0
       });
       if (row.kind === "session") return option;
-      return h4(
+      return h5(
         "div",
         { key: row.key, role: "presentation" },
         option,
-        groupId2 === void 0 ? null : h4("div", { id: groupId2, role: "group", className: "wsp-tree-children" }, renderGroup(row.key))
+        groupId2 === void 0 ? null : h5("div", { id: groupId2, role: "group", className: "wsp-tree-children" }, renderGroup(row.key))
       );
     });
     return renderGroup();
   }
-  return h4(SwitcherDialog, {
+  return h5(SwitcherDialog, {
     title,
     panelRef,
     busy: busy || pending,
@@ -1897,7 +2054,7 @@ function NavigationDialog({
     onClose: controls.close,
     onKeyDown,
     ...choosing ? { subtitle: t("dialog.subtitle") } : {},
-    search: renaming === void 0 ? h4(SearchField, {
+    search: renaming === void 0 ? h5(SearchField, {
       t,
       value: query,
       onChange: changeQuery,
@@ -1906,7 +2063,7 @@ function NavigationDialog({
       label: t(tree ? choosing ? "search.label" : "searchWorkspaceTree" : "sessionSearch"),
       listId: rows.length === 0 ? void 0 : listId,
       activeOptionId: active === void 0 ? void 0 : optionId(index)
-    }) : h4(
+    }) : h5(
       "form",
       {
         className: "wsp-rename",
@@ -1919,7 +2076,7 @@ function NavigationDialog({
           });
         }
       },
-      h4("div", { className: "wsp-search" }, h4("input", {
+      h5("div", { className: "wsp-search" }, h5("input", {
         className: "wsp-search-input",
         ref: inputRef,
         "aria-label": t("renameWorkspace"),
@@ -1927,54 +2084,58 @@ function NavigationDialog({
         readOnly: busy,
         onChange: (event) => setRenaming({ ...renaming, title: event.target.value })
       })),
-      h4("button", { type: "submit", className: "wsp-foot-action", disabled: !canSaveRename }, t("save")),
-      h4("button", { type: "button", className: "wsp-foot-action", onClick: () => setRenaming(void 0) }, t("back"))
+      h5("button", { type: "submit", className: "wsp-foot-action", disabled: !canSaveRename }, t("save")),
+      h5("button", { type: "button", className: "wsp-foot-action", onClick: () => setRenaming(void 0) }, t("back"))
     ),
-    body: rows.length === 0 ? empty : h4("div", {
+    body: rows.length === 0 ? empty : h5("div", {
       className: "wsp-list wsp-navigation-list",
       role: tree ? "tree" : "listbox",
       id: listId,
       "aria-label": title
     }, renderRows()),
-    status: h4(
-      React4.Fragment,
+    status: h5(
+      React5.Fragment,
       null,
-      groupingError ? h4("div", { className: "wsp-warning", role: "status" }, t("group.failed")) : null,
-      catalogError && rows.length > 0 ? h4("div", { className: "wsp-warning", role: "status" }, t("listUnavailable")) : null,
-      status === void 0 ? null : h4(ErrorBanner, {
+      groupingError ? h5("div", { className: "wsp-warning", role: "status" }, t("group.failed")) : null,
+      catalogError && rows.length > 0 ? h5("div", { className: "wsp-warning", role: "status" }, t("listUnavailable")) : null,
+      status === void 0 ? null : h5(ErrorBanner, {
         ...status,
         dismiss: t("dismiss"),
         onDismiss: error === void 0 ? remote.dismiss : () => setError(void 0)
       })
     ),
-    toolbar: renaming === void 0 ? h4(
+    toolbar: renaming === void 0 ? h5(
       "div",
       { className: "wsp-navigation-toolbar" },
-      h4(
-        "label",
-        { className: "wsp-group-label" },
-        t("group.options"),
-        h4("select", {
-          className: "wsp-group-select",
-          value: displayedGroup,
-          disabled: busy,
-          onChange: (event) => {
-            const id = event.currentTarget.value;
-            preferenceChoice.current = id;
-            setGroupId(id);
-            setActiveKey(void 0);
-          }
-        }, choices.map((choice) => h4("option", { key: choice.id, value: choice.id }, choice.label)))
-      ),
-      canAdd && addWorkspace !== void 0 ? h4(AddWorkspaceButton, { busy: writeKind === "add", t, onClick: add }) : null
+      h5(GroupingMenu, {
+        label: t("group.options"),
+        heading: t("group.heading"),
+        selected: displayedGroup,
+        choices,
+        disabled: busy,
+        onSelect: (id) => {
+          preferenceChoice.current = id;
+          setGroupId(id);
+          setActiveKey(void 0);
+        }
+      }),
+      canAdd && addWorkspace !== void 0 ? h5("button", {
+        type: "button",
+        className: "wsp-icon-btn wsp-tool-button",
+        title: t(writeKind === "add" ? "adding" : "add"),
+        "aria-label": t("add"),
+        "aria-busy": writeKind === "add" || void 0,
+        "aria-disabled": busy || void 0,
+        onClick: add
+      }, h5(FolderAddGlyph)) : null
     ) : null,
-    footer: h4(
-      React4.Fragment,
+    footer: h5(
+      React5.Fragment,
       null,
-      h4(
+      h5(
         "div",
         { className: "wsp-navigation-actions" },
-        choosing || focusedWorkspace === void 0 || renaming !== void 0 ? null : h4(RenameButton, {
+        choosing || focusedWorkspace === void 0 || renaming !== void 0 ? null : h5(RenameButton, {
           useWorkspaceAccess,
           workspaceId: focusedWorkspace.id,
           name: focusedWorkspace.title,
@@ -1983,7 +2144,7 @@ function NavigationDialog({
           onClick: () => setRenaming({ id: focusedWorkspace.id, title: focusedWorkspace.title, original: focusedWorkspace.title })
         })
       ),
-      h4(
+      h5(
         "span",
         { className: "wsp-dialog-count", role: "status" },
         remote.pending ? t("searching") : remote.hasMore ? t("refineSearch") : pending ? t("loadingList") : trimmed === "" && tree ? null : t("countResults", { n: rows.length })
@@ -1992,13 +2153,13 @@ function NavigationDialog({
   });
 }
 function RenameButton({ useWorkspaceAccess, workspaceId, name, t, busy, onClick }) {
-  return useWorkspaceAccess(workspaceId, "workspace/rename") ? h4("button", {
+  return useWorkspaceAccess(workspaceId, "workspace/rename") ? h5("button", {
     type: "button",
     className: "wsp-foot-action wsp-rename-action",
     disabled: busy,
     onClick,
     title: t("renameNamedWorkspace", { name })
-  }, h4("span", null, t("renameNamedWorkspace", { name }))) : null;
+  }, h5("span", null, t("renameNamedWorkspace", { name }))) : null;
 }
 function flattenTree(matches, expanded, auto, filtering, t, depth = 0, parentKey) {
   return matches.flatMap((match) => {
@@ -2055,7 +2216,7 @@ function ResultRow({
   const path = workspace?.path ?? directory?.path ?? session?.path;
   const splitDisclosure = choosing && workspace !== void 0 && branch?.expandable === true;
   const hasSearchMeta = Boolean(session?.snippet || !tree && (session?.workspace || session?.path));
-  const option = h4(
+  const option = h5(
     "button",
     {
       id,
@@ -2076,7 +2237,7 @@ function ResultRow({
       onClick: onChoose,
       onFocus
     },
-    branch === void 0 ? session && h4(SessionMarker, { session, useSessionStatus, statusLabel }) : h4(
+    branch === void 0 ? session && h5(SessionMarker, { session, useSessionStatus, statusLabel }) : h5(
       "span",
       {
         className: "wsp-row-icon wsp-tree-icon",
@@ -2084,35 +2245,35 @@ function ResultRow({
         "data-swap": branch.expandable && !splitDisclosure || void 0,
         "data-expanded": branch.expanded
       },
-      h4(branch.expanded ? OpenFolderGlyph : FolderGlyph, { className: "wsp-tree-folder" }),
-      branch.expandable && !splitDisclosure ? h4(DisclosureGlyph, { className: "wsp-tree-arrow" }) : null
+      h5(branch.expanded ? OpenFolderGlyph : FolderGlyph, { className: "wsp-tree-folder" }),
+      branch.expandable && !splitDisclosure ? h5(DisclosureGlyph, { className: "wsp-tree-arrow" }) : null
     ),
-    h4(
+    h5(
       "span",
       { className: "wsp-row-text" },
-      workspace?.showPath ? h4(
+      workspace?.showPath ? h5(
         "span",
         { className: "wsp-row-line" },
-        h4("span", { className: "wsp-row-title" }, title),
-        h4("span", { className: "wsp-row-suffix" }, shortenPath(workspace.path))
-      ) : h4("span", { className: "wsp-row-title" }, title),
-      hasSearchMeta ? h4(
+        h5("span", { className: "wsp-row-title" }, title),
+        h5("span", { className: "wsp-row-suffix" }, shortenPath(workspace.path))
+      ) : h5("span", { className: "wsp-row-title" }, title),
+      hasSearchMeta ? h5(
         "span",
         { className: "wsp-search-meta" },
-        tree ? null : h4("span", { className: "wsp-row-path" }, session?.workspace || session?.path),
-        session?.snippet ? h4("span", { className: "wsp-row-path wsp-session-snippet" }, session.snippet) : null
+        tree ? null : h5("span", { className: "wsp-row-path" }, session?.workspace || session?.path),
+        session?.snippet ? h5("span", { className: "wsp-row-path wsp-session-snippet" }, session.snippet) : null
       ) : null
     ),
-    session === void 0 ? null : h4("span", { className: "wsp-row-time" }, relativeTime(session.latest, now, t)),
-    choosing && selected ? h4("span", { className: "wsp-row-check", "aria-hidden": true }, h4(CheckGlyph, { size: 14 })) : null
+    session === void 0 ? null : h5("span", { className: "wsp-row-time" }, relativeTime(session.latest, now, t)),
+    choosing && selected ? h5("span", { className: "wsp-row-check", "aria-hidden": true }, h5(CheckGlyph, { size: 14 })) : null
   );
   if (!splitDisclosure) return option;
   const action = t(branch.expanded ? "collapseBranch" : "expandBranch");
-  return h4(
+  return h5(
     "div",
     { className: "wsp-tree-option", role: "presentation" },
     option,
-    h4("button", {
+    h5("button", {
       type: "button",
       className: "wsp-icon-btn wsp-tree-disclosure",
       tabIndex: -1,
@@ -2124,7 +2285,7 @@ function ResultRow({
         onToggle?.();
         document.getElementById(id)?.focus({ preventScroll: true });
       }
-    }, h4(DisclosureGlyph, { className: "wsp-tree-arrow" }))
+    }, h5(DisclosureGlyph, { className: "wsp-tree-arrow" }))
   );
 }
 function SessionMarker({ session, useSessionStatus, statusLabel }) {
@@ -2141,7 +2302,7 @@ function SessionMarker({ session, useSessionStatus, statusLabel }) {
     if (status?.running ?? session.running) return "status.running";
     return status?.completionUnread ? "status.completed" : void 0;
   });
-  return h4("span", { className: "wsp-row-icon" }, label === void 0 ? null : h4("span", {
+  return h5("span", { className: "wsp-row-icon" }, label === void 0 ? null : h5("span", {
     className: "wsp-session-dot",
     role: "img",
     "aria-label": statusLabel(label),
@@ -2153,8 +2314,8 @@ function errorMessage(error) {
   return error instanceof Error ? error.message : String(error);
 }
 function useContentSearch(query, search) {
-  const [result, setResult] = useState();
-  useEffect2(() => {
+  const [result, setResult] = useState2();
+  useEffect3(() => {
     setResult(void 0);
     if (query === "" || query.length > 500) return;
     const abort = new AbortController();
@@ -2343,18 +2504,18 @@ function installSwitcherShortcuts(ctx, controls) {
 }
 
 // src/client/view.ts
-var React5 = __toESM(require("react"), 1);
-var h5 = React5.createElement;
+var React6 = __toESM(require("react"), 1);
+var h6 = React6.createElement;
 var {
   useCallback,
-  useEffect: useEffect3,
-  useId: useId3,
-  useLayoutEffect: useLayoutEffect2,
+  useEffect: useEffect4,
+  useId: useId4,
+  useLayoutEffect: useLayoutEffect3,
   useMemo: useMemo2,
-  useRef: useRef2,
-  useState: useState2,
+  useRef: useRef3,
+  useState: useState3,
   useSyncExternalStore: useSyncExternalStore2
-} = React5;
+} = React6;
 var EMPTY_WORKSPACES = {
   items: [],
   archivedSessionIds: [],
@@ -2391,18 +2552,18 @@ function WorkspacePicker(props) {
   const snapshot = useWorkspaceRows((state) => state);
   const sessionState = useSessionRows((state) => state);
   const flowAvailable = useFlow((value) => value === true);
-  const [query, setQuery] = useState2("");
-  const [expanded, setExpanded] = useState2(false);
-  const [activeId, setActiveId] = useState2(null);
-  const [placement, setPlacement] = useState2(null);
-  const [busy, setBusy] = useState2(false);
-  const [error, setError] = useState2(null);
-  const [now, setNow] = useState2(() => Date.now());
-  const inputRef = useRef2(null);
-  const panelRef = useRef2(null);
-  const wasOpen = useRef2(false);
-  const closedRef = useRef2(false);
-  const uid = useId3().replace(/[^a-zA-Z0-9_-]/g, "");
+  const [query, setQuery] = useState3("");
+  const [expanded, setExpanded] = useState3(false);
+  const [activeId, setActiveId] = useState3(null);
+  const [placement, setPlacement] = useState3(null);
+  const [busy, setBusy] = useState3(false);
+  const [error, setError] = useState3(null);
+  const [now, setNow] = useState3(() => Date.now());
+  const inputRef = useRef3(null);
+  const panelRef = useRef3(null);
+  const wasOpen = useRef3(false);
+  const closedRef = useRef3(false);
+  const uid = useId4().replace(/[^a-zA-Z0-9_-]/g, "");
   const listId = "wsp-list-" + uid;
   const rows = useMemo2(
     () => buildRows(snapshot.items, sessionState.byId, t("defaultName")),
@@ -2418,7 +2579,7 @@ function WorkspacePicker(props) {
   const listError = snapshot.state === "error";
   const listRendered = !pending && filtered.length > 0 && !(listError && rows.length === 0);
   const canAdd = localHost === true && flowAvailable && typeof pickDirectory === "function" && typeof createWorkspace === "function";
-  useEffect3(() => {
+  useEffect4(() => {
     if (open) {
       wasOpen.current = true;
       closedRef.current = false;
@@ -2437,16 +2598,16 @@ function WorkspacePicker(props) {
     const anchor = anchorRef && anchorRef.current;
     if (anchor && typeof anchor.focus === "function") anchor.focus({ preventScroll: true });
   }, [open, anchorRef]);
-  useEffect3(() => () => {
+  useEffect4(() => () => {
     closedRef.current = true;
   }, []);
-  useEffect3(() => {
+  useEffect4(() => {
     if (!open) return void 0;
     setNow(Date.now());
     const timer = window.setInterval(() => setNow(Date.now()), 6e4);
     return () => window.clearInterval(timer);
   }, [open]);
-  useLayoutEffect2(() => {
+  useLayoutEffect3(() => {
     if (!open) return void 0;
     const frame = window.requestAnimationFrame(() => {
       const input = inputRef.current;
@@ -2454,7 +2615,7 @@ function WorkspacePicker(props) {
     });
     return () => window.cancelAnimationFrame(frame);
   }, [open, expanded]);
-  useLayoutEffect2(() => {
+  useLayoutEffect3(() => {
     if (!open || expanded) return void 0;
     let frame = 0;
     const update = () => {
@@ -2482,7 +2643,7 @@ function WorkspacePicker(props) {
       window.removeEventListener("scroll", schedule, true);
     };
   }, [open, expanded, anchorRef]);
-  useEffect3(() => {
+  useEffect4(() => {
     if (!open) return;
     const root = panelRef.current;
     if (!root) return;
@@ -2545,7 +2706,7 @@ function WorkspacePicker(props) {
   };
   if (!open) return null;
   if (!expanded && placement === null) return null;
-  const renderRows = (run, offset) => run.map((row, index) => h5(WorkspaceRowButton, {
+  const renderRows = (run, offset) => run.map((row, index) => h6(WorkspaceRowButton, {
     key: row.id,
     row,
     id: optionId(offset + index),
@@ -2560,31 +2721,31 @@ function WorkspacePicker(props) {
   }));
   let body;
   if (listError && rows.length === 0) {
-    body = h5(EmptyState, { title: t("error.title"), body: t("error.body") });
+    body = h6(EmptyState, { title: t("error.title"), body: t("error.body") });
   } else if (pending) {
-    body = h5(
-      React5.Fragment,
+    body = h6(
+      React6.Fragment,
       null,
-      h5("span", { className: "wsp-sr-only", role: "status" }, t("loading")),
-      h5(Skeleton, { rows: expanded ? 6 : 4 })
+      h6("span", { className: "wsp-sr-only", role: "status" }, t("loading")),
+      h6(Skeleton, { rows: expanded ? 6 : 4 })
     );
   } else if (rows.length === 0) {
-    body = h5(EmptyState, {
+    body = h6(EmptyState, {
       title: t("empty.noWorkspacesTitle"),
       body: canAdd ? t("empty.noWorkspacesBody") : t("empty.noAddBody")
     });
   } else if (filtered.length === 0) {
-    body = h5(EmptyState, { title: t("empty.title"), body: t("empty.body") });
+    body = h6(EmptyState, { title: t("empty.title"), body: t("empty.body") });
   } else if (expanded) {
     const showRecent = query.trim() === "" && rows.length > SHORTLIST + 1;
     const recentRows = showRecent ? filtered.slice(0, SHORTLIST) : [];
     const restRows = showRecent ? filtered.slice(SHORTLIST) : filtered;
-    body = h5(
+    body = h6(
       "div",
       { role: "listbox", id: listId, "aria-label": t("list.label"), className: "wsp-list" },
-      showRecent ? h5(SectionHeader, { key: "recent", label: t("recent"), count: recentRows.length }) : null,
+      showRecent ? h6(SectionHeader, { key: "recent", label: t("recent"), count: recentRows.length }) : null,
       showRecent ? renderRows(recentRows, 0) : null,
-      h5(SectionHeader, {
+      h6(SectionHeader, {
         key: "rest",
         label: showRecent ? t("others") : query.trim() === "" ? t("all") : t("results"),
         count: restRows.length
@@ -2593,10 +2754,10 @@ function WorkspacePicker(props) {
     );
   } else {
     const searching = query.trim() !== "";
-    body = h5(
+    body = h6(
       "div",
       { role: "listbox", id: listId, "aria-label": t("list.label"), className: "wsp-list" },
-      h5(SectionHeader, {
+      h6(SectionHeader, {
         key: "head",
         label: searching ? t("results") : t("recent"),
         count: searching ? filtered.length : 0
@@ -2604,14 +2765,14 @@ function WorkspacePicker(props) {
       renderRows(compactRows, 0)
     );
   }
-  const banner = error === null ? null : h5(ErrorBanner, {
+  const banner = error === null ? null : h6(ErrorBanner, {
     label: t("addFailed"),
     message: error,
     dismiss: t("dismiss"),
     onDismiss: () => setError(null)
   });
-  const staleWarning = listError && rows.length > 0 ? h5("div", { className: "wsp-warning", role: "status" }, t("error.stale")) : null;
-  const search = h5(SearchField, {
+  const staleWarning = listError && rows.length > 0 ? h6("div", { className: "wsp-warning", role: "status" }, t("error.stale")) : null;
+  const search = h6(SearchField, {
     t,
     value: query,
     onChange: setQuery,
@@ -2619,9 +2780,9 @@ function WorkspacePicker(props) {
     listId: listRendered ? listId : void 0,
     activeOptionId: activeRow === void 0 ? void 0 : optionId(activeIndex)
   });
-  const addAction = canAdd ? h5(AddWorkspaceButton, { t, busy, onClick: addWorkspace }) : h5("span", { className: "wsp-foot-note" }, t("sorted"));
+  const addAction = canAdd ? h6(AddWorkspaceButton, { t, busy, onClick: addWorkspace }) : h6("span", { className: "wsp-foot-note" }, t("sorted"));
   if (expanded) {
-    return h5(SwitcherDialog, {
+    return h6(SwitcherDialog, {
       title: t("dialog.title"),
       subtitle: t("dialog.subtitle"),
       panelRef,
@@ -2632,12 +2793,12 @@ function WorkspacePicker(props) {
       onClose: requestClose,
       onBack: () => setExpanded(false),
       onKeyDown,
-      status: h5(React5.Fragment, null, staleWarning, banner),
-      footer: h5(
-        React5.Fragment,
+      status: h6(React6.Fragment, null, staleWarning, banner),
+      footer: h6(
+        React6.Fragment,
         null,
         addAction,
-        h5(
+        h6(
           "span",
           { className: "wsp-dialog-count" },
           query.trim() === "" ? filtered.length === 1 ? t("count.one") : t("count.other", { n: filtered.length }) : t("countResults", { n: filtered.length })
@@ -2647,11 +2808,11 @@ function WorkspacePicker(props) {
   }
   if (placement === null) return null;
   const expandable = filtered.length > compactRows.length;
-  return createPortal(h5(
-    React5.Fragment,
+  return createPortal(h6(
+    React6.Fragment,
     null,
-    h5("style", null, CSS),
-    h5(
+    h6("style", null, CSS),
+    h6(
       "div",
       {
         className: "wsp-layer",
@@ -2659,7 +2820,7 @@ function WorkspacePicker(props) {
           if (event.target === event.currentTarget) requestClose();
         }
       },
-      h5(
+      h6(
         "div",
         {
           ref: panelRef,
@@ -2676,25 +2837,25 @@ function WorkspacePicker(props) {
           onMouseDown: (event) => event.stopPropagation(),
           onKeyDown
         },
-        h5("div", { className: "wsp-pop-head" }, search),
-        h5("div", { className: "wsp-pop-body" }, body),
+        h6("div", { className: "wsp-pop-head" }, search),
+        h6("div", { className: "wsp-pop-body" }, body),
         staleWarning,
         banner,
-        h5(
+        h6(
           "div",
           { className: "wsp-foot" },
           addAction,
-          expandable ? h5(
+          expandable ? h6(
             "button",
             {
               type: "button",
               className: "wsp-foot-action",
               onClick: () => setExpanded(true)
             },
-            h5(GridGlyph, { size: 14 }),
-            h5("span", null, query.trim() === "" ? t("expandCount", { n: filtered.length }) : t("expandResults", { n: filtered.length })),
-            h5(ChevronRightGlyph, { size: 12 })
-          ) : h5(
+            h6(GridGlyph, { size: 14 }),
+            h6("span", null, query.trim() === "" ? t("expandCount", { n: filtered.length }) : t("expandResults", { n: filtered.length })),
+            h6(ChevronRightGlyph, { size: 12 })
+          ) : h6(
             "span",
             { className: "wsp-foot-count" },
             query.trim() === "" ? filtered.length === 1 ? t("count.one") : t("count.other", { n: filtered.length }) : t("countResults", { n: filtered.length })
@@ -2741,12 +2902,12 @@ function apply(ctx) {
   }, SwitcherOverlay)), `${NS}: shortcut overlay`);
   ctx.effect(() => installSwitcherShortcuts(ctx, controls), `${NS}: shortcuts`);
   function HeroPicker(props) {
-    const current = React6.useRef(props);
-    React6.useLayoutEffect(() => {
+    const current = React7.useRef(props);
+    React7.useLayoutEffect(() => {
       current.current = props;
     }, [props]);
-    React6.useLayoutEffect(() => controls.bindHero(() => current.current), []);
-    return React6.createElement(WorkspacePicker, props);
+    React7.useLayoutEffect(() => controls.bindHero(() => current.current), []);
+    return React7.createElement(WorkspacePicker, props);
   }
   ctx.effect(() => ctx.slots.inject(HERO_SLOT, () => ctx.slots.register({
     name: HERO_SLOT,
