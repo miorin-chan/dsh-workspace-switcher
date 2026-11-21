@@ -12,7 +12,7 @@ globalThis.window = {
 }
 await import('../client.js')
 
-assert.equal(registration.id, 'dsh-workspace-welcome-switcher')
+assert.equal(registration.id, '@miorin/dsh-workspace-welcome-switcher')
 const ReactStub = {
   Fragment: Symbol('Fragment'),
   createElement: () => null,

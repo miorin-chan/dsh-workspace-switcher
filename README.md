@@ -1,4 +1,4 @@
-# dsh-workspace-welcome-switcher
+# @miorin/dsh-workspace-welcome-switcher
 
 [简体中文](README.zh.md)
 
@@ -29,6 +29,7 @@ Recent order is computed at render time from Session activity; it never rewrites
 ## Install
 
 **Plugins** > **Add plugin**, or install this directory with `plugin_manager`.
-This bundle is part of [`dsh-workspace-atlas`](../dsh-workspace-atlas/README.md); install either one, never both.
+This bundle is part of [`@miorin/dsh-workspace-atlas`](../dsh-workspace-atlas/README.md);
+install either one, never both.
 
 [Project documentation](docs/README.md)
