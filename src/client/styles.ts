@@ -310,6 +310,7 @@ export const CSS = `
   padding: 16px 24px;
   border-top: .5px solid var(--dsw-alias-border-l3);
 }
+.wsp-navigation-list { padding-block-start: 8px; }
 .wsp-navigation-list, .wsp-tree-children { gap: 2px; }
 .wsp-tree-children {
   display: grid; grid-template-columns: minmax(0, 1fr); margin-block-start: 2px;
