@@ -40,7 +40,7 @@
 import type { Context } from '@deepseek-ai/cordis'
 import type {} from '@deepseek-ai/dsh-api-session-controller/client'
 import type {} from '@deepseek-ai/dsh-client-ui-layout/client'
-import type {} from '@deepseek-ai/dsh-client-ui-context-menu/client'
+import type { ContextMenus, MenuActionView } from '@deepseek-ai/dsh-client-ui-context-menu/client'
 import * as React from 'react'
 
 import { createGroupingPreferences, createGroupingRegistry, activeGrouping } from './grouping'
@@ -55,7 +55,7 @@ import { createViewPreferences, moveSession } from './view-preferences'
 import { WorkspacePicker, type WorkspacePickerProps } from './view'
 
 /** Services this module needs before `apply` runs. */
-export const inject = ['slots', 'locale', 'uiWorkspace', 'workspaces', 'remote', 'sessions', 'shortcuts']
+export const inject = ['slots', 'locale', 'uiWorkspace', 'workspaces', 'remote', 'sessions', 'shortcuts', 'contextMenus']
 
 /**
  * Register the shared picker UI and shortcuts for this Client lifetime.
@@ -69,6 +69,7 @@ export function apply(ctx: Context): void {
   const groupingPreferences = createGroupingPreferences()
   ctx.provide('workspaceSwitcherGrouping', { register: groupings.register })
   const injected = heroInjection(ctx)
+  const contextMenus: ContextMenus = ctx.contextMenus
   const actions: NavigationActions = {
     controls,
     groupings,
@@ -77,14 +78,25 @@ export function apply(ctx: Context): void {
     statusLabel: ctx.locale.bind('workspace'),
     searchContent: (query, signal) => ctx.sessions.search(query, signal),
     openSession: id => ctx.uiWorkspace.openSession(id),
+    runSessionAction: (target, id, icon) => {
+      const menu = contextMenus.resolve(target)
+      try {
+        // Built-in row contributions resolve synchronously from the live permission and membership snapshots.
+        const action = menu.source.getSnapshot().find((item: MenuActionView) => item.id === id && item.icon?.key === icon)
+        if (action !== undefined) menu.select(action.id)
+      } finally {
+        menu.dispose()
+      }
+    },
   }
   ctx.effect(() => ctx.slots.inject('shell.overlay', () => ctx.slots.register({
     name: 'shell.overlay', id: NS, locale: NS,
     inject: () => {
       const { localHost, pickDirectory, createWorkspace } = injected()
-      if (!localHost) return actions
+      const hooks = { rowMenuTarget: contextMenus.active }
+      if (!localHost) return { ...actions, hooks }
       return {
-        ...actions,
+        ...actions, hooks,
         addWorkspace: async (signal: AbortSignal) => {
           const path = await pickDirectory()
           return path && !signal.aborted ? (await createWorkspace({ path })).workspaceId : undefined

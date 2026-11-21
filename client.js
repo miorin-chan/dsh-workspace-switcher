@@ -810,7 +810,7 @@ function relativeTime(at, now, t) {
 }
 
 // src/client/navigation.ts
-var import_dsh_client_ui_primitives3 = require("@deepseek-ai/dsh-client-ui-primitives");
+var import_dsh_client_ui_primitives4 = require("@deepseek-ai/dsh-client-ui-primitives");
 var React5 = __toESM(require("react"), 1);
 
 // src/client/components.ts
@@ -1392,24 +1392,48 @@ var CSS = `
 /* Adapted from Rows.module.css in DSH 0.2.2-rc.5. Copyright (c) 2026 DeepSeek, MIT. */
 .wsp-menu-row { position: relative; }
 .wsp-row-resting { flex: none; display: inline-flex; align-items: center; gap: 6px; }
-.wsp-row-menu {
-  position: absolute; inset-inline-end: 4px; inset-block-start: 50%;
-  transform: translateY(-50%); width: 24px; height: 24px;
+.wsp-row-actions {
+  position: absolute; inset-inline-end: 8px; inset-block-start: 50%; transform: translateY(-50%);
+  display: inline-flex; align-items: center; gap: 13px;
 }
-.wsp-row-menu > svg { width: 14px; height: 14px; }
-.wsp-menu-row:has(> .wsp-row-menu) {
-  & > .wsp-navigation-row { padding-inline-end: 32px; }
+.wsp-row-quick-actions { display: contents; }
+.wsp-row-action {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; margin: -4px; border: 0; padding: 0;
+  border-radius: var(--dsw-radius-xs); background: transparent; cursor: pointer;
+  color: var(--dsw-alias-label-tertiary);
+}
+.wsp-row-action:focus-visible { outline-offset: -2px; }
+.wsp-row-action > svg { width: 14px; height: 14px; }
+.wsp-menu-row:has(.wsp-row-action) { --wsp-action-space: 30px; }
+.wsp-menu-row:has(.wsp-row-pin[data-pinned]) { --wsp-action-space: 59px; }
+.wsp-row-title[data-scrolled] { mask-image: linear-gradient(to right, transparent, #000 12px); }
+.wsp-row-title[data-clipped] { mask-image: linear-gradient(to left, transparent, #000 12px); }
+.wsp-row-title[data-scrolled][data-clipped] {
+  mask-image: linear-gradient(to right, transparent, #000 12px, #000 calc(100% - 12px), transparent);
+}
+@media (hover: none) {
+  .wsp-row-archive, .wsp-row-pin:not([data-pinned]),
+  .wsp-menu-row[data-collapsed-workspace] .wsp-row-actions,
+  .wsp-menu-row .wsp-row-time[data-timestamp],
+  .wsp-menu-row:has(.wsp-row-pin[data-pinned]) .wsp-row-pin-indicator { display: none; }
+  .wsp-menu-row:not([data-collapsed-workspace]) > .wsp-navigation-row {
+    padding-inline-end: var(--wsp-action-space, 8px);
+  }
 }
 @media (hover: hover) {
-  .wsp-menu-row:has(> .wsp-row-menu) {
-    & > .wsp-navigation-row { padding-inline-end: 8px; }
-    & > .wsp-row-menu { opacity: 0; pointer-events: none; }
-    &:is(:hover, :has(:focus-visible, > .wsp-row-menu[aria-expanded='true'])) {
-      & > .wsp-navigation-row { padding-inline-end: 32px; }
-      & > .wsp-row-menu { opacity: 1; pointer-events: auto; }
-      & .wsp-row-resting { display: none; }
-    }
-    &:hover > .wsp-navigation-row { background-color: var(--dsw-alias-interactive-bg-hover); }
+  .wsp-menu-row:is(:hover, [data-menu-open]) .wsp-session-title { text-overflow: clip; }
+  .wsp-row-action:hover { color: var(--dsw-alias-label-primary); }
+  .wsp-menu-row:has(.wsp-row-archive), .wsp-menu-row:has(.wsp-row-pin) { --wsp-action-space: 59px; }
+  .wsp-menu-row:has(.wsp-row-archive):has(.wsp-row-pin) { --wsp-action-space: 88px; }
+  .wsp-menu-row > .wsp-row-actions { opacity: 0; pointer-events: none; }
+  .wsp-menu-row:has(.wsp-row-action):is(:hover, :has(:focus-visible), [data-menu-open]) {
+    & > .wsp-navigation-row { padding-inline-end: var(--wsp-action-space); }
+    & > .wsp-row-actions { opacity: 1; pointer-events: auto; }
+    & .wsp-row-resting { display: none; }
+  }
+  .wsp-menu-row:is(:hover, [data-menu-open]) > .wsp-navigation-row {
+    background-color: var(--dsw-alias-interactive-bg-hover);
   }
 }
 .wsp-navigation-actions { min-width: 0; flex-wrap: wrap; }
@@ -1915,6 +1939,43 @@ function initialExpansion(roots, workspaceId, currentId) {
   return [];
 }
 
+// src/client/session-quick-actions.ts
+var import_dsh_client_ui_primitives3 = require("@deepseek-ai/dsh-client-ui-primitives");
+var import_react = require("react");
+function SessionQuickActions({ target, archived, pinned, useSessionAccess, t, runSessionAction }) {
+  const { sessionId } = target.value;
+  const canArchive = useSessionAccess(sessionId, archived ? "workspace/unarchiveSession" : "workspace/archiveSession");
+  const canPin = useSessionAccess(sessionId, pinned ? "workspace/unpinSession" : "workspace/pinSession");
+  const archive = canArchive ? (0, import_react.createElement)(import_dsh_client_ui_primitives3.Tooltip, {
+    label: t(archived ? "actions.unarchive" : "actions.archive"),
+    side: "bottom",
+    align: "end",
+    delayMs: 500,
+    portal: true,
+    children: (0, import_react.createElement)("button", {
+      type: "button",
+      className: "wsp-row-action wsp-row-archive",
+      "aria-label": t(archived ? "menu.unarchiveSession" : "menu.archiveSession"),
+      onClick: () => runSessionAction(target, "session.archive/archive", archived ? "workspace.unarchive" : "workspace.archive")
+    }, (0, import_react.createElement)(archived ? import_dsh_client_ui_primitives3.IconUnarchiveOutlineRegular : import_dsh_client_ui_primitives3.IconArchiveOutlineRegular, { size: 14 }))
+  }) : null;
+  const pin = !archived && canPin ? (0, import_react.createElement)(import_dsh_client_ui_primitives3.Tooltip, {
+    label: t(pinned ? "actions.unpin" : "actions.pin"),
+    side: "bottom",
+    align: "end",
+    delayMs: 500,
+    portal: true,
+    children: (0, import_react.createElement)("button", {
+      type: "button",
+      className: "wsp-row-action wsp-row-pin",
+      "data-pinned": pinned || void 0,
+      "aria-label": t(pinned ? "menu.unpinSession" : "menu.pinSession"),
+      onClick: () => runSessionAction(target, "session.pin/pin", pinned ? "workspace.unpin" : "workspace.pin")
+    }, (0, import_react.createElement)(pinned ? import_dsh_client_ui_primitives3.IconPinFillRegular : import_dsh_client_ui_primitives3.IconPinOutlineRegular, { size: 14 }))
+  }) : null;
+  return (0, import_react.createElement)("span", { className: "wsp-row-quick-actions" }, archive, pin);
+}
+
 // src/client/session-presentation.ts
 var PENDING_LABELS = {
   approval: ["status.waitingApproval", "status.compact.approval"],
@@ -1948,13 +2009,70 @@ function sessionStatuses(session, catalog, statuses, t) {
   return [{ state: "idle", label: t("status.idle") }];
 }
 
+// src/client/title-marquee.ts
+var import_react2 = require("react");
+var MIN_TITLE_REVEAL_PX = 8;
+var TITLE_MARQUEE_PX_PER_MS = 0.03;
+function placeTitle(title, left, range) {
+  if (typeof title.scrollTo === "function") title.scrollTo({ left, behavior: "instant" });
+  else title.scrollLeft = left;
+  if (left > 0) title.dataset.scrolled = "";
+  else delete title.dataset.scrolled;
+  if (left < range) title.dataset.clipped = "";
+  else delete title.dataset.clipped;
+}
+function restTitle(title) {
+  if (typeof title.scrollTo === "function") title.scrollTo({ left: 0, behavior: "instant" });
+  else title.scrollLeft = 0;
+  delete title.dataset.scrolled;
+  delete title.dataset.clipped;
+}
+function useTitleMarquee(title) {
+  const frame = (0, import_react2.useRef)(0);
+  const revealing = (0, import_react2.useRef)(false);
+  (0, import_react2.useEffect)(() => () => {
+    cancelAnimationFrame(frame.current);
+  }, []);
+  return (0, import_react2.useMemo)(() => ({
+    enter: (event) => {
+      if (event?.pointerType === "touch") return;
+      if (title.current === null) return;
+      if (revealing.current) return;
+      revealing.current = true;
+      const element = title.current;
+      const range = element.scrollWidth - element.clientWidth;
+      if (range <= MIN_TITLE_REVEAL_PX) return;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        placeTitle(element, range, range);
+        return;
+      }
+      cancelAnimationFrame(frame.current);
+      let previous;
+      let position = 0;
+      const step = (now) => {
+        position += previous === void 0 ? 0 : (now - previous) * TITLE_MARQUEE_PX_PER_MS;
+        previous = now;
+        placeTitle(element, Math.min(position, range), range);
+        if (position < range) frame.current = requestAnimationFrame(step);
+      };
+      frame.current = requestAnimationFrame(step);
+    },
+    leave: () => {
+      revealing.current = false;
+      cancelAnimationFrame(frame.current);
+      if (title.current === null) return;
+      restTitle(title.current);
+    }
+  }), [title]);
+}
+
 // src/client/navigation.ts
-var h5 = React5.createElement;
-var { useEffect: useEffect2, useId: useId2, useMemo, useRef: useRef2, useState: useState2, useSyncExternalStore } = React5;
+var h6 = React5.createElement;
+var { useEffect: useEffect3, useId: useId2, useMemo: useMemo2, useRef: useRef3, useState: useState2, useSyncExternalStore } = React5;
 var NO_HITS = [];
 function SwitcherOverlay(props) {
   const mode = useSyncExternalStore(props.controls.subscribe, props.controls.getSnapshot);
-  return mode === null ? null : h5(NavigationDialog, { ...props, key: mode, mode });
+  return mode === null ? null : h6(NavigationDialog, { ...props, key: mode, mode });
 }
 function NavigationDialog({
   mode,
@@ -1969,23 +2087,27 @@ function NavigationDialog({
   useContextMenu,
   renderFactorySlot,
   useRemoteAccess,
+  useSessionAccess,
   useSessionStatus,
+  useRowMenuTarget,
   statusLabel,
   searchContent,
   openSession,
-  addWorkspace
+  addWorkspace,
+  runSessionAction
 }) {
   const workspaces = useWorkspaces((state) => state);
   const sessions = useSessions((state) => state);
   const statuses = useSessionStatus((state) => state);
   const showMain = usePanelInfo((state) => state.activePanelId === null);
   const { getTriggerProps } = useContextMenu();
+  const openMenuTarget = useRowMenuTarget((value) => value);
   const canAdd = useRemoteAccess("workspace/create");
   const hero = mode === "workspaces" && showMain ? controls.hero() : void 0;
   const choosing = hero !== void 0;
   const catalog = useSyncExternalStore(groupings.subscribe, groupings.getSnapshot);
   const [groupId, setGroupId] = useState2(() => groupingPreferences.initial(mode, catalog));
-  const preferenceChoice = useRef2(void 0);
+  const preferenceChoice = useRef3(void 0);
   const groupBy = activeGrouping(groupId, catalog, choosing);
   const grouping = catalog.find((entry) => entry.id === groupBy);
   const tree = groupBy !== FLAT;
@@ -1994,7 +2116,7 @@ function NavigationDialog({
     setView(next);
     viewPreferences.set(next);
   };
-  const { roots, sessions: sessionRows, currentId, groupingError, orders } = useMemo(
+  const { roots, sessions: sessionRows, currentId, groupingError, orders } = useMemo2(
     () => buildNavigation(
       workspaces,
       sessions,
@@ -2007,7 +2129,7 @@ function NavigationDialog({
     [workspaces, sessions, t, groupBy, grouping, choosing, view]
   );
   const displayedGroup = groupingError ? WORKSPACE_TREE : groupBy;
-  useEffect2(() => {
+  useEffect3(() => {
     if (preferenceChoice.current !== groupId) return;
     preferenceChoice.current = void 0;
     if (displayedGroup === groupId) groupingPreferences.remember(groupId);
@@ -2024,24 +2146,24 @@ function NavigationDialog({
   const [expansions, setExpansions] = useState2(() => /* @__PURE__ */ new Map());
   const expanded = expansions.get(displayedGroup) ?? /* @__PURE__ */ new Map();
   const [busy, setBusy] = useState2(false);
-  const pendingWrite = useRef2(false);
-  const lifetime = useRef2(null);
-  const mounted = useRef2(false);
+  const pendingWrite = useRef3(false);
+  const lifetime = useRef3(null);
+  const mounted = useRef3(false);
   const [error, setError] = useState2();
   const [now, setNow] = useState2(Date.now);
-  const inputRef = useRef2(null);
-  const panelRef = useRef2(null);
+  const inputRef = useRef3(null);
+  const panelRef = useRef3(null);
   const listId = useId2();
   const trimmed = query.trim();
   const remoteQuery = choosing ? "" : trimmed.replaceAll("\0", "");
   const remote = useContentSearch(remoteQuery, searchContent);
   const workspaceToReveal = addedWorkspaceId ?? hero?.selectedId;
-  const autoExpanded = useMemo(() => new Set(initialExpansion(
+  const autoExpanded = useMemo2(() => new Set(initialExpansion(
     roots,
     workspaceToReveal,
     workspaceToReveal === void 0 ? currentId : void 0
   )), [roots, workspaceToReveal, currentId]);
-  const currentBranches = useMemo(
+  const currentBranches = useMemo2(
     () => new Set(initialExpansion(roots, hero?.selectedId, currentId)),
     [roots, hero?.selectedId, currentId]
   );
@@ -2076,7 +2198,7 @@ function NavigationDialog({
       window.clearInterval(timer);
     };
   }, []);
-  useEffect2(() => {
+  useEffect3(() => {
     const frame = window.requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
     return () => window.cancelAnimationFrame(frame);
   }, []);
@@ -2085,7 +2207,7 @@ function NavigationDialog({
       inputRef.current?.focus({ preventScroll: true });
     }
   }, [displayedGroup, activeIndex]);
-  useEffect2(() => {
+  useEffect3(() => {
     panelRef.current?.querySelector('[data-active="true"]')?.scrollIntoView({ block: "nearest" });
   }, [active?.key]);
   const changeQuery = (value) => {
@@ -2194,7 +2316,7 @@ function NavigationDialog({
     if (focusedSession === void 0 || target?.kind !== "session") return;
     reorder(focusedSession, target);
   };
-  const dragged = useRef2(null);
+  const dragged = useRef3(null);
   const [dropTarget, setDropTarget] = useState2();
   const clearDrag = () => {
     dragged.current = null;
@@ -2215,7 +2337,7 @@ function NavigationDialog({
   }
   const status = error ?? (remote.error === void 0 ? void 0 : { label: t("contentSearchFailed"), message: remote.error });
   const catalogError = workspaces.state === "error";
-  const empty = pending ? h5(Skeleton, { rows: 5 }) : h5("div", { className: "wsp-empty", role: "status" }, t(catalogError ? "listUnavailable" : trimmed !== "" ? "noMatches" : tree && (choosing || view.archiveFilter !== "only-archived") ? "empty.noWorkspacesTitle" : "noSessions"));
+  const empty = pending ? h6(Skeleton, { rows: 5 }) : h6("div", { className: "wsp-empty", role: "status" }, t(catalogError ? "listUnavailable" : trimmed !== "" ? "noMatches" : tree && (choosing || view.archiveFilter !== "only-archived") ? "empty.noWorkspacesTitle" : "noSessions"));
   function renderRows() {
     const children = /* @__PURE__ */ new Map();
     for (const [i, row] of rows.entries()) {
@@ -2228,7 +2350,7 @@ function NavigationDialog({
       const id = optionId(i);
       const groupId2 = children.has(row.key) ? `${id}-children` : void 0;
       const target = busy || choosing ? void 0 : rowMenuTarget(row, sessions.byId);
-      const option = h5(ResultRow, {
+      const option = h6(ResultRow, {
         key: row.key,
         row,
         id,
@@ -2242,9 +2364,18 @@ function NavigationDialog({
         statuses: row.kind === "session" ? sessionStatuses(row.session, sessions, statuses, statusLabel) : void 0,
         pinnedLabel: statusLabel("row.pinned"),
         menuTrigger: getTriggerProps(target, { tabIndex: -1 }),
+        menuOpen: target?.kind === "session" && openMenuTarget?.kind === "session" ? target.value.sessionId === openMenuTarget.value.sessionId : target?.kind === "workspace" && openMenuTarget?.kind === "workspace" && target.value.workspaceId === openMenuTarget.value.workspaceId,
+        quickActions: target?.kind === "session" && row.kind === "session" ? h6(SessionQuickActions, {
+          target,
+          archived: row.session.archived,
+          pinned: row.session.pinned,
+          useSessionAccess,
+          t: statusLabel,
+          runSessionAction
+        }) : void 0,
         rowMenu: target === void 0 ? void 0 : renderFactorySlot("contextMenu.button", {
           target,
-          className: "wsp-icon-btn wsp-row-menu",
+          className: "wsp-row-action wsp-row-menu",
           label: statusLabel(
             target.kind === "session" ? "actions.session.aria" : "actions.workspace.aria",
             { name: row.kind === "session" ? row.session.title : row.title }
@@ -2288,16 +2419,16 @@ function NavigationDialog({
         } : void 0
       });
       if (row.kind === "session") return option;
-      return h5(
+      return h6(
         "div",
         { key: row.key, role: "presentation" },
         option,
-        groupId2 === void 0 ? null : h5("div", { id: groupId2, role: "group", className: "wsp-tree-children" }, renderGroup(row.key))
+        groupId2 === void 0 ? null : h6("div", { id: groupId2, role: "group", className: "wsp-tree-children" }, renderGroup(row.key))
       );
     });
     return renderGroup();
   }
-  return h5(SwitcherDialog, {
+  return h6(SwitcherDialog, {
     title,
     panelRef,
     busy: busy || pending,
@@ -2305,7 +2436,7 @@ function NavigationDialog({
     onClose: controls.close,
     onKeyDown,
     ...choosing ? { subtitle: t("dialog.subtitle") } : {},
-    search: h5(SearchField, {
+    search: h6(SearchField, {
       t,
       value: query,
       onChange: changeQuery,
@@ -2316,27 +2447,27 @@ function NavigationDialog({
       activeOptionId: active === void 0 ? void 0 : optionId(index),
       onKeyDown: busy || choosing || active === void 0 ? void 0 : getTriggerProps(rowMenuTarget(active, sessions.byId)).onKeyDown
     }),
-    body: rows.length === 0 ? empty : h5("div", {
+    body: rows.length === 0 ? empty : h6("div", {
       className: "wsp-list wsp-navigation-list",
       role: tree ? "tree" : "listbox",
       id: listId,
       "aria-label": title
     }, renderRows()),
-    status: h5(
+    status: h6(
       React5.Fragment,
       null,
-      groupingError ? h5("div", { className: "wsp-warning", role: "status" }, t("group.failed")) : null,
-      catalogError && rows.length > 0 ? h5("div", { className: "wsp-warning", role: "status" }, t("listUnavailable")) : null,
-      status === void 0 ? null : h5(ErrorBanner, {
+      groupingError ? h6("div", { className: "wsp-warning", role: "status" }, t("group.failed")) : null,
+      catalogError && rows.length > 0 ? h6("div", { className: "wsp-warning", role: "status" }, t("listUnavailable")) : null,
+      status === void 0 ? null : h6(ErrorBanner, {
         ...status,
         dismiss: t("dismiss"),
         onDismiss: error === void 0 ? remote.dismiss : () => setError(void 0)
       })
     ),
-    toolbar: h5(
+    toolbar: h6(
       "div",
       { className: "wsp-navigation-toolbar" },
-      h5(GroupingMenu, {
+      h6(GroupingMenu, {
         label: t("group.options"),
         disabled: busy,
         sections: [{
@@ -2371,7 +2502,7 @@ function NavigationDialog({
           }
         }] : []]
       }),
-      canAdd && addWorkspace !== void 0 ? h5("button", {
+      canAdd && addWorkspace !== void 0 ? h6("button", {
         type: "button",
         className: "wsp-icon-btn wsp-tool-button",
         title: t(busy ? "adding" : "add"),
@@ -2381,18 +2512,18 @@ function NavigationDialog({
         onClick: () => {
           void add();
         }
-      }, h5(import_dsh_client_ui_primitives3.IconProjectAddOutlineRegular, { size: 16 })) : null
+      }, h6(import_dsh_client_ui_primitives4.IconProjectAddOutlineRegular, { size: 16 })) : null
     ),
-    footer: h5(
+    footer: h6(
       React5.Fragment,
       null,
-      h5(
+      h6(
         "div",
         { className: "wsp-navigation-actions" },
-        position >= 0 && siblings.length > 1 ? h5(
+        position >= 0 && siblings.length > 1 ? h6(
           React5.Fragment,
           null,
-          h5("button", {
+          h6("button", {
             type: "button",
             className: "wsp-icon-btn wsp-tool-button",
             title: t("session.moveUp"),
@@ -2401,18 +2532,18 @@ function NavigationDialog({
             onClick: () => {
               if (position > 0) shiftSession(siblings[position - 1]);
             }
-          }, h5(import_dsh_client_ui_primitives3.IconChevronUpOutlineRegular, { size: 16 })),
-          h5("button", {
+          }, h6(import_dsh_client_ui_primitives4.IconChevronUpOutlineRegular, { size: 16 })),
+          h6("button", {
             type: "button",
             className: "wsp-icon-btn wsp-tool-button",
             title: t("session.moveDown"),
             "aria-label": t("session.moveDown"),
             "aria-disabled": position === siblings.length - 1 || void 0,
             onClick: () => shiftSession(siblings[position + 1])
-          }, h5(import_dsh_client_ui_primitives3.IconChevronDownOutlineRegular, { size: 16 }))
+          }, h6(import_dsh_client_ui_primitives4.IconChevronDownOutlineRegular, { size: 16 }))
         ) : null
       ),
-      h5(
+      h6(
         "span",
         { className: "wsp-dialog-count", role: "status" },
         remote.pending ? t("searching") : remote.hasMore ? t("refineSearch") : pending ? t("loadingList") : trimmed === "" && tree ? null : t("countResults", { n: rows.length })
@@ -2478,11 +2609,20 @@ function ResultRow({
   dropTarget,
   drag,
   menuTrigger,
+  menuOpen,
   rowMenu,
+  quickActions,
   onChoose,
   onFocus,
   onToggle
 }) {
+  const rowRef = useRef3(null);
+  const titleRef = useRef3(null);
+  const marquee = useTitleMarquee(titleRef);
+  useEffect3(() => {
+    if (menuOpen || rowRef.current?.matches(":hover")) marquee.enter();
+    else marquee.leave();
+  }, [menuOpen, marquee]);
   const branch = row.kind === "branch" ? row : void 0;
   const session = row.kind === "session" ? row.session : void 0;
   const workspace = branch?.match.branch.workspace;
@@ -2493,7 +2633,7 @@ function ResultRow({
   const hasSearchMeta = Boolean(session?.snippet || !tree && (session?.workspace || session?.path));
   const status = statuses?.[0];
   const statusTitle = statuses?.map((item) => item.label).join(" \xB7 ");
-  const option = h5(
+  const option = h6(
     "button",
     {
       id,
@@ -2518,7 +2658,7 @@ function ResultRow({
       onClick: onChoose,
       onFocus
     },
-    branch === void 0 ? session?.archived ? h5("span", { className: "wsp-row-icon" }, h5(import_dsh_client_ui_primitives3.IconArchiveOutlineRegular, { size: 14 })) : h5("span", { className: "wsp-row-icon" }, status === void 0 || status.state === "idle" ? null : h5("span", { role: "img", "aria-label": statusTitle, title: statusTitle }, h5(import_dsh_client_ui_primitives3.StateDot, { state: status.state, size: 12 }))) : h5(
+    branch === void 0 ? session?.archived ? h6("span", { className: "wsp-row-icon" }, h6(import_dsh_client_ui_primitives4.IconArchiveOutlineRegular, { size: 14 })) : h6("span", { className: "wsp-row-icon" }, status === void 0 || status.state === "idle" ? null : h6("span", { role: "img", "aria-label": statusTitle, title: statusTitle }, h6(import_dsh_client_ui_primitives4.StateDot, { state: status.state, size: 12 }))) : h6(
       "span",
       {
         className: "wsp-row-icon wsp-tree-icon",
@@ -2526,54 +2666,67 @@ function ResultRow({
         "data-swap": branch.expandable && !splitDisclosure || void 0,
         "data-expanded": branch.expanded
       },
-      h5(branch.expanded ? OpenFolderGlyph : FolderGlyph, { className: "wsp-tree-folder" }),
-      branch.expandable && !splitDisclosure ? h5(DisclosureGlyph, { className: "wsp-tree-arrow" }) : null
+      h6(branch.expanded ? OpenFolderGlyph : FolderGlyph, { className: "wsp-tree-folder" }),
+      branch.expandable && !splitDisclosure ? h6(DisclosureGlyph, { className: "wsp-tree-arrow" }) : null
     ),
-    h5(
+    h6(
       "span",
       { className: "wsp-row-text" },
-      workspace?.showPath ? h5(
+      workspace?.showPath ? h6(
         "span",
         { className: "wsp-row-line" },
-        h5("span", { className: "wsp-row-title" }, title),
-        h5("span", { className: "wsp-row-suffix" }, shortenPath(workspace.path))
-      ) : h5("span", { className: "wsp-row-title" }, title),
-      hasSearchMeta ? h5(
+        h6("span", { className: "wsp-row-title" }, title),
+        h6("span", { className: "wsp-row-suffix" }, shortenPath(workspace.path))
+      ) : h6("span", {
+        className: session === void 0 ? "wsp-row-title" : "wsp-row-title wsp-session-title",
+        ref: session === void 0 ? void 0 : titleRef
+      }, title),
+      hasSearchMeta ? h6(
         "span",
         { className: "wsp-search-meta" },
-        tree ? null : h5("span", { className: "wsp-row-path" }, session?.workspace || session?.path),
-        session?.snippet ? h5("span", { className: "wsp-row-path wsp-session-snippet" }, session.snippet) : null
+        tree ? null : h6("span", { className: "wsp-row-path" }, session?.workspace || session?.path),
+        session?.snippet ? h6("span", { className: "wsp-row-path wsp-session-snippet" }, session.snippet) : null
       ) : null
     ),
-    session === void 0 ? null : h5(
+    session === void 0 ? null : h6(
       "span",
       { className: "wsp-row-resting" },
-      h5(
+      h6(
         "span",
-        { className: "wsp-row-time", title: status?.trailingLabel ? statusTitle : void 0 },
+        {
+          className: "wsp-row-time",
+          "data-timestamp": status?.trailingLabel === void 0 || session.archived || void 0,
+          title: status?.trailingLabel ? statusTitle : void 0
+        },
         session.archived ? relativeTime(session.latest, now, t) : status?.trailingLabel ?? relativeTime(session.latest, now, t)
       ),
-      session.pinned && !session.archived ? h5("span", {
-        className: "wsp-row-icon",
+      session.pinned && !session.archived ? h6("span", {
+        className: "wsp-row-icon wsp-row-pin-indicator",
         role: "img",
         title: pinnedLabel,
         "aria-label": pinnedLabel
-      }, h5(import_dsh_client_ui_primitives3.IconPinFillRegular, { size: 12 })) : null
+      }, h6(import_dsh_client_ui_primitives4.IconPinFillRegular, { size: 12 })) : null
     ),
-    choosing && selected ? h5("span", { className: "wsp-row-check", "aria-hidden": true }, h5(CheckGlyph, { size: 14 })) : null
+    choosing && selected ? h6("span", { className: "wsp-row-check", "aria-hidden": true }, h6(CheckGlyph, { size: 14 })) : null
   );
-  if (!splitDisclosure) return rowMenu === void 0 ? option : h5("div", {
+  if (!splitDisclosure) return rowMenu === void 0 ? option : h6("div", {
     className: "wsp-tree-option wsp-menu-row",
     role: "presentation",
-    "data-active": active || void 0,
+    "data-menu-open": menuOpen || void 0,
+    ref: rowRef,
+    onPointerEnter: session === void 0 ? void 0 : marquee.enter,
+    onPointerLeave: session === void 0 ? void 0 : () => {
+      if (!menuOpen) marquee.leave();
+    },
+    "data-collapsed-workspace": workspace !== void 0 && branch?.expandable && !branch.expanded || void 0,
     onFocus
-  }, option, rowMenu);
+  }, option, h6("span", { className: "wsp-row-actions" }, rowMenu, quickActions));
   const action = t(branch.expanded ? "collapseBranch" : "expandBranch");
-  return h5(
+  return h6(
     "div",
     { className: "wsp-tree-option", role: "presentation" },
     option,
-    h5("button", {
+    h6("button", {
       type: "button",
       className: "wsp-icon-btn wsp-tree-disclosure",
       tabIndex: -1,
@@ -2585,7 +2738,7 @@ function ResultRow({
         onToggle?.();
         document.getElementById(id)?.focus({ preventScroll: true });
       }
-    }, h5(DisclosureGlyph, { className: "wsp-tree-arrow" }))
+    }, h6(DisclosureGlyph, { className: "wsp-tree-arrow" }))
   );
 }
 function errorMessage(error) {
@@ -2593,7 +2746,7 @@ function errorMessage(error) {
 }
 function useContentSearch(query, search) {
   const [result, setResult] = useState2();
-  useEffect2(() => {
+  useEffect3(() => {
     setResult(void 0);
     if (query === "" || query.length > 500) return;
     const abort = new AbortController();
@@ -2783,14 +2936,14 @@ function installSwitcherShortcuts(ctx, controls) {
 
 // src/client/view.ts
 var React6 = __toESM(require("react"), 1);
-var h6 = React6.createElement;
+var h7 = React6.createElement;
 var {
   useCallback,
-  useEffect: useEffect3,
+  useEffect: useEffect4,
   useId: useId3,
   useLayoutEffect: useLayoutEffect2,
-  useMemo: useMemo2,
-  useRef: useRef3,
+  useMemo: useMemo3,
+  useRef: useRef4,
   useState: useState3,
   useSyncExternalStore: useSyncExternalStore2
 } = React6;
@@ -2837,17 +2990,17 @@ function WorkspacePicker(props) {
   const [busy, setBusy] = useState3(false);
   const [error, setError] = useState3(null);
   const [now, setNow] = useState3(() => Date.now());
-  const inputRef = useRef3(null);
-  const panelRef = useRef3(null);
-  const wasOpen = useRef3(false);
-  const closedRef = useRef3(false);
+  const inputRef = useRef4(null);
+  const panelRef = useRef4(null);
+  const wasOpen = useRef4(false);
+  const closedRef = useRef4(false);
   const uid = useId3().replace(/[^a-zA-Z0-9_-]/g, "");
   const listId = "wsp-list-" + uid;
-  const rows = useMemo2(
+  const rows = useMemo3(
     () => buildRows(snapshot.items, sessionState.byId, t("defaultName")),
     [snapshot.items, sessionState.byId, t]
   );
-  const filtered = useMemo2(() => filterRows(rows, query), [rows, query]);
+  const filtered = useMemo3(() => filterRows(rows, query), [rows, query]);
   const compactRows = filtered.slice(0, SHORTLIST);
   const visibleRows = expanded ? filtered : compactRows;
   const activeRow = visibleRows.find((row) => row.id === activeId) ?? (query.trim() === "" ? void 0 : visibleRows[0]);
@@ -2857,7 +3010,7 @@ function WorkspacePicker(props) {
   const listError = snapshot.state === "error";
   const listRendered = !pending && filtered.length > 0 && !(listError && rows.length === 0);
   const canAdd = localHost === true && flowAvailable && typeof pickDirectory === "function" && typeof createWorkspace === "function";
-  useEffect3(() => {
+  useEffect4(() => {
     if (open) {
       wasOpen.current = true;
       closedRef.current = false;
@@ -2876,10 +3029,10 @@ function WorkspacePicker(props) {
     const anchor = anchorRef && anchorRef.current;
     if (anchor && typeof anchor.focus === "function") anchor.focus({ preventScroll: true });
   }, [open, anchorRef]);
-  useEffect3(() => () => {
+  useEffect4(() => () => {
     closedRef.current = true;
   }, []);
-  useEffect3(() => {
+  useEffect4(() => {
     if (!open) return void 0;
     setNow(Date.now());
     const timer = window.setInterval(() => setNow(Date.now()), 6e4);
@@ -2921,7 +3074,7 @@ function WorkspacePicker(props) {
       window.removeEventListener("scroll", schedule, true);
     };
   }, [open, expanded, anchorRef]);
-  useEffect3(() => {
+  useEffect4(() => {
     if (!open) return;
     const root = panelRef.current;
     if (!root) return;
@@ -2984,7 +3137,7 @@ function WorkspacePicker(props) {
   };
   if (!open) return null;
   if (!expanded && placement === null) return null;
-  const renderRows = (run, offset) => run.map((row, index) => h6(WorkspaceRowButton, {
+  const renderRows = (run, offset) => run.map((row, index) => h7(WorkspaceRowButton, {
     key: row.id,
     row,
     id: optionId(offset + index),
@@ -2999,31 +3152,31 @@ function WorkspacePicker(props) {
   }));
   let body;
   if (listError && rows.length === 0) {
-    body = h6(EmptyState, { title: t("error.title"), body: t("error.body") });
+    body = h7(EmptyState, { title: t("error.title"), body: t("error.body") });
   } else if (pending) {
-    body = h6(
+    body = h7(
       React6.Fragment,
       null,
-      h6("span", { className: "wsp-sr-only", role: "status" }, t("loading")),
-      h6(Skeleton, { rows: expanded ? 6 : 4 })
+      h7("span", { className: "wsp-sr-only", role: "status" }, t("loading")),
+      h7(Skeleton, { rows: expanded ? 6 : 4 })
     );
   } else if (rows.length === 0) {
-    body = h6(EmptyState, {
+    body = h7(EmptyState, {
       title: t("empty.noWorkspacesTitle"),
       body: canAdd ? t("empty.noWorkspacesBody") : t("empty.noAddBody")
     });
   } else if (filtered.length === 0) {
-    body = h6(EmptyState, { title: t("empty.title"), body: t("empty.body") });
+    body = h7(EmptyState, { title: t("empty.title"), body: t("empty.body") });
   } else if (expanded) {
     const showRecent = query.trim() === "" && rows.length > SHORTLIST + 1;
     const recentRows = showRecent ? filtered.slice(0, SHORTLIST) : [];
     const restRows = showRecent ? filtered.slice(SHORTLIST) : filtered;
-    body = h6(
+    body = h7(
       "div",
       { role: "listbox", id: listId, "aria-label": t("list.label"), className: "wsp-list" },
-      showRecent ? h6(SectionHeader, { key: "recent", label: t("recent"), count: recentRows.length }) : null,
+      showRecent ? h7(SectionHeader, { key: "recent", label: t("recent"), count: recentRows.length }) : null,
       showRecent ? renderRows(recentRows, 0) : null,
-      h6(SectionHeader, {
+      h7(SectionHeader, {
         key: "rest",
         label: showRecent ? t("others") : query.trim() === "" ? t("all") : t("results"),
         count: restRows.length
@@ -3032,10 +3185,10 @@ function WorkspacePicker(props) {
     );
   } else {
     const searching = query.trim() !== "";
-    body = h6(
+    body = h7(
       "div",
       { role: "listbox", id: listId, "aria-label": t("list.label"), className: "wsp-list" },
-      h6(SectionHeader, {
+      h7(SectionHeader, {
         key: "head",
         label: searching ? t("results") : t("recent"),
         count: searching ? filtered.length : 0
@@ -3043,14 +3196,14 @@ function WorkspacePicker(props) {
       renderRows(compactRows, 0)
     );
   }
-  const banner = error === null ? null : h6(ErrorBanner, {
+  const banner = error === null ? null : h7(ErrorBanner, {
     label: t("addFailed"),
     message: error,
     dismiss: t("dismiss"),
     onDismiss: () => setError(null)
   });
-  const staleWarning = listError && rows.length > 0 ? h6("div", { className: "wsp-warning", role: "status" }, t("error.stale")) : null;
-  const search = h6(SearchField, {
+  const staleWarning = listError && rows.length > 0 ? h7("div", { className: "wsp-warning", role: "status" }, t("error.stale")) : null;
+  const search = h7(SearchField, {
     t,
     value: query,
     onChange: setQuery,
@@ -3058,9 +3211,9 @@ function WorkspacePicker(props) {
     listId: listRendered ? listId : void 0,
     activeOptionId: activeRow === void 0 ? void 0 : optionId(activeIndex)
   });
-  const addAction = canAdd ? h6(AddWorkspaceButton, { t, busy, onClick: addWorkspace }) : h6("span", { className: "wsp-foot-note" }, t("sorted"));
+  const addAction = canAdd ? h7(AddWorkspaceButton, { t, busy, onClick: addWorkspace }) : h7("span", { className: "wsp-foot-note" }, t("sorted"));
   if (expanded) {
-    return h6(SwitcherDialog, {
+    return h7(SwitcherDialog, {
       title: t("dialog.title"),
       subtitle: t("dialog.subtitle"),
       panelRef,
@@ -3071,12 +3224,12 @@ function WorkspacePicker(props) {
       onClose: requestClose,
       onBack: () => setExpanded(false),
       onKeyDown,
-      status: h6(React6.Fragment, null, staleWarning, banner),
-      footer: h6(
+      status: h7(React6.Fragment, null, staleWarning, banner),
+      footer: h7(
         React6.Fragment,
         null,
         addAction,
-        h6(
+        h7(
           "span",
           { className: "wsp-dialog-count" },
           query.trim() === "" ? filtered.length === 1 ? t("count.one") : t("count.other", { n: filtered.length }) : t("countResults", { n: filtered.length })
@@ -3086,11 +3239,11 @@ function WorkspacePicker(props) {
   }
   if (placement === null) return null;
   const expandable = filtered.length > compactRows.length;
-  return createPortal(h6(
+  return createPortal(h7(
     React6.Fragment,
     null,
-    h6("style", null, CSS),
-    h6(
+    h7("style", null, CSS),
+    h7(
       "div",
       {
         className: "wsp-layer",
@@ -3098,7 +3251,7 @@ function WorkspacePicker(props) {
           if (event.target === event.currentTarget) requestClose();
         }
       },
-      h6(
+      h7(
         "div",
         {
           ref: panelRef,
@@ -3115,25 +3268,25 @@ function WorkspacePicker(props) {
           onMouseDown: (event) => event.stopPropagation(),
           onKeyDown
         },
-        h6("div", { className: "wsp-pop-head" }, search),
-        h6("div", { className: "wsp-pop-body" }, body),
+        h7("div", { className: "wsp-pop-head" }, search),
+        h7("div", { className: "wsp-pop-body" }, body),
         staleWarning,
         banner,
-        h6(
+        h7(
           "div",
           { className: "wsp-foot" },
           addAction,
-          expandable ? h6(
+          expandable ? h7(
             "button",
             {
               type: "button",
               className: "wsp-foot-action",
               onClick: () => setExpanded(true)
             },
-            h6(GridGlyph, { size: 14 }),
-            h6("span", null, query.trim() === "" ? t("expandCount", { n: filtered.length }) : t("expandResults", { n: filtered.length })),
-            h6(ChevronRightGlyph, { size: 12 })
-          ) : h6(
+            h7(GridGlyph, { size: 14 }),
+            h7("span", null, query.trim() === "" ? t("expandCount", { n: filtered.length }) : t("expandResults", { n: filtered.length })),
+            h7(ChevronRightGlyph, { size: 12 })
+          ) : h7(
             "span",
             { className: "wsp-foot-count" },
             query.trim() === "" ? filtered.length === 1 ? t("count.one") : t("count.other", { n: filtered.length }) : t("countResults", { n: filtered.length })
@@ -3145,7 +3298,7 @@ function WorkspacePicker(props) {
 }
 
 // src/client/index.ts
-var inject = ["slots", "locale", "uiWorkspace", "workspaces", "remote", "sessions", "shortcuts"];
+var inject = ["slots", "locale", "uiWorkspace", "workspaces", "remote", "sessions", "shortcuts", "contextMenus"];
 function apply(ctx) {
   ctx.effect(() => registerLocale(ctx), `${NS}: locale`);
   const controls = createSwitcherControls();
@@ -3153,6 +3306,7 @@ function apply(ctx) {
   const groupingPreferences = createGroupingPreferences();
   ctx.provide("workspaceSwitcherGrouping", { register: groupings.register });
   const injected = heroInjection(ctx);
+  const contextMenus = ctx.contextMenus;
   const actions = {
     controls,
     groupings,
@@ -3160,7 +3314,16 @@ function apply(ctx) {
     viewPreferences: createViewPreferences(),
     statusLabel: ctx.locale.bind("workspace"),
     searchContent: (query, signal) => ctx.sessions.search(query, signal),
-    openSession: (id) => ctx.uiWorkspace.openSession(id)
+    openSession: (id) => ctx.uiWorkspace.openSession(id),
+    runSessionAction: (target, id, icon) => {
+      const menu = contextMenus.resolve(target);
+      try {
+        const action = menu.source.getSnapshot().find((item) => item.id === id && item.icon?.key === icon);
+        if (action !== void 0) menu.select(action.id);
+      } finally {
+        menu.dispose();
+      }
+    }
   };
   ctx.effect(() => ctx.slots.inject("shell.overlay", () => ctx.slots.register({
     name: "shell.overlay",
@@ -3168,9 +3331,11 @@ function apply(ctx) {
     locale: NS,
     inject: () => {
       const { localHost, pickDirectory, createWorkspace } = injected();
-      if (!localHost) return actions;
+      const hooks = { rowMenuTarget: contextMenus.active };
+      if (!localHost) return { ...actions, hooks };
       return {
         ...actions,
+        hooks,
         addWorkspace: async (signal) => {
           const path = await pickDirectory();
           return path && !signal.aborted ? (await createWorkspace({ path })).workspaceId : void 0;

@@ -1,4 +1,7 @@
-import { IconArchiveOutlineRegular, IconChevronDownOutlineRegular, IconChevronUpOutlineRegular, IconProjectAddOutlineRegular, IconPinFillRegular, StateDot } from '@deepseek-ai/dsh-client-ui-primitives'
+import {
+  IconArchiveOutlineRegular, IconChevronDownOutlineRegular, IconChevronUpOutlineRegular, IconPinFillRegular,
+  IconProjectAddOutlineRegular, StateDot,
+} from '@deepseek-ai/dsh-client-ui-primitives'
 import * as React from 'react'
 import type { ReactNode } from 'react'
 import type { SessionListState } from '@deepseek-ai/dsh-api-session-controller/client'
@@ -16,8 +19,10 @@ import {
   buildNavigation, filterTree, initialExpansion, searchSessions,
   type NavigationCatalog, type SearchHit, type SessionId, type SessionRow, type TreeMatch,
 } from './navigation-model'
+import { SessionQuickActions, type RunSessionAction, type SessionActionAccess } from './session-quick-actions'
 import { sessionStatuses, type SessionStatusSnapshot } from './session-presentation'
 import type { createSwitcherControls, SwitcherMode } from './shortcuts'
+import { useTitleMarquee } from './title-marquee'
 import type { SnapshotHook } from './view'
 import { FLAT_ORDER, createViewPreferences, isArchiveFilter, isOrderBy, moveSession } from './view-preferences'
 
@@ -39,11 +44,14 @@ export interface NavigationActions {
   readonly statusLabel: PropsLocale<'workspace'>['t']
   readonly searchContent: Search
   readonly openSession: (id: SessionId) => void
+  readonly runSessionAction: RunSessionAction
   readonly addWorkspace?: (signal: AbortSignal) => Promise<WorkspaceId | undefined>
 }
 
 interface OverlayProps extends NavigationActions, PropsRenderFactories, Pick<PropsRuntime<'shell.overlay'>, 'useContextMenu'> {
   readonly t: TranslateSeat
+  readonly useSessionAccess: SessionActionAccess
+  readonly useRowMenuTarget: SnapshotHook<ContextMenuTarget | null>
   readonly useWorkspaces: SnapshotHook<WorkspaceSnapshot>
   readonly useSessions: SnapshotHook<NavigationCatalog & Partial<Pick<SessionListState, 'projectionsBySession'>>>
   readonly useSessionStatus: SnapshotHook<SessionStatusSnapshot>
@@ -57,13 +65,15 @@ export function SwitcherOverlay(props: OverlayProps): ReactNode {
 }
 
 function NavigationDialog({ mode, controls, groupings, groupingPreferences, viewPreferences, t, useWorkspaces, useSessions, usePanelInfo,
-  useContextMenu, renderFactorySlot, useRemoteAccess, useSessionStatus, statusLabel, searchContent, openSession, addWorkspace,
+  useContextMenu, renderFactorySlot, useRemoteAccess, useSessionAccess, useSessionStatus, useRowMenuTarget,
+  statusLabel, searchContent, openSession, addWorkspace, runSessionAction,
 }: OverlayProps & { mode: SwitcherMode }): ReactNode {
   const workspaces = useWorkspaces(state => state)
   const sessions = useSessions(state => state)
   const statuses = useSessionStatus(state => state)
   const showMain = usePanelInfo(state => state.activePanelId === null)
   const { getTriggerProps } = useContextMenu()
+  const openMenuTarget = useRowMenuTarget(value => value)
   const canAdd = useRemoteAccess('workspace/create')
   const hero = mode === 'workspaces' && showMain ? controls.hero() : undefined
   const choosing = hero !== undefined
@@ -319,8 +329,16 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
         statuses: row.kind === 'session' ? sessionStatuses(row.session, sessions, statuses, statusLabel) : undefined,
         pinnedLabel: statusLabel('row.pinned'),
         menuTrigger: getTriggerProps(target, { tabIndex: -1 }),
+        menuOpen: target?.kind === 'session' && openMenuTarget?.kind === 'session'
+          ? target.value.sessionId === openMenuTarget.value.sessionId
+          : target?.kind === 'workspace' && openMenuTarget?.kind === 'workspace'
+            && target.value.workspaceId === openMenuTarget.value.workspaceId,
+        quickActions: target?.kind === 'session' && row.kind === 'session' ? h(SessionQuickActions, {
+          target, archived: row.session.archived, pinned: row.session.pinned,
+          useSessionAccess, t: statusLabel, runSessionAction,
+        }) : undefined,
         rowMenu: target === undefined ? undefined : renderFactorySlot('contextMenu.button', {
-          target, className: 'wsp-icon-btn wsp-row-menu',
+          target, className: 'wsp-row-action wsp-row-menu',
           label: statusLabel(target.kind === 'session' ? 'actions.session.aria' : 'actions.workspace.aria',
             { name: row.kind === 'session' ? row.session.title : row.title }),
         }),
@@ -488,15 +506,22 @@ function flattenTree(matches: readonly TreeMatch[], expanded: ReadonlyMap<string
 }
 
 function ResultRow({ row, id, groupId, t, now, choosing, active, selected, currentBranch,
-  statuses, pinnedLabel, tree, busy, dropTarget, drag, menuTrigger, rowMenu, onChoose, onFocus, onToggle,
+  statuses, pinnedLabel, tree, busy, dropTarget, drag, menuTrigger, menuOpen, rowMenu, quickActions, onChoose, onFocus, onToggle,
 }: {
   row: NavigationRow; id: string; groupId: string | undefined; t: TranslateSeat; now: number;
   choosing: boolean; active: boolean; selected: boolean; currentBranch: boolean; tree: boolean; busy: boolean;
   statuses: ReturnType<typeof sessionStatuses> | undefined; pinnedLabel: string;
   drag?: React.HTMLAttributes<HTMLButtonElement>; dropTarget: DropHalf | undefined;
-  menuTrigger: ContextMenuTriggerProps; rowMenu: ReactNode;
+  menuTrigger: ContextMenuTriggerProps; menuOpen: boolean; rowMenu: ReactNode; quickActions: ReactNode;
   onChoose: () => void; onFocus: () => void; onToggle?: (() => void) | undefined
 }): ReactNode {
+  const rowRef = useRef<HTMLDivElement>(null)
+  const titleRef = useRef<HTMLSpanElement>(null)
+  const marquee = useTitleMarquee(titleRef)
+  useEffect(() => {
+    if (menuOpen || rowRef.current?.matches(':hover')) marquee.enter()
+    else marquee.leave()
+  }, [menuOpen, marquee])
   const branch = row.kind === 'branch' ? row : undefined
   const session = row.kind === 'session' ? row.session : undefined
   const workspace = branch?.match.branch.workspace
@@ -533,24 +558,32 @@ function ResultRow({ row, id, groupId, t, now, choosing, active, selected, curre
       workspace?.showPath ? h('span', { className: 'wsp-row-line' },
         h('span', { className: 'wsp-row-title' }, title),
         h('span', { className: 'wsp-row-suffix' }, shortenPath(workspace.path)),
-      ) : h('span', { className: 'wsp-row-title' }, title),
+      ) : h('span', {
+        className: session === undefined ? 'wsp-row-title' : 'wsp-row-title wsp-session-title',
+        ref: session === undefined ? undefined : titleRef,
+      }, title),
       hasSearchMeta ? h('span', { className: 'wsp-search-meta' },
         tree ? null : h('span', { className: 'wsp-row-path' }, session?.workspace || session?.path),
         session?.snippet ? h('span', { className: 'wsp-row-path wsp-session-snippet' }, session.snippet) : null,
       ) : null,
     ),
     session === undefined ? null : h('span', { className: 'wsp-row-resting' },
-      h('span', { className: 'wsp-row-time', title: status?.trailingLabel ? statusTitle : undefined },
+      h('span', { className: 'wsp-row-time', 'data-timestamp': status?.trailingLabel === undefined || session.archived || undefined,
+        title: status?.trailingLabel ? statusTitle : undefined },
         session.archived ? relativeTime(session.latest, now, t) : status?.trailingLabel ?? relativeTime(session.latest, now, t)),
-      session.pinned && !session.archived ? h('span', { className: 'wsp-row-icon', role: 'img',
+      session.pinned && !session.archived ? h('span', { className: 'wsp-row-icon wsp-row-pin-indicator', role: 'img',
         title: pinnedLabel, 'aria-label': pinnedLabel }, h(IconPinFillRegular, { size: 12 })) : null,
     ),
     choosing && selected ? h('span', { className: 'wsp-row-check', 'aria-hidden': true }, h(CheckGlyph, { size: 14 })) : null,
   )
   if (!splitDisclosure) return rowMenu === undefined ? option : h('div', {
-    className: 'wsp-tree-option wsp-menu-row', role: 'presentation', 'data-active': active || undefined,
+    className: 'wsp-tree-option wsp-menu-row', role: 'presentation', 'data-menu-open': menuOpen || undefined,
+    ref: rowRef,
+    onPointerEnter: session === undefined ? undefined : marquee.enter,
+    onPointerLeave: session === undefined ? undefined : () => { if (!menuOpen) marquee.leave() },
+    'data-collapsed-workspace': workspace !== undefined && branch?.expandable && !branch.expanded || undefined,
     onFocus,
-  }, option, rowMenu)
+  }, option, h('span', { className: 'wsp-row-actions' }, rowMenu, quickActions))
   const action = t(branch.expanded ? 'collapseBranch' : 'expandBranch')
   return h('div', { className: 'wsp-tree-option', role: 'presentation' },
     option,

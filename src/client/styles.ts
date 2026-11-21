@@ -348,24 +348,48 @@ export const CSS = `
 /* Adapted from Rows.module.css in DSH 0.2.2-rc.5. Copyright (c) 2026 DeepSeek, MIT. */
 .wsp-menu-row { position: relative; }
 .wsp-row-resting { flex: none; display: inline-flex; align-items: center; gap: 6px; }
-.wsp-row-menu {
-  position: absolute; inset-inline-end: 4px; inset-block-start: 50%;
-  transform: translateY(-50%); width: 24px; height: 24px;
+.wsp-row-actions {
+  position: absolute; inset-inline-end: 8px; inset-block-start: 50%; transform: translateY(-50%);
+  display: inline-flex; align-items: center; gap: 13px;
 }
-.wsp-row-menu > svg { width: 14px; height: 14px; }
-.wsp-menu-row:has(> .wsp-row-menu) {
-  & > .wsp-navigation-row { padding-inline-end: 32px; }
+.wsp-row-quick-actions { display: contents; }
+.wsp-row-action {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; margin: -4px; border: 0; padding: 0;
+  border-radius: var(--dsw-radius-xs); background: transparent; cursor: pointer;
+  color: var(--dsw-alias-label-tertiary);
+}
+.wsp-row-action:focus-visible { outline-offset: -2px; }
+.wsp-row-action > svg { width: 14px; height: 14px; }
+.wsp-menu-row:has(.wsp-row-action) { --wsp-action-space: 30px; }
+.wsp-menu-row:has(.wsp-row-pin[data-pinned]) { --wsp-action-space: 59px; }
+.wsp-row-title[data-scrolled] { mask-image: linear-gradient(to right, transparent, #000 12px); }
+.wsp-row-title[data-clipped] { mask-image: linear-gradient(to left, transparent, #000 12px); }
+.wsp-row-title[data-scrolled][data-clipped] {
+  mask-image: linear-gradient(to right, transparent, #000 12px, #000 calc(100% - 12px), transparent);
+}
+@media (hover: none) {
+  .wsp-row-archive, .wsp-row-pin:not([data-pinned]),
+  .wsp-menu-row[data-collapsed-workspace] .wsp-row-actions,
+  .wsp-menu-row .wsp-row-time[data-timestamp],
+  .wsp-menu-row:has(.wsp-row-pin[data-pinned]) .wsp-row-pin-indicator { display: none; }
+  .wsp-menu-row:not([data-collapsed-workspace]) > .wsp-navigation-row {
+    padding-inline-end: var(--wsp-action-space, 8px);
+  }
 }
 @media (hover: hover) {
-  .wsp-menu-row:has(> .wsp-row-menu) {
-    & > .wsp-navigation-row { padding-inline-end: 8px; }
-    & > .wsp-row-menu { opacity: 0; pointer-events: none; }
-    &:is(:hover, :has(:focus-visible, > .wsp-row-menu[aria-expanded='true'])) {
-      & > .wsp-navigation-row { padding-inline-end: 32px; }
-      & > .wsp-row-menu { opacity: 1; pointer-events: auto; }
-      & .wsp-row-resting { display: none; }
-    }
-    &:hover > .wsp-navigation-row { background-color: var(--dsw-alias-interactive-bg-hover); }
+  .wsp-menu-row:is(:hover, [data-menu-open]) .wsp-session-title { text-overflow: clip; }
+  .wsp-row-action:hover { color: var(--dsw-alias-label-primary); }
+  .wsp-menu-row:has(.wsp-row-archive), .wsp-menu-row:has(.wsp-row-pin) { --wsp-action-space: 59px; }
+  .wsp-menu-row:has(.wsp-row-archive):has(.wsp-row-pin) { --wsp-action-space: 88px; }
+  .wsp-menu-row > .wsp-row-actions { opacity: 0; pointer-events: none; }
+  .wsp-menu-row:has(.wsp-row-action):is(:hover, :has(:focus-visible), [data-menu-open]) {
+    & > .wsp-navigation-row { padding-inline-end: var(--wsp-action-space); }
+    & > .wsp-row-actions { opacity: 1; pointer-events: auto; }
+    & .wsp-row-resting { display: none; }
+  }
+  .wsp-menu-row:is(:hover, [data-menu-open]) > .wsp-navigation-row {
+    background-color: var(--dsw-alias-interactive-bg-hover);
   }
 }
 .wsp-navigation-actions { min-width: 0; flex-wrap: wrap; }

@@ -102,6 +102,7 @@ function fakeContext() {
         return () => { catalogListeners.delete(listener) }
       } },
     },
+    contextMenus: { active: {} },
     remote: { $host: { home: '/Users/tester', isLoopback: true } },
     uiWorkspace: { pickDirectory: async () => null },
     workspaces: { create: async input => ({ workspaceId: 'ws-created', path: input.path }) },
@@ -110,7 +111,7 @@ function fakeContext() {
 }
 
 test('declares the services it injects', () => {
-  assert.deepEqual(plugin.inject, ['slots', 'locale', 'uiWorkspace', 'workspaces', 'remote', 'sessions', 'shortcuts'])
+  assert.deepEqual(plugin.inject, ['slots', 'locale', 'uiWorkspace', 'workspaces', 'remote', 'sessions', 'shortcuts', 'contextMenus'])
 })
 
 test('registers the eight locale dictionaries and releases them on unload', () => {
@@ -560,4 +561,31 @@ test('session attention status precedes own activity and reports running subagen
   statuses.set('child', { running: false })
   statuses.set('parent', { running: false, completionUnread: true })
   assert.deepEqual(sessionStatuses(session, catalog, statuses, translate), [{ state: 'done', label: 'status.completed' }])
+})
+
+
+test('quick actions use the exact live official action and dispose the occurrence', () => {
+  const { ctx, registrations } = fakeContext()
+  const target = { kind: 'session', value: { sessionId: 'row', displayTitle: 'Row title' } }
+  const selected = []
+  let disposed = 0
+  let entries = [{ id: 'extension/archive', icon: { key: 'workspace.archive' } }]
+  ctx.contextMenus.resolve = captured => {
+    assert.equal(captured, target)
+    return {
+      source: { getSnapshot: () => entries },
+      select: id => selected.push(id),
+      dispose: () => { disposed++ },
+    }
+  }
+  plugin.apply(ctx)
+  const overlay = registrations.find(entry => entry.options.name === 'shell.overlay')
+  const { runSessionAction } = overlay.options.inject()
+  runSessionAction(target, 'session.archive/archive', 'workspace.archive')
+  entries.push({ id: 'session.archive/archive', icon: { key: 'workspace.unarchive' } })
+  runSessionAction(target, 'session.archive/archive', 'workspace.archive')
+  assert.deepEqual(selected, [])
+  runSessionAction(target, 'session.archive/archive', 'workspace.unarchive')
+  assert.deepEqual(selected, ['session.archive/archive'])
+  assert.equal(disposed, 3)
 })
