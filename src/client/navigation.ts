@@ -539,10 +539,12 @@ function ResultRow({ row, id, groupId, t, now, choosing, active, selected, curre
         session?.snippet ? h('span', { className: 'wsp-row-path wsp-session-snippet' }, session.snippet) : null,
       ) : null,
     ),
-    session === undefined ? null : h('span', { className: 'wsp-row-time', title: status?.trailingLabel ? statusTitle : undefined },
-      session.archived ? relativeTime(session.latest, now, t) : status?.trailingLabel ?? relativeTime(session.latest, now, t)),
-    session?.pinned && !session.archived ? h('span', { className: 'wsp-row-icon', role: 'img',
-      title: pinnedLabel, 'aria-label': pinnedLabel }, h(IconPinFillRegular, { size: 12 })) : null,
+    session === undefined ? null : h('span', { className: 'wsp-row-resting' },
+      h('span', { className: 'wsp-row-time', title: status?.trailingLabel ? statusTitle : undefined },
+        session.archived ? relativeTime(session.latest, now, t) : status?.trailingLabel ?? relativeTime(session.latest, now, t)),
+      session.pinned && !session.archived ? h('span', { className: 'wsp-row-icon', role: 'img',
+        title: pinnedLabel, 'aria-label': pinnedLabel }, h(IconPinFillRegular, { size: 12 })) : null,
+    ),
     choosing && selected ? h('span', { className: 'wsp-row-check', 'aria-hidden': true }, h(CheckGlyph, { size: 14 })) : null,
   )
   if (!splitDisclosure) return rowMenu === undefined ? option : h('div', {

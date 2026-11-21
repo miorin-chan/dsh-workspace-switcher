@@ -345,12 +345,27 @@ export const CSS = `
   .wsp-navigation-row:hover .wsp-tree-icon[data-swap='true'] > .wsp-tree-folder { display: none; }
   .wsp-navigation-row:hover .wsp-tree-icon[data-swap='true'] > .wsp-tree-arrow { display: block; }
 }
-.wsp-menu-row { gap: 2px; }
-.wsp-row-menu { flex: none; width: 24px; height: 24px; }
+/* Adapted from Rows.module.css in DSH 0.2.2-rc.5. Copyright (c) 2026 DeepSeek, MIT. */
+.wsp-menu-row { position: relative; }
+.wsp-row-resting { flex: none; display: inline-flex; align-items: center; gap: 6px; }
+.wsp-row-menu {
+  position: absolute; inset-inline-end: 4px; inset-block-start: 50%;
+  transform: translateY(-50%); width: 24px; height: 24px;
+}
 .wsp-row-menu > svg { width: 14px; height: 14px; }
-@media (hover: hover) and (pointer: fine) {
-  .wsp-menu-row:not(:hover):not(:focus-within):not([data-active='true']) > .wsp-row-menu:not([aria-expanded='true']) {
-    visibility: hidden;
+.wsp-menu-row:has(> .wsp-row-menu) {
+  & > .wsp-navigation-row { padding-inline-end: 32px; }
+}
+@media (hover: hover) {
+  .wsp-menu-row:has(> .wsp-row-menu) {
+    & > .wsp-navigation-row { padding-inline-end: 8px; }
+    & > .wsp-row-menu { opacity: 0; pointer-events: none; }
+    &:is(:hover, :has(:focus-visible, > .wsp-row-menu[aria-expanded='true'])) {
+      & > .wsp-navigation-row { padding-inline-end: 32px; }
+      & > .wsp-row-menu { opacity: 1; pointer-events: auto; }
+      & .wsp-row-resting { display: none; }
+    }
+    &:hover > .wsp-navigation-row { background-color: var(--dsw-alias-interactive-bg-hover); }
   }
 }
 .wsp-navigation-actions { min-width: 0; flex-wrap: wrap; }
