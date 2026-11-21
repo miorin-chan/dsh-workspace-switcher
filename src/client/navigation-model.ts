@@ -35,7 +35,7 @@ export type SearchHit = SessionSearchResultItem
  * packages/client/ui-workspace/src/client/tree.ts. Copyright (c) 2026 DeepSeek.
  * Distributed under the MIT license in LICENSE.deepseek-harness.
  */
-function mainSessionId(byId: NavigationCatalog['byId']): SessionId | undefined {
+export function mainSessionId(byId: NavigationCatalog['byId']): SessionId | undefined {
   return Object.values(byId).find(({ retainedBy }) =>
     'mainView' in retainedBy && typeof retainedBy.mainView === 'number' && retainedBy.mainView > 0)?.id
 }

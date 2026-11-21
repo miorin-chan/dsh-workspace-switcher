@@ -5,7 +5,16 @@ import { test } from 'node:test'
 let registration
 globalThis.HTMLElement = class HTMLElement {}
 globalThis.document = { activeElement: null }
+const keyboardListeners = new Map()
+function sendKeyEvent(type, event = {}) {
+  for (const listener of keyboardListeners.get(type) ?? []) listener(event)
+}
 globalThis.window = {
+  addEventListener(type, listener) {
+    if (!keyboardListeners.has(type)) keyboardListeners.set(type, new Set())
+    keyboardListeners.get(type).add(listener)
+  },
+  removeEventListener(type, listener) { keyboardListeners.get(type)?.delete(listener) },
   requestAnimationFrame: callback => callback(),
   __ModuleLoader__: {
     load(entry) {
@@ -36,7 +45,7 @@ const plugin = registration.factory(name => (
 const {
   buildRows, filterRows, shortenPath, relativeTime, toMillis, SHORTLIST,
   buildNavigation, filterTree, initialExpansion, searchSessions,
-  activeGrouping, createGroupingPreferences, createGroupingRegistry, createViewPreferences, moveSession, sessionStatuses,
+  activeGrouping, createGroupingPreferences, createGroupingRegistry, createViewPreferences, moveSession, sessionStatuses, createRecentSessions,
 } = plugin.__test
 
 /** A minimal host: recorded effects, a locale service, and a slot registry. */
@@ -97,10 +106,13 @@ function fakeContext() {
     },
     shortcuts: {
       runtime: 'desktop', platform: 'macos', registry: { commands }, register,
-      catalog: { subscribe: listener => {
-        catalogListeners.add(listener)
-        return () => { catalogListeners.delete(listener) }
-      } },
+      catalog: {
+        getSnapshot: () => [...commands.values()].map(command => ({ id: command.id, binding: command.defaults?.['desktop:macos'] })),
+        subscribe: listener => {
+          catalogListeners.add(listener)
+          return () => { catalogListeners.delete(listener) }
+        },
+      },
     },
     contextMenus: { active: {} },
     remote: { $host: { home: '/Users/tester', isLoopback: true } },
@@ -588,4 +600,82 @@ test('quick actions use the exact live official action and dispose the occurrenc
   runSessionAction(target, 'session.archive/archive', 'workspace.unarchive')
   assert.deepEqual(selected, ['session.archive/archive'])
   assert.equal(disposed, 3)
+})
+
+
+test('snapshots actual visits, preserves order when moving the highlight and skips unavailable sessions', () => {
+  const opened = []
+  const recent = createRecentSessions(id => opened.push(id))
+  const available = new Set(['a', 'b', 'c'])
+  const observe = id => recent.observe(id, candidate => available.has(candidate))
+  observe('a')
+  assert.equal(recent.canStep(), false)
+  observe('c')
+  observe('b')
+  observe('b')
+  recent.step(1, true)
+  assert.deepEqual(recent.getSnapshot().ids, ['b', 'c', 'a'])
+  assert.equal(recent.getSnapshot().index, 1)
+  recent.step(1, true)
+  assert.equal(recent.getSnapshot().index, 2)
+  assert.deepEqual(opened, [])
+  recent.cancel()
+  recent.step(-1, true)
+  assert.equal(recent.getSnapshot().index, 2)
+  available.delete('a')
+  observe('b')
+  assert.equal(recent.getSnapshot().ids[recent.getSnapshot().index], 'c')
+  assert.equal(recent.getSnapshot().confirmOnControlRelease, false)
+  assert.deepEqual(opened, [])
+  recent.confirm()
+  assert.deepEqual(opened, ['c'])
+  observe('c')
+  recent.step(1, true)
+  recent.confirm()
+  assert.deepEqual(opened, ['c', 'b'])
+})
+
+test('registers both Desktop bindings and confirms on Control release, with blur and unload cleanup', () => {
+  const { ctx, effects, registrations, commands } = fakeContext()
+  const listenerCounts = () => ['keyup', 'blur'].map(type => keyboardListeners.get(type)?.size ?? 0)
+  const before = listenerCounts()
+  const opened = []
+  ctx.uiWorkspace.openSession = id => { opened.push(id) }
+  plugin.apply(ctx)
+  const { controls, recent } = registrations.find(record => record.options.name === 'shell.overlay').options.inject()
+  const next = commands.get('workspace.recentSession')
+  const reverse = commands.get('workspace.recentSessionReverse')
+  const page = { modal: null, region: 'editable' }
+  assert.deepEqual(next.defaults, {
+    'desktop:macos': { code: 'Tab', modifiers: ['control'] },
+    'desktop:windows': { code: 'Tab', modifiers: ['control'] },
+  })
+  assert.deepEqual(reverse.defaults['desktop:macos'], { code: 'Tab', modifiers: ['control', 'shift'] })
+  assert.equal(next.resolve(page).status, 'pass')
+  for (const id of ['a', 'b', 'c']) recent.observe(id, () => true)
+  assert.equal(next.resolve({ ...page, modal: 'other' }).status, 'pass')
+  assert.equal(next.resolve({ ...page, region: 'terminal' }).status, 'pass')
+  next.resolve(page).run()
+  assert.equal(controls.getSnapshot(), 'recent')
+  assert.equal(recent.getSnapshot().index, 1)
+  sendKeyEvent('keyup', { key: 'Tab', ctrlKey: true })
+  sendKeyEvent('keyup', { key: 'Control', ctrlKey: true })
+  assert.deepEqual(opened, [])
+  sendKeyEvent('keyup', { key: 'Control', ctrlKey: false })
+  assert.deepEqual(opened, ['b'])
+  assert.equal(controls.getSnapshot(), null)
+  reverse.resolve(page).run()
+  assert.equal(recent.getSnapshot().index, 2)
+  sendKeyEvent('blur')
+  assert.equal(controls.getSnapshot(), null)
+  sendKeyEvent('keyup', { key: 'Control', ctrlKey: false })
+  assert.deepEqual(opened, ['b'])
+  next.resolve(page).run()
+  commands.get('workspace.switcher').resolve({ ...page, modal: 'workspace-switcher' }).run()
+  assert.equal(controls.getSnapshot(), 'workspaces')
+  assert.equal(recent.getSnapshot(), null)
+  for (const { dispose } of effects.reverse()) dispose()
+  assert.equal(commands.has(next.id), false)
+  assert.equal(commands.has(reverse.id), false)
+  assert.deepEqual(listenerCounts(), before)
 })

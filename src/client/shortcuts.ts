@@ -1,19 +1,21 @@
 import type { Context } from '@deepseek-ai/cordis'
-import type {} from '@deepseek-ai/dsh-client-shortcuts/client'
+import type { ShortcutBinding, ShortcutCatalogEntry } from '@deepseek-ai/dsh-client-shortcuts/client'
 import { NS } from './labels'
 import type { WorkspaceId } from '@deepseek-ai/dsh-api-workspace-controller/client'
 import type { WorkspacePickerProps } from './view'
+import type { createRecentSessions } from './recent-sessions'
 
 export const SWITCHER_MODAL = 'workspace-switcher'
 export type SwitcherMode = 'sessions' | 'workspaces'
+type OverlayMode = SwitcherMode | 'recent'
 type HeroPicker = Pick<WorkspacePickerProps, 'onPick' | 'onClose' | 'selectedId'>
 
 export function createSwitcherControls() {
-  let mode: SwitcherMode | null = null
+  let mode: OverlayMode | null = null
   let origin: HTMLElement | null = null
   const listeners = new Set<() => void>()
   const heroPickers = new Set<() => HeroPicker>()
-  const setMode = (next: SwitcherMode | null) => {
+  const setMode = (next: OverlayMode | null) => {
     if (mode === next) return
     mode = next
     for (const listener of listeners) listener()
@@ -26,6 +28,13 @@ export function createSwitcherControls() {
     }
   }
   const hero = () => [...heroPickers].at(-1)?.()
+  const open = (next: OverlayMode) => {
+    if (mode === null) {
+      origin = document.activeElement instanceof HTMLElement ? document.activeElement : null
+      hero()?.onClose()
+    }
+    setMode(next)
+  }
   return {
     hero,
     bindHero(get: () => HeroPicker) {
@@ -39,12 +48,10 @@ export function createSwitcherControls() {
       return () => { listeners.delete(listener) }
     },
     close: () => setMode(null),
+    openRecent: () => open('recent'),
     toggle(next: SwitcherMode) {
-      if (mode === null) {
-        origin = document.activeElement instanceof HTMLElement ? document.activeElement : null
-        hero()?.onClose()
-      }
-      setMode(mode === next ? null : next)
+      if (mode === next) setMode(null)
+      else open(next)
     },
   }
 }
@@ -131,6 +138,54 @@ export function installSwitcherShortcuts(ctx: Context, controls: ReturnType<type
       input.consume()
       if (!gesture.repeat) controls.toggle(gesture.shift ? 'workspaces' : 'sessions')
     }))
+  }
+  return () => { for (const release of dispose.reverse()) release() }
+}
+
+/** New commands own their bindings and use the registry's native Desktop path. */
+export function installRecentShortcuts(ctx: Context, controls: ReturnType<typeof createSwitcherControls>,
+  recent: ReturnType<typeof createRecentSessions>): () => void {
+  const { shortcuts } = ctx
+  const t = ctx.locale.bind(NS)
+  const dispose = [
+    recent.subscribe(() => {
+      if (recent.getSnapshot() === null && controls.getSnapshot() === 'recent') controls.close()
+    }),
+    controls.subscribe(() => { if (controls.getSnapshot() !== 'recent') recent.cancel() }),
+  ]
+  const confirmOnRelease = (event: KeyboardEvent) => {
+    if (event.key === 'Control' && !event.ctrlKey && recent.getSnapshot()?.confirmOnControlRelease) recent.confirm()
+  }
+  window.addEventListener('keyup', confirmOnRelease, true)
+  window.addEventListener('blur', recent.cancel)
+  dispose.push(() => {
+    window.removeEventListener('keyup', confirmOnRelease, true)
+    window.removeEventListener('blur', recent.cancel)
+    recent.cancel()
+  })
+  for (const direction of [1, -1] as const) {
+    const id = (direction === 1 ? 'workspace.recentSession' : 'workspace.recentSessionReverse') as ShortcutCommand['id']
+    const binding: ShortcutBinding = { code: 'Tab', modifiers: direction === 1 ? ['control'] : ['control', 'shift'] }
+    try {
+      dispose.push(shortcuts.register({
+        id,
+        label: () => t(direction === 1 ? 'recentSession.next' : 'recentSession.previous'),
+        aliases: [],
+        defaults: { 'desktop:macos': binding, 'desktop:windows': binding },
+        regions: ['page', 'editable'],
+        modals: [SWITCHER_MODAL],
+        resolve: ({ modal, region, source }) => {
+          const mode = controls.getSnapshot()
+          if ((mode !== null && mode !== 'recent') || (modal !== null && modal !== SWITCHER_MODAL)
+            || region === 'terminal' || !recent.canStep()) return { status: 'pass' }
+          const effective = shortcuts.catalog.getSnapshot().find((row: ShortcutCatalogEntry) => row.id === id)?.binding
+          const release = source !== 'menu' && effective?.modifiers.includes('control') === true
+          return { status: 'handled', run: () => { controls.openRecent(); recent.step(direction, release) } }
+        },
+      }))
+    } catch (error) {
+      console.warn(`workspace-switcher: could not register ${id}`, error)
+    }
   }
   return () => { for (const release of dispose.reverse()) release() }
 }

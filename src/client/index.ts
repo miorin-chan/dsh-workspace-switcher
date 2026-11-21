@@ -50,7 +50,8 @@ import { SwitcherOverlay, type NavigationActions } from './navigation'
 import { buildNavigation, filterTree, initialExpansion, searchSessions } from './navigation-model'
 import { HERO_SLOT, heroInjection, registerLocale } from './remote'
 import { sessionStatuses } from './session-presentation'
-import { createSwitcherControls, installSwitcherShortcuts } from './shortcuts'
+import { createRecentSessions } from './recent-sessions'
+import { createSwitcherControls, installRecentShortcuts, installSwitcherShortcuts } from './shortcuts'
 import { createViewPreferences, moveSession } from './view-preferences'
 import { WorkspacePicker, type WorkspacePickerProps } from './view'
 
@@ -72,12 +73,12 @@ export function apply(ctx: Context): void {
   const contextMenus: ContextMenus = ctx.contextMenus
   const actions: NavigationActions = {
     controls,
+    openSession: id => ctx.uiWorkspace.openSession(id),
     groupings,
     groupingPreferences,
     viewPreferences: createViewPreferences(),
     statusLabel: ctx.locale.bind('workspace'),
     searchContent: (query, signal) => ctx.sessions.search(query, signal),
-    openSession: id => ctx.uiWorkspace.openSession(id),
     runSessionAction: (target, id, icon) => {
       const menu = contextMenus.resolve(target)
       try {
@@ -89,14 +90,15 @@ export function apply(ctx: Context): void {
       }
     },
   }
+  const recent = createRecentSessions(actions.openSession)
   ctx.effect(() => ctx.slots.inject('shell.overlay', () => ctx.slots.register({
     name: 'shell.overlay', id: NS, locale: NS,
     inject: () => {
       const { localHost, pickDirectory, createWorkspace } = injected()
       const hooks = { rowMenuTarget: contextMenus.active }
-      if (!localHost) return { ...actions, hooks }
+      if (!localHost) return { ...actions, recent, hooks }
       return {
-        ...actions, hooks,
+        ...actions, recent, hooks,
         addWorkspace: async (signal: AbortSignal) => {
           const path = await pickDirectory()
           return path && !signal.aborted ? (await createWorkspace({ path })).workspaceId : undefined
@@ -105,6 +107,7 @@ export function apply(ctx: Context): void {
     },
   }, SwitcherOverlay)), `${NS}: shortcut overlay`)
   ctx.effect(() => installSwitcherShortcuts(ctx, controls), `${NS}: shortcuts`)
+  ctx.effect(() => installRecentShortcuts(ctx, controls, recent), `${NS}: recent session shortcuts`)
 
   function HeroPicker(props: WorkspacePickerProps) {
     const current = React.useRef(props)
@@ -126,6 +129,7 @@ export function apply(ctx: Context): void {
 export const __test = {
   SHORTLIST,
   createGroupingRegistry,
+  createRecentSessions,
   createGroupingPreferences,
   createViewPreferences,
   moveSession,

@@ -16,9 +16,11 @@ import { activeGrouping, FLAT, WORKSPACES, WORKSPACE_TREE, type createGroupingPr
 import type { TranslateSeat } from './labels'
 import { filterRows, relativeTime, shortenPath } from './model'
 import {
-  buildNavigation, filterTree, initialExpansion, searchSessions,
+  buildNavigation, filterTree, initialExpansion, mainSessionId, searchSessions,
   type NavigationCatalog, type SearchHit, type SessionId, type SessionRow, type TreeMatch,
 } from './navigation-model'
+import { RecentSessionDialog } from './recent-dialog'
+import type { createRecentSessions } from './recent-sessions'
 import { SessionQuickActions, type RunSessionAction, type SessionActionAccess } from './session-quick-actions'
 import { sessionStatuses, type SessionStatusSnapshot } from './session-presentation'
 import type { createSwitcherControls, SwitcherMode } from './shortcuts'
@@ -50,6 +52,7 @@ export interface NavigationActions {
 
 interface OverlayProps extends NavigationActions, PropsRenderFactories, Pick<PropsRuntime<'shell.overlay'>, 'useContextMenu'> {
   readonly t: TranslateSeat
+  readonly recent: ReturnType<typeof createRecentSessions>
   readonly useSessionAccess: SessionActionAccess
   readonly useRowMenuTarget: SnapshotHook<ContextMenuTarget | null>
   readonly useWorkspaces: SnapshotHook<WorkspaceSnapshot>
@@ -60,8 +63,22 @@ interface OverlayProps extends NavigationActions, PropsRenderFactories, Pick<Pro
 }
 
 export function SwitcherOverlay(props: OverlayProps): ReactNode {
-  const mode = useSyncExternalStore(props.controls.subscribe, props.controls.getSnapshot)
-  return mode === null ? null : h(NavigationDialog, { ...props, key: mode, mode })
+  const { controls, recent, t, usePanelInfo, useSessions, useWorkspaces } = props
+  const mode = useSyncExternalStore(controls.subscribe, controls.getSnapshot)
+  const catalog = useSessions(state => state.byId)
+  const archived = useWorkspaces(state => state.archivedSessionIds)
+  const showConversation = usePanelInfo(state => state.activePanelId === null)
+  const current = showConversation ? mainSessionId(catalog) : undefined
+  React.useLayoutEffect(() => {
+    const archivedIds = new Set(archived)
+    recent.observe(current, id => {
+      const session = catalog[id]
+      return session !== undefined && !session.blank && session.origin !== 'subagent' && !archivedIds.has(id)
+    })
+  }, [recent, current, catalog, archived])
+  if (mode === null) return null
+  if (mode === 'recent') return h(RecentSessionDialog, { recent, t, useSessions, useWorkspaces })
+  return h(NavigationDialog, { ...props, key: mode, mode })
 }
 
 function NavigationDialog({ mode, controls, groupings, groupingPreferences, viewPreferences, t, useWorkspaces, useSessions, usePanelInfo,
