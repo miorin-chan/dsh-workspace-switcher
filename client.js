@@ -1413,6 +1413,8 @@ var CSS = `
   mask-image: linear-gradient(to right, transparent, #000 12px, #000 calc(100% - 12px), transparent);
 }
 @media (hover: none) {
+  /* Keep More at the trailing edge while preserving its first Tab stop. */
+  .wsp-row-pin[data-pinned] { order: -1; }
   .wsp-row-archive, .wsp-row-pin:not([data-pinned]),
   .wsp-menu-row[data-collapsed-workspace] .wsp-row-actions,
   .wsp-menu-row .wsp-row-time[data-timestamp],
