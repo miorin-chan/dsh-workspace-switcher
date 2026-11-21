@@ -12,7 +12,7 @@ Check whether new behavior belongs in its own bundle.
 
 ## Workspace aggregate
 
-This bundle belongs to `dsh-workspace-family`. Keep its row id stable and coordinate new workspace-facing behavior
+This bundle belongs to `dsh-workspace-atlas`. Keep its row id stable and coordinate new workspace-facing behavior
 with the aggregate's `aggregate.yml` and documentation.
 The aggregate and this bundle insert the same row id, so do not install both.
 
@@ -79,7 +79,7 @@ Update `CHANGELOG.md` when releasing.
 - After a DSH upgrade, run `node scripts/sync-types.mjs` to repin the type packages,
   then `npm run check`, then verify the picker in the running UI.
   Record what to verify.
-- From the default workspace root, run `node tools/new-dsh-plugin/cli.mjs --check plugins/dsh-workspace-picker`
+- From the default workspace root, run `node tools/new-dsh-plugin/cli.mjs --check plugins/dsh-workspace-welcome-switcher`
   to check the manifest, locale JSON, and the other scaffold files.
 - Use a disposable profile for installation tests.
   Distinguish fixture results from observations in the UI.

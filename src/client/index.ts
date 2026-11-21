@@ -1,5 +1,5 @@
 /**
- * Browser half of `dsh-workspace-picker`.
+ * Browser half of `dsh-workspace-welcome-switcher`.
  *
  * A more capable performer of the blank-session Workspace chooser. The shipped
  * picker is one flat menu in Host order; this entry shadows it (a single slot,

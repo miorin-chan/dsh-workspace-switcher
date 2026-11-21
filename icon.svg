@@ -1,11 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
   <defs>
-    <linearGradient id="dsh-workspace-picker-fold" x1="12" y1="12" x2="28" y2="30" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#7CC6FF"/>
+    <linearGradient id="welcome-switcher-compass" x1="28.5" y1="7.5" x2="8.5" y2="28.5" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8FD3FF"/>
       <stop offset="1" stop-color="#4B62E1"/>
     </linearGradient>
   </defs>
-  <path d="M7 17.9V14.8C7 13.5 8.05 12.5 9.35 12.5H13.2C13.85 12.5 14.45 12.75 14.9 13.2L16.4 14.7H27.6C28.95 14.7 30 15.75 30 17.05V26.6C30 27.9 28.95 28.95 27.65 28.95H9.35C8.05 28.95 7 27.9 7 26.6Z" fill="url(#dsh-workspace-picker-fold)"/>
-  <circle cx="24.8" cy="23.8" r="3.9" fill="none" stroke="#FFFFFF" stroke-width="2.1"/>
-  <path d="M27.6 26.6L31.2 30.2" stroke="#FFFFFF" stroke-width="2.1" stroke-linecap="round"/>
+  <circle cx="17" cy="17" r="12" fill="url(#welcome-switcher-compass)"/>
+  <circle cx="17" cy="17" r="9.6" stroke="#FFFFFF" stroke-opacity="0.18"/>
+  <g stroke="#FFFFFF" stroke-opacity="0.45" stroke-width="1.4" stroke-linecap="round">
+    <path d="M17 5.6v1.8M17 26.6v1.8M5.6 17h1.8M26.6 17h1.8"/>
+  </g>
+  <g transform="rotate(24 17 17)">
+    <path d="M17 8.6l2.5 5.8L17 17l-2.5-2.6Z" fill="#FFFFFF"/>
+    <path d="M17 25.4l2.5-5.8L17 17l-2.5 2.6Z" fill="#FFFFFF" fill-opacity="0.45"/>
+  </g>
+  <circle cx="17" cy="17" r="1.5" fill="#FFFFFF"/>
+  <circle cx="23.8" cy="23.8" r="4.9" fill="url(#welcome-switcher-compass)"/>
+  <circle cx="23.6" cy="23.6" r="3.2" stroke="#FFFFFF" stroke-width="1.8"/>
+  <path d="M26 26l2.5 2.5" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round"/>
 </svg>

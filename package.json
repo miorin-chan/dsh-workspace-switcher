@@ -1,9 +1,9 @@
 {
-  "name": "dsh-workspace-picker",
+  "name": "dsh-workspace-welcome-switcher",
   "version": "0.1.1",
   "private": true,
   "license": "MIT",
-  "description": "Upgrades the New Session workspace chooser with recently used order, search, a compact shortlist, and an expanded picker for large workspace lists.",
+  "description": "Active search and recents instead of scanning a list, with a short list for everyday choice.",
   "type": "module",
   "keywords": [
     "deepseek-harness",

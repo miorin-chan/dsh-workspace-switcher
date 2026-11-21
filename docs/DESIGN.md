@@ -1,6 +1,6 @@
 # 设计与实现
 
-本文记录 `dsh-workspace-picker` 的设计边界与关键决定。
+本文记录 `dsh-workspace-welcome-switcher` 的设计边界与关键决定。
 行为验证见根目录测试与实机检查记录。
 
 ## 目标

@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "Refined workspace picker",
-    "description": "Upgrades the workspace chooser on the New Session screen: recently used order, search, a compact shortlist of five, and an expanded dialog for large lists. Turn it off to restore the built-in menu."
+    "title": "Workspace Switcher",
+    "description": "Active search and recents instead of scanning a list, with a short list for everyday choice."
   }
 }

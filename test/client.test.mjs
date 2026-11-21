@@ -12,7 +12,7 @@ globalThis.window = {
 }
 await import('../client.js')
 
-assert.equal(registration.id, 'dsh-workspace-picker')
+assert.equal(registration.id, 'dsh-workspace-welcome-switcher')
 const ReactStub = {
   Fragment: Symbol('Fragment'),
   createElement: () => null,
@@ -84,8 +84,8 @@ test('registers the eight locale dictionaries and releases them on unload', () =
   const { ctx, effects, dictionaries } = fakeContext()
   plugin.apply(ctx)
 
-  assert.ok(dictionaries.has('dsh-workspace-picker'))
-  const labels = dictionaries.get('dsh-workspace-picker')
+  assert.ok(dictionaries.has('dsh-workspace-welcome-switcher'))
+  const labels = dictionaries.get('dsh-workspace-welcome-switcher')
   assert.deepEqual(
     Object.keys(labels).sort(),
     ['de', 'en', 'es', 'fr', 'ja', 'pt', 'ru', 'zh'],
@@ -93,7 +93,7 @@ test('registers the eight locale dictionaries and releases them on unload', () =
   assert.equal(labels.zh['dialog.title'], '选择工作区')
 
   for (const effect of effects) effect.dispose()
-  assert.equal(dictionaries.has('dsh-workspace-picker'), false)
+  assert.equal(dictionaries.has('dsh-workspace-welcome-switcher'), false)
 })
 
 test('shadows the shipped hero picker at a lower priority', () => {
@@ -104,7 +104,7 @@ test('shadows the shipped hero picker at a lower priority', () => {
   const { options, component } = registrations[0]
   assert.equal(options.name, 'conversation.hero.workspace')
   assert.equal(options.priority, -1)
-  assert.equal(options.locale, 'dsh-workspace-picker')
+  assert.equal(options.locale, 'dsh-workspace-welcome-switcher')
   assert.equal(typeof component, 'function')
   assert.equal(registrations[0].disposed, false)
 
