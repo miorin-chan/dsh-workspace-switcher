@@ -1,4 +1,4 @@
-# @miorin/dsh-workspace-welcome-switcher
+# @miorin/dsh-workspace-switcher
 
 [English](README.md)
 

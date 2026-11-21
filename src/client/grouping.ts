@@ -17,6 +17,7 @@ export interface WorkspaceGrouping {
 export const FLAT = 'flat'
 export const WORKSPACES = 'workspace'
 export const WORKSPACE_TREE = 'workspace-tree'
+// Keep the persisted key stable across package renames.
 const preferenceKey = 'dsh-workspace-welcome-switcher.grouping'
 
 export function createGroupingRegistry() {

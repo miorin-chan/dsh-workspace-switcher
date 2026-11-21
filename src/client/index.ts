@@ -1,5 +1,5 @@
 /**
- * Browser half of `dsh-workspace-welcome-switcher`.
+ * Browser half of `dsh-workspace-switcher`.
  *
  * The New Session chooser keeps its five-row shortlist. Its expanded dialog
  * shares its controls and theme with the frame-wide Session search and Workspace

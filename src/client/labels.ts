@@ -11,7 +11,7 @@
 import type {} from '@deepseek-ai/dsh-client-ui-slots'
 
 /** Locale registration namespace of this bundle. */
-export const NS = 'dsh-workspace-welcome-switcher'
+export const NS = 'dsh-workspace-switcher'
 
 /** Runtime dictionary keys; keep all eight dictionaries in step. */
 export type LabelKey =
@@ -700,6 +700,6 @@ export const LABELS = { en, zh, ja, de, es, fr, pt, ru } satisfies Record<string
 declare module '@deepseek-ai/dsh-client-ui-slots' {
   interface LocaleNamespaceMap {
     /** Switcher copy on the blank-session hero. */
-    'dsh-workspace-welcome-switcher': LabelKey
+    'dsh-workspace-switcher': LabelKey
   }
 }

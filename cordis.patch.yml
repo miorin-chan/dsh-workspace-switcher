@@ -2,4 +2,4 @@
 # package.json `dsh.client` and carries Workspace Switcher.
 - insert:
     - id: workspace-switcher
-      name: '@miorin/dsh-workspace-welcome-switcher'
+      name: '@miorin/dsh-workspace-switcher'

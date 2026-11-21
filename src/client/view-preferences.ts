@@ -6,6 +6,7 @@ export type SessionOrders = Readonly<Record<string, readonly string[]>>
 export const FLAT_ORDER = 'flat'
 export const UNGROUPED_ORDER = 'ungrouped'
 
+// Keep the persisted key stable across package renames.
 const key = 'dsh-workspace-welcome-switcher.session-view'
 interface ViewPreferences {
   readonly orderBy: OrderBy
