@@ -59,8 +59,14 @@ The aggregate and this bundle insert the same row id, so do not install both.
 
 - Keep the bundle independently installable and toggleable.
   Keep runtime modules private to this bundle and put shared tools in the workspace `tools/` directory.
-- Use public APIs where available. Explain required internal dependencies in the browser module header.
-  If the expected structure is missing, leave DSH behavior intact and log a single `console.warn`.
+- Implement new behavior through supported DSH plugin APIs and extension points.
+  Keep DSH source and installed files intact.
+  Do not patch global behavior or override DSH internals.
+  When an extension point is missing, report the gap and stay within supported scope.
+- Use TypeScript for new implementation.
+  Reuse the DSH type declarations for the supported runtime version.
+  Retain types across interfaces, configuration, and events, validate and narrow unknown inputs,
+  and keep type dependencies in sync.
 - Keep the factory free of side effects.
   Register resources in `apply` with `ctx.effect` or `ctx.on` and return cleanup functions.
 - Prefer recognizable icons for common action buttons, and use visible text only
