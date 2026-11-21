@@ -263,6 +263,17 @@ export const CSS = `
   padding: 0 24px 12px;
   border-bottom: .5px solid var(--dsw-alias-border-l3);
 }
+.wsp-navigation-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
+.wsp-group-label {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  color: var(--dsw-alias-label-secondary); font-size: 12px;
+}
+.wsp-group-select {
+  max-width: 100%; min-width: 0; min-height: 28px; padding: 3px 8px; border-radius: var(--dsw-radius-xs, 6px);
+  border: 1px solid var(--dsw-alias-border-l3);
+  color: var(--dsw-alias-label-primary); background: var(--dsw-alias-interactive-bg-hover); font: inherit;
+}
+.wsp-group-select:focus-visible { outline: 2px solid var(--dsw-alias-state-business-primary); outline-offset: 1px; }
 .wsp-dialog-search .wsp-search {
   height: 32px; margin: 0; padding: 0 8px;
   border: .5px solid var(--dsw-alias-border-l4);

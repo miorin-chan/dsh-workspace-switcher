@@ -4,6 +4,7 @@ import type { WorkspaceId, WorkspaceSnapshot } from '@deepseek-ai/dsh-api-worksp
 import { AddWorkspaceButton, ErrorBanner, SearchField, Skeleton } from './components'
 import { SwitcherDialog, trapTab } from './dialog'
 import { CheckGlyph, DisclosureGlyph, FolderGlyph, OpenFolderGlyph } from './glyphs'
+import { activeGrouping, FLAT, WORKSPACES, WORKSPACE_TREE, type createGroupingPreferences, type createGroupingRegistry } from './grouping'
 import type { TranslateSeat } from './labels'
 import { filterRows, relativeTime, shortenPath } from './model'
 import {
@@ -28,6 +29,8 @@ type Search = (query: string, signal: AbortSignal) => Promise<{
 
 export interface NavigationActions {
   readonly controls: Controls
+  readonly groupings: ReturnType<typeof createGroupingRegistry>
+  readonly groupingPreferences: ReturnType<typeof createGroupingPreferences>
   readonly statusLabel: (key: StatusLabel) => string
   readonly searchContent: Search
   readonly openSession: (id: SessionId) => void
@@ -50,24 +53,42 @@ export function SwitcherOverlay(props: OverlayProps): ReactNode {
   return mode === null ? null : h(NavigationDialog, { ...props, key: mode, mode })
 }
 
-function NavigationDialog({ mode, controls, t, useWorkspaces, useSessions, usePanelInfo,
+function NavigationDialog({ mode, controls, groupings, groupingPreferences, t, useWorkspaces, useSessions, usePanelInfo,
   useWorkspaceAccess, useRemoteAccess, useSessionStatus, statusLabel, searchContent, openSession, renameWorkspace, addWorkspace,
 }: OverlayProps & { mode: SwitcherMode }): ReactNode {
   const workspaces = useWorkspaces(state => state)
   const sessions = useSessions(state => state)
   const showMain = usePanelInfo(state => state.activePanelId === null)
   const canAdd = useRemoteAccess('workspace/create')
-  const tree = mode === 'workspaces'
-  const hero = tree && showMain ? controls.hero() : undefined
+  const hero = mode === 'workspaces' && showMain ? controls.hero() : undefined
   const choosing = hero !== undefined
-  const { roots, sessions: sessionRows, currentId } = useMemo(
-    () => buildNavigation(workspaces, sessions, t('defaultName'), t('untitledSession')),
-    [workspaces, sessions, t],
+  const catalog = useSyncExternalStore(groupings.subscribe, groupings.getSnapshot)
+  const [groupId, setGroupId] = useState(() => groupingPreferences.initial(mode, catalog))
+  const preferenceChoice = useRef<string | undefined>(undefined)
+  const groupBy = activeGrouping(groupId, catalog, choosing)
+  const grouping = catalog.find(entry => entry.id === groupBy)
+  const tree = groupBy !== FLAT
+  const { roots, sessions: sessionRows, currentId, groupingError } = useMemo(
+    () => buildNavigation(workspaces, sessions, t('defaultName'), t('untitledSession'), groupBy, grouping),
+    [workspaces, sessions, t, groupBy, grouping],
   )
+  const displayedGroup = groupingError ? WORKSPACE_TREE : groupBy
+  useEffect(() => {
+    if (preferenceChoice.current !== groupId) return
+    preferenceChoice.current = undefined
+    if (displayedGroup === groupId) groupingPreferences.remember(groupId)
+  }, [displayedGroup, groupId, groupingPreferences])
+  const choices = [
+    ...(!choosing ? [{ id: FLAT, label: t('group.flat') }] : []),
+    { id: WORKSPACES, label: t('list.label') },
+    { id: WORKSPACE_TREE, label: t('workspaceTree') },
+    ...catalog.map(entry => ({ id: entry.id, label: entry.label() })),
+  ]
   const [query, setQuery] = useState('')
   const [activeKey, setActiveKey] = useState<string>()
   const [addedWorkspaceId, setAddedWorkspaceId] = useState<WorkspaceId>()
-  const [expanded, setExpanded] = useState<ReadonlyMap<string, boolean>>(() => new Map())
+  const [expansions, setExpansions] = useState<ReadonlyMap<string, ReadonlyMap<string, boolean>>>(() => new Map())
+  const expanded = expansions.get(displayedGroup) ?? new Map<string, boolean>()
   const [renaming, setRenaming] = useState<{ readonly id: WorkspaceId; readonly title: string; readonly original: string }>()
   const [writeKind, setWriteKind] = useState<'add' | 'rename'>()
   const busy = writeKind !== undefined
@@ -80,14 +101,14 @@ function NavigationDialog({ mode, controls, t, useWorkspaces, useSessions, usePa
   const panelRef = useRef<HTMLDivElement>(null)
   const listId = useId()
   const trimmed = query.trim()
-  const remoteQuery = tree ? '' : trimmed.replaceAll('\0', '')
+  const remoteQuery = choosing ? '' : trimmed.replaceAll('\0', '')
   const remote = useContentSearch(remoteQuery, searchContent)
   const workspaceToReveal = addedWorkspaceId ?? hero?.selectedId
   const autoExpanded = useMemo(() => new Set(initialExpansion(roots, workspaceToReveal,
     workspaceToReveal === undefined ? currentId : undefined)), [roots, workspaceToReveal, currentId])
   const currentBranches = useMemo(() => new Set(initialExpansion(roots, hero?.selectedId, currentId)),
     [roots, hero?.selectedId, currentId])
-  const matches = tree ? filterTree(roots, trimmed, choosing, t('ungrouped')) : []
+  const matches = tree ? filterTree(roots, trimmed, choosing, t('ungrouped'), remote.hits) : []
   const treeRows = tree ? flattenTree(matches, expanded, autoExpanded, trimmed !== '', t) : []
   const flatRows = tree ? [] : searchSessions(sessionRows, trimmed, remote.hits)
   const rows: NavigationRow[] = tree ? treeRows : flatRows.map(session => ({
@@ -104,7 +125,8 @@ function NavigationDialog({ mode, controls, t, useWorkspaces, useSessions, usePa
   const index = activeIndex >= 0 ? activeIndex : trimmed !== '' && rows.length > 0 ? Math.max(firstChoice, 0) : -1
   const active = rows[index]
   const optionId = (i: number) => `${listId}-${i}`
-  const title = t(tree ? choosing ? 'dialog.title' : 'workspaceTree' : 'sessionSearch')
+  const title = choosing ? t('dialog.title')
+    : tree ? choices.find(choice => choice.id === displayedGroup)?.label ?? t('workspaceTree') : t('sessionSearch')
   const pending = rows.length === 0 && (remote.pending
     || (workspaces.phase !== 'ready' && workspaces.state !== 'error')
     || (!choosing && sessions.phase !== 'ready'))
@@ -125,6 +147,11 @@ function NavigationDialog({ mode, controls, t, useWorkspaces, useSessions, usePa
     const frame = window.requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }))
     return () => window.cancelAnimationFrame(frame)
   }, [renameId])
+  React.useLayoutEffect(() => {
+    if (document.activeElement === document.body) {
+      inputRef.current?.focus({ preventScroll: true })
+    }
+  }, [displayedGroup])
   useEffect(() => {
     panelRef.current?.querySelector('[data-active="true"]')?.scrollIntoView({ block: 'nearest' })
   }, [active?.key])
@@ -132,10 +159,12 @@ function NavigationDialog({ mode, controls, t, useWorkspaces, useSessions, usePa
   const changeQuery = (value: string) => {
     setQuery(value)
     setActiveKey(undefined)
-    setExpanded(new Map())
+    setExpansions(new Map())
   }
   const toggle = (row: BranchRow, open = !row.expanded) => {
-    if (row.expandable) setExpanded(previous => new Map(previous).set(row.key, open))
+    if (row.expandable) setExpansions(previous => new Map(previous).set(
+      displayedGroup, new Map(previous.get(displayedGroup)).set(row.key, open),
+    ))
   }
   const choose = (row: NavigationRow) => {
     if (pendingWrite.current) return
@@ -167,6 +196,26 @@ function NavigationDialog({ mode, controls, t, useWorkspaces, useSessions, usePa
       pendingWrite.current = false
       if (mounted.current) setWriteKind(undefined)
     }
+  }
+
+  const add = () => {
+    if (addWorkspace === undefined) return
+    void write('add', t('addFailed'), async () => {
+      const signal = lifetime.current?.signal
+      if (signal === undefined) return
+      const id = await addWorkspace(signal)
+      if (!mounted.current || id === undefined) return
+      if (choosing && controls.hero() !== undefined) {
+        controls.pickWorkspace(id)
+        controls.close()
+        return
+      }
+      changeQuery('')
+      if (!tree) setGroupId(groupingPreferences.initial('workspaces', groupings.getSnapshot()))
+      setAddedWorkspaceId(id)
+      setActiveKey(`workspace:${id}`)
+      inputRef.current?.focus({ preventScroll: true })
+    })
   }
 
   const onKeyDown: React.KeyboardEventHandler<HTMLDivElement> = event => {
@@ -279,30 +328,28 @@ function NavigationDialog({ mode, controls, t, useWorkspaces, useSessions, usePa
       className: 'wsp-list wsp-navigation-list', role: tree ? 'tree' : 'listbox', id: listId, 'aria-label': title,
     }, renderRows()),
     status: h(React.Fragment, null,
+      groupingError ? h('div', { className: 'wsp-warning', role: 'status' }, t('group.failed')) : null,
       catalogError && rows.length > 0 ? h('div', { className: 'wsp-warning', role: 'status' }, t('listUnavailable')) : null,
       status === undefined ? null : h(ErrorBanner, {
         ...status, dismiss: t('dismiss'), onDismiss: error === undefined ? remote.dismiss : () => setError(undefined),
       }),
     ),
+    toolbar: renaming === undefined ? h('div', { className: 'wsp-navigation-toolbar' },
+      h('label', { className: 'wsp-group-label' }, t('group.options'),
+        h('select', {
+          className: 'wsp-group-select', value: displayedGroup, disabled: busy,
+          onChange: (event: React.ChangeEvent<HTMLSelectElement>) => {
+            const id = event.currentTarget.value
+            preferenceChoice.current = id
+            setGroupId(id)
+            setActiveKey(undefined)
+          },
+        }, choices.map(choice => h('option', { key: choice.id, value: choice.id }, choice.label))),
+      ),
+      canAdd && addWorkspace !== undefined ? h(AddWorkspaceButton, { busy: writeKind === 'add', t, onClick: add }) : null,
+    ) : null,
     footer: h(React.Fragment, null,
       h('div', { className: 'wsp-navigation-actions' },
-        tree && canAdd && addWorkspace !== undefined && renaming === undefined ? h(AddWorkspaceButton, { busy: writeKind === 'add', t, onClick: () => {
-          void write('add', t('addFailed'), async () => {
-            const signal = lifetime.current?.signal
-            if (signal === undefined) return
-            const id = await addWorkspace(signal)
-            if (!mounted.current || id === undefined) return
-            if (choosing && controls.hero() !== undefined) {
-              controls.pickWorkspace(id)
-              controls.close()
-            } else {
-              changeQuery('')
-              setAddedWorkspaceId(id)
-              setActiveKey(`workspace:${id}`)
-              inputRef.current?.focus({ preventScroll: true })
-            }
-          })
-        } }) : null,
         choosing || focusedWorkspace === undefined || renaming !== undefined ? null : h(RenameButton, {
           useWorkspaceAccess, workspaceId: focusedWorkspace.id, name: focusedWorkspace.title, t, busy,
           onClick: () => setRenaming({ id: focusedWorkspace.id, title: focusedWorkspace.title, original: focusedWorkspace.title }),
@@ -367,7 +414,7 @@ function ResultRow({ row, id, groupId, t, now, choosing, active, selected, curre
   const title = branch?.title ?? session?.title
   const path = workspace?.path ?? directory?.path ?? session?.path
   const splitDisclosure = choosing && workspace !== undefined && branch?.expandable === true
-  const hasSearchMeta = !tree && Boolean(session?.workspace || session?.path || session?.snippet)
+  const hasSearchMeta = Boolean(session?.snippet || (!tree && (session?.workspace || session?.path)))
   const option = h('button', {
     id, type: 'button', role: tree ? 'treeitem' : 'option', tabIndex: -1,
     'aria-level': tree ? row.depth + 1 : undefined, 'aria-owns': groupId,
@@ -391,7 +438,7 @@ function ResultRow({ row, id, groupId, t, now, choosing, active, selected, curre
         h('span', { className: 'wsp-row-suffix' }, shortenPath(workspace.path)),
       ) : h('span', { className: 'wsp-row-title' }, title),
       hasSearchMeta ? h('span', { className: 'wsp-search-meta' },
-        h('span', { className: 'wsp-row-path' }, session?.workspace || session?.path),
+        tree ? null : h('span', { className: 'wsp-row-path' }, session?.workspace || session?.path),
         session?.snippet ? h('span', { className: 'wsp-row-path wsp-session-snippet' }, session.snippet) : null,
       ) : null,
     ),

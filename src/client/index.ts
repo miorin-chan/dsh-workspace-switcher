@@ -42,6 +42,7 @@ import type {} from '@deepseek-ai/dsh-api-session-controller/client'
 import type {} from '@deepseek-ai/dsh-client-ui-layout/client'
 import * as React from 'react'
 
+import { createGroupingPreferences, createGroupingRegistry, activeGrouping } from './grouping'
 import { NS } from './labels'
 import { buildRows, filterRows, relativeTime, shortenPath, toMillis, SHORTLIST } from './model'
 import { SwitcherOverlay, type NavigationActions } from './navigation'
@@ -61,9 +62,14 @@ export function apply(ctx: Context): void {
   ctx.effect(() => registerLocale(ctx), `${NS}: locale`)
 
   const controls = createSwitcherControls()
+  const groupings = createGroupingRegistry()
+  const groupingPreferences = createGroupingPreferences()
+  ctx.provide('workspaceSwitcherGrouping', { register: groupings.register })
   const injected = heroInjection(ctx)
   const actions: NavigationActions = {
     controls,
+    groupings,
+    groupingPreferences,
     statusLabel: ctx.locale.bind('workspace'),
     searchContent: (query, signal) => ctx.sessions.search(query, signal),
     openSession: id => ctx.uiWorkspace.openSession(id),
@@ -104,6 +110,9 @@ export function apply(ctx: Context): void {
 /** Pure model helpers the offline tests drive directly. */
 export const __test = {
   SHORTLIST,
+  createGroupingRegistry,
+  createGroupingPreferences,
+  activeGrouping,
   buildRows,
   buildNavigation,
   filterTree,

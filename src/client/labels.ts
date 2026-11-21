@@ -58,6 +58,9 @@ export type LabelKey =
   | 'sessions.other'
   | 'sessionSearch'
   | 'workspaceTree'
+  | 'group.options'
+  | 'group.flat'
+  | 'group.failed'
   | 'searchWorkspaceTree'
   | 'untitledSession'
   | 'ungrouped'
@@ -83,6 +86,9 @@ export type LabelDict = Record<LabelKey, string>
 export type TranslateSeat = (key: LabelKey, params?: Record<string, unknown>) => string
 
 const en: LabelDict = {
+  "group.options": "View options",
+  "group.flat": "Flat sessions",
+  "group.failed": "Could not apply this grouping. Showing the workspace tree.",
   "defaultName": "Default workspace",
   "search.placeholder": "Search workspaces",
   "search.label": "Search workspaces",
@@ -148,6 +154,9 @@ const en: LabelDict = {
 }
 
 const zh: LabelDict = {
+  "group.options": "视图选项",
+  "group.flat": "平铺会话",
+  "group.failed": "无法应用此分组，已显示工作区树",
   "defaultName": "默认工作区",
   "search.placeholder": "搜索工作区",
   "search.label": "搜索工作区",
@@ -213,6 +222,9 @@ const zh: LabelDict = {
 }
 
 const ja: LabelDict = {
+  "group.options": "表示オプション",
+  "group.flat": "セッション一覧",
+  "group.failed": "このグループ化を適用できなかったため、ワークスペースツリーを表示しています。",
   "defaultName": "デフォルトのワークスペース",
   "search.placeholder": "ワークスペースを検索",
   "search.label": "ワークスペースを検索",
@@ -278,6 +290,9 @@ const ja: LabelDict = {
 }
 
 const de: LabelDict = {
+  "group.options": "Ansichtsoptionen",
+  "group.flat": "Flache Sitzungsliste",
+  "group.failed": "Die Gruppierung konnte nicht angewendet werden. Der Arbeitsbereichsbaum wird angezeigt.",
   "defaultName": "Standardarbeitsbereich",
   "search.placeholder": "Arbeitsbereiche durchsuchen",
   "search.label": "Arbeitsbereiche durchsuchen",
@@ -343,6 +358,9 @@ const de: LabelDict = {
 }
 
 const es: LabelDict = {
+  "group.options": "Opciones de vista",
+  "group.flat": "Lista de sesiones",
+  "group.failed": "No se pudo aplicar la agrupación. Se muestra el árbol de espacios de trabajo.",
   "defaultName": "Espacio de trabajo predeterminado",
   "search.placeholder": "Buscar espacios de trabajo",
   "search.label": "Buscar espacios de trabajo",
@@ -408,6 +426,9 @@ const es: LabelDict = {
 }
 
 const fr: LabelDict = {
+  "group.options": "Options d’affichage",
+  "group.flat": "Liste des sessions",
+  "group.failed": "Impossible d’appliquer ce regroupement. L’arborescence des espaces de travail est affichée.",
   "defaultName": "Espace de travail par défaut",
   "search.placeholder": "Rechercher des espaces de travail",
   "search.label": "Rechercher des espaces de travail",
@@ -473,6 +494,9 @@ const fr: LabelDict = {
 }
 
 const pt: LabelDict = {
+  "group.options": "Opções de visualização",
+  "group.flat": "Lista de sessões",
+  "group.failed": "Não foi possível aplicar este agrupamento. A árvore de espaços de trabalho está sendo exibida.",
   "defaultName": "Área de trabalho padrão",
   "search.placeholder": "Pesquisar áreas de trabalho",
   "search.label": "Pesquisar áreas de trabalho",
@@ -538,6 +562,9 @@ const pt: LabelDict = {
 }
 
 const ru: LabelDict = {
+  "group.options": "Параметры вида",
+  "group.flat": "Список сессий",
+  "group.failed": "Не удалось применить группировку. Показано дерево рабочих областей.",
   "defaultName": "Рабочее пространство по умолчанию",
   "search.placeholder": "Поиск рабочих пространств",
   "search.label": "Поиск рабочих пространств",

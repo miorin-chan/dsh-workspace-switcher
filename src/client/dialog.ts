@@ -10,7 +10,7 @@ const h = React.createElement
 export function trapTab(event: { key: string; shiftKey: boolean; preventDefault(): void }, panel: HTMLElement | null): void {
   if (event.key !== 'Tab' || panel === null) return
   const items = panel.querySelectorAll<HTMLElement>(
-    'button:not([disabled]):not([tabindex="-1"]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    'button:not([disabled]):not([tabindex="-1"]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
   )
   const first = items[0]
   const last = items[items.length - 1]
@@ -33,6 +33,7 @@ interface SwitcherDialogProps {
   readonly panelRef: RefObject<HTMLDivElement>
   readonly busy: boolean
   readonly search: ReactNode
+  readonly toolbar?: ReactNode
   readonly body: ReactNode
   readonly status?: ReactNode
   readonly footer: ReactNode
@@ -43,7 +44,7 @@ interface SwitcherDialogProps {
 }
 
 export function SwitcherDialog({
-  title, subtitle, panelRef, busy, search, body, status, footer, t, onClose, onBack, onKeyDown,
+  title, subtitle, panelRef, busy, search, toolbar, body, status, footer, t, onClose, onBack, onKeyDown,
 }: SwitcherDialogProps): ReactNode {
   const titleId = React.useId()
   React.useEffect(() => {
@@ -86,7 +87,7 @@ export function SwitcherDialog({
             'aria-label': t('close'), title: t('close'), onClick: onClose,
           }, h(CloseGlyph, { size: 14 })),
         ),
-        h('div', { className: 'wsp-dialog-search' }, search),
+        h('div', { className: 'wsp-dialog-search' }, search, toolbar),
         h('div', { className: 'wsp-dialog-body' }, body),
         status,
         h('div', { className: 'wsp-dialog-foot' }, footer),

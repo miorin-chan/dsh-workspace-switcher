@@ -47,9 +47,70 @@ __export(index_exports, {
 module.exports = __toCommonJS(index_exports);
 var React6 = __toESM(require("react"), 1);
 
+// src/client/grouping.ts
+var FLAT = "flat";
+var WORKSPACES = "workspace";
+var WORKSPACE_TREE = "workspace-tree";
+var preferenceKey = "dsh-workspace-welcome-switcher.grouping";
+function createGroupingRegistry() {
+  let snapshot = [];
+  const listeners = /* @__PURE__ */ new Set();
+  const publish = (next) => {
+    snapshot = next;
+    for (const listener of listeners) listener();
+  };
+  return {
+    getSnapshot: () => snapshot,
+    subscribe(listener) {
+      listeners.add(listener);
+      return () => {
+        listeners.delete(listener);
+      };
+    },
+    register(grouping) {
+      if (!/^[a-z][a-z0-9-]*$/.test(grouping.id) || [FLAT, WORKSPACES, WORKSPACE_TREE].includes(grouping.id) || snapshot.some((entry2) => entry2.id === grouping.id)) {
+        throw new Error(`Invalid or already registered switcher grouping: ${grouping.id}`);
+      }
+      const entry = { ...grouping };
+      publish([...snapshot, entry]);
+      return () => {
+        if (snapshot.includes(entry)) publish(snapshot.filter((current) => current !== entry));
+      };
+    }
+  };
+}
+function activeGrouping(id, catalog, choosing) {
+  if (id === WORKSPACES || id === WORKSPACE_TREE || !choosing && id === FLAT || catalog.some((grouping) => grouping.id === id)) return id;
+  return WORKSPACE_TREE;
+}
+function createGroupingPreferences(storage = () => localStorage) {
+  let remembered = WORKSPACE_TREE;
+  try {
+    const saved = storage().getItem(preferenceKey);
+    if (saved && saved !== FLAT) remembered = saved;
+  } catch (error) {
+  }
+  return {
+    initial(mode, catalog) {
+      return mode === "sessions" ? FLAT : activeGrouping(remembered, catalog, true);
+    },
+    remember(id) {
+      if (id === FLAT) return;
+      remembered = id;
+      try {
+        storage().setItem(preferenceKey, id);
+      } catch (error) {
+      }
+    }
+  };
+}
+
 // src/client/labels.ts
 var NS = "dsh-workspace-welcome-switcher";
 var en = {
+  "group.options": "View options",
+  "group.flat": "Flat sessions",
+  "group.failed": "Could not apply this grouping. Showing the workspace tree.",
   "defaultName": "Default workspace",
   "search.placeholder": "Search workspaces",
   "search.label": "Search workspaces",
@@ -114,6 +175,9 @@ var en = {
   renameNamedWorkspace: "Rename {name}"
 };
 var zh = {
+  "group.options": "\u89C6\u56FE\u9009\u9879",
+  "group.flat": "\u5E73\u94FA\u4F1A\u8BDD",
+  "group.failed": "\u65E0\u6CD5\u5E94\u7528\u6B64\u5206\u7EC4\uFF0C\u5DF2\u663E\u793A\u5DE5\u4F5C\u533A\u6811",
   "defaultName": "\u9ED8\u8BA4\u5DE5\u4F5C\u533A",
   "search.placeholder": "\u641C\u7D22\u5DE5\u4F5C\u533A",
   "search.label": "\u641C\u7D22\u5DE5\u4F5C\u533A",
@@ -178,6 +242,9 @@ var zh = {
   renameNamedWorkspace: "\u91CD\u547D\u540D\u300C{name}\u300D"
 };
 var ja = {
+  "group.options": "\u8868\u793A\u30AA\u30D7\u30B7\u30E7\u30F3",
+  "group.flat": "\u30BB\u30C3\u30B7\u30E7\u30F3\u4E00\u89A7",
+  "group.failed": "\u3053\u306E\u30B0\u30EB\u30FC\u30D7\u5316\u3092\u9069\u7528\u3067\u304D\u306A\u304B\u3063\u305F\u305F\u3081\u3001\u30EF\u30FC\u30AF\u30B9\u30DA\u30FC\u30B9\u30C4\u30EA\u30FC\u3092\u8868\u793A\u3057\u3066\u3044\u307E\u3059\u3002",
   "defaultName": "\u30C7\u30D5\u30A9\u30EB\u30C8\u306E\u30EF\u30FC\u30AF\u30B9\u30DA\u30FC\u30B9",
   "search.placeholder": "\u30EF\u30FC\u30AF\u30B9\u30DA\u30FC\u30B9\u3092\u691C\u7D22",
   "search.label": "\u30EF\u30FC\u30AF\u30B9\u30DA\u30FC\u30B9\u3092\u691C\u7D22",
@@ -242,6 +309,9 @@ var ja = {
   renameNamedWorkspace: "\u300C{name}\u300D\u306E\u540D\u524D\u3092\u5909\u66F4"
 };
 var de = {
+  "group.options": "Ansichtsoptionen",
+  "group.flat": "Flache Sitzungsliste",
+  "group.failed": "Die Gruppierung konnte nicht angewendet werden. Der Arbeitsbereichsbaum wird angezeigt.",
   "defaultName": "Standardarbeitsbereich",
   "search.placeholder": "Arbeitsbereiche durchsuchen",
   "search.label": "Arbeitsbereiche durchsuchen",
@@ -306,6 +376,9 @@ var de = {
   renameNamedWorkspace: "{name} umbenennen"
 };
 var es = {
+  "group.options": "Opciones de vista",
+  "group.flat": "Lista de sesiones",
+  "group.failed": "No se pudo aplicar la agrupaci\xF3n. Se muestra el \xE1rbol de espacios de trabajo.",
   "defaultName": "Espacio de trabajo predeterminado",
   "search.placeholder": "Buscar espacios de trabajo",
   "search.label": "Buscar espacios de trabajo",
@@ -370,6 +443,9 @@ var es = {
   renameNamedWorkspace: "Cambiar el nombre de {name}"
 };
 var fr = {
+  "group.options": "Options d\u2019affichage",
+  "group.flat": "Liste des sessions",
+  "group.failed": "Impossible d\u2019appliquer ce regroupement. L\u2019arborescence des espaces de travail est affich\xE9e.",
   "defaultName": "Espace de travail par d\xE9faut",
   "search.placeholder": "Rechercher des espaces de travail",
   "search.label": "Rechercher des espaces de travail",
@@ -434,6 +510,9 @@ var fr = {
   renameNamedWorkspace: "Renommer {name}"
 };
 var pt = {
+  "group.options": "Op\xE7\xF5es de visualiza\xE7\xE3o",
+  "group.flat": "Lista de sess\xF5es",
+  "group.failed": "N\xE3o foi poss\xEDvel aplicar este agrupamento. A \xE1rvore de espa\xE7os de trabalho est\xE1 sendo exibida.",
   "defaultName": "\xC1rea de trabalho padr\xE3o",
   "search.placeholder": "Pesquisar \xE1reas de trabalho",
   "search.label": "Pesquisar \xE1reas de trabalho",
@@ -498,6 +577,9 @@ var pt = {
   renameNamedWorkspace: "Renomear {name}"
 };
 var ru = {
+  "group.options": "\u041F\u0430\u0440\u0430\u043C\u0435\u0442\u0440\u044B \u0432\u0438\u0434\u0430",
+  "group.flat": "\u0421\u043F\u0438\u0441\u043E\u043A \u0441\u0435\u0441\u0441\u0438\u0439",
+  "group.failed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u0433\u0440\u0443\u043F\u043F\u0438\u0440\u043E\u0432\u043A\u0443. \u041F\u043E\u043A\u0430\u0437\u0430\u043D\u043E \u0434\u0435\u0440\u0435\u0432\u043E \u0440\u0430\u0431\u043E\u0447\u0438\u0445 \u043E\u0431\u043B\u0430\u0441\u0442\u0435\u0439.",
   "defaultName": "\u0420\u0430\u0431\u043E\u0447\u0435\u0435 \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E \u043F\u043E \u0443\u043C\u043E\u043B\u0447\u0430\u043D\u0438\u044E",
   "search.placeholder": "\u041F\u043E\u0438\u0441\u043A \u0440\u0430\u0431\u043E\u0447\u0438\u0445 \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432",
   "search.label": "\u041F\u043E\u0438\u0441\u043A \u0440\u0430\u0431\u043E\u0447\u0438\u0445 \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432",
@@ -1153,6 +1235,17 @@ var CSS = `
   padding: 0 24px 12px;
   border-bottom: .5px solid var(--dsw-alias-border-l3);
 }
+.wsp-navigation-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
+.wsp-group-label {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  color: var(--dsw-alias-label-secondary); font-size: 12px;
+}
+.wsp-group-select {
+  max-width: 100%; min-width: 0; min-height: 28px; padding: 3px 8px; border-radius: var(--dsw-radius-xs, 6px);
+  border: 1px solid var(--dsw-alias-border-l3);
+  color: var(--dsw-alias-label-primary); background: var(--dsw-alias-interactive-bg-hover); font: inherit;
+}
+.wsp-group-select:focus-visible { outline: 2px solid var(--dsw-alias-state-business-primary); outline-offset: 1px; }
 .wsp-dialog-search .wsp-search {
   height: 32px; margin: 0; padding: 0 8px;
   border: .5px solid var(--dsw-alias-border-l4);
@@ -1277,7 +1370,7 @@ var h3 = React3.createElement;
 function trapTab(event, panel) {
   if (event.key !== "Tab" || panel === null) return;
   const items = panel.querySelectorAll(
-    'button:not([disabled]):not([tabindex="-1"]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    'button:not([disabled]):not([tabindex="-1"]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
   );
   const first = items[0];
   const last = items[items.length - 1];
@@ -1299,6 +1392,7 @@ function SwitcherDialog({
   panelRef,
   busy,
   search,
+  toolbar,
   body,
   status,
   footer,
@@ -1365,7 +1459,7 @@ function SwitcherDialog({
             onClick: onClose
           }, h3(CloseGlyph, { size: 14 }))
         ),
-        h3("div", { className: "wsp-dialog-search" }, search),
+        h3("div", { className: "wsp-dialog-search" }, search, toolbar),
         h3("div", { className: "wsp-dialog-body" }, body),
         status,
         h3("div", { className: "wsp-dialog-foot" }, footer)
@@ -1386,50 +1480,46 @@ function parentPath(path) {
 }
 function workspaceRoots(branches) {
   const byPath = /* @__PURE__ */ new Map();
-  const childPaths = /* @__PURE__ */ new Map();
   for (const branch of branches) {
     const path = branch.workspace?.path;
-    if (!path) continue;
-    const key = directoryKey(path);
-    if (!byPath.has(key)) byPath.set(key, branch);
-    for (let child = key, parent = parentPath(child); parent !== void 0; child = parent, parent = parentPath(child)) {
-      const siblings = childPaths.get(parent) ?? /* @__PURE__ */ new Set();
-      siblings.add(child);
-      childPaths.set(parent, siblings);
+    if (path) {
+      const key = directoryKey(path);
+      if (!byPath.has(key)) byPath.set(key, branch);
     }
   }
   const roots = [];
-  const attached = /* @__PURE__ */ new Set();
-  const attach = (branch, path) => {
-    if (attached.has(branch)) return;
-    attached.add(branch);
-    for (let parent = path === void 0 ? void 0 : parentPath(path); parent !== void 0; parent = parentPath(parent)) {
-      let owner = byPath.get(parent);
-      if (owner === void 0 && parent !== "" && (childPaths.get(parent)?.size ?? 0) > 1) {
-        owner = {
-          key: `directory:${parent}`,
-          directory: { title: parent.split("/").at(-1) || parent, path: parent },
-          workspace: void 0,
-          children: [],
-          sessions: []
-        };
-        byPath.set(parent, owner);
-      }
-      if (owner !== void 0) {
-        attach(owner, parent);
-        owner.children.push(branch);
-        return;
-      }
-    }
-    roots.push(branch);
-  };
   for (const branch of branches) {
     const path = branch.workspace?.path;
-    attach(branch, path ? directoryKey(path) : void 0);
+    let parent = path ? parentPath(directoryKey(path)) : void 0;
+    while (parent !== void 0 && !byPath.has(parent)) parent = parentPath(parent);
+    const owner = parent === void 0 ? void 0 : byPath.get(parent);
+    if (owner === void 0) roots.push(branch);
+    else owner.children.push(branch);
   }
   return roots;
 }
-function buildNavigation(snapshot, catalog, defaultName, untitled) {
+function projectedRoots(grouping, branches) {
+  const input = [...branches.values()].flatMap(({ workspace }) => workspace === void 0 ? [] : [{ workspaceId: workspace.id, path: workspace.path }]);
+  const seen = /* @__PURE__ */ new Set();
+  const convert = (node) => {
+    const key = node.kind === "workspace" ? `workspace:${node.workspaceId}` : `directory:${node.key}`;
+    if (seen.has(key)) throw new Error(`Repeated node: ${key}`);
+    seen.add(key);
+    const children = (node.children ?? []).map(convert);
+    if (node.kind === "directory") {
+      return { key, directory: { title: node.title, path: node.path }, workspace: void 0, sessions: [], children };
+    }
+    const branch = branches.get(node.workspaceId);
+    if (branch === void 0) throw new Error(`Unknown workspace: ${node.workspaceId}`);
+    return { ...branch, children };
+  };
+  const roots = grouping.project(input).map(convert);
+  if (input.some(({ workspaceId }) => !seen.has(`workspace:${workspaceId}`))) {
+    throw new Error("A registered workspace is missing from the grouping");
+  }
+  return roots;
+}
+function buildNavigation(snapshot, catalog, defaultName, untitled, groupId, grouping) {
   const { byId } = catalog;
   const workspaceRows = buildRows(snapshot.items, byId, defaultName);
   const branchById = new Map(workspaceRows.map((workspace) => [workspace.id, {
@@ -1465,14 +1555,25 @@ function buildNavigation(snapshot, catalog, defaultName, untitled) {
     });
   }
   sessions.sort((a, b) => b.latest - a.latest || a.id.localeCompare(b.id));
-  const roots = workspaceRoots([...branchById.values()]);
   const ungrouped = { key: "ungrouped", workspace: void 0, children: [], sessions: [] };
   for (const session of sessions) {
     const branch = session.workspaceId === void 0 ? ungrouped : branchById.get(session.workspaceId) ?? ungrouped;
     branch.sessions.push(session);
   }
+  const branches = [...branchById.values()];
+  let roots;
+  let groupingError = false;
+  if (grouping !== void 0) {
+    try {
+      roots = projectedRoots(grouping, branchById);
+    } catch (error) {
+      console.warn(`[workspace switcher] Grouping ${grouping.id} failed`, error);
+      groupingError = true;
+    }
+  }
+  roots ?? (roots = groupId === WORKSPACES ? branches : workspaceRoots(branches));
   if (ungrouped.sessions.length > 0) roots.push(ungrouped);
-  return { roots, sessions, currentId };
+  return { roots, sessions, currentId, groupingError };
 }
 function searchSessions(rows, query, hits) {
   const snippets = new Map(hits.map((hit) => [hit.sessionId, hit.snippet]));
@@ -1489,14 +1590,18 @@ function searchSessions(rows, query, hits) {
     return row === void 0 || localIds.has(id) ? [] : [row];
   })].map((row) => ({ ...row, snippet: snippets.get(row.id) }));
 }
-function filterTree(roots, query, choosing, ungrouped) {
-  return roots.flatMap((branch) => {
-    if (choosing && branch.workspace === void 0 && branch.directory === void 0) return [];
-    const matches = filterRows([branch.workspace ?? branch.directory ?? { title: ungrouped, path: "" }], query).length > 0;
-    const children = filterTree(branch.children, matches ? "" : query, choosing, ungrouped);
-    const sessions = choosing ? [] : filterRows(branch.sessions, matches ? "" : query);
-    return matches || children.length > 0 || sessions.length > 0 ? [{ branch, children, sessions }] : [];
-  });
+function filterTree(roots, query, choosing, ungrouped, hits = []) {
+  const bySession = new Map(hits.map((hit) => [hit.sessionId, hit.snippet]));
+  return matchBranches(roots, query);
+  function matchBranches(branches, text) {
+    return branches.flatMap((branch) => {
+      if (choosing && branch.workspace === void 0 && branch.directory === void 0) return [];
+      const matches = filterRows([branch.workspace ?? branch.directory ?? { title: ungrouped, path: "" }], text).length > 0;
+      const children = matchBranches(branch.children, matches ? "" : text);
+      const hits2 = choosing ? [] : branch.sessions.filter((session) => matches || bySession.has(session.id) || filterRows([session], text).length > 0).map((session) => ({ ...session, snippet: bySession.get(session.id) }));
+      return matches || children.length > 0 || hits2.length > 0 ? [{ branch, children, sessions: hits2 }] : [];
+    });
+  }
 }
 function initialExpansion(roots, workspaceId, currentId) {
   for (const branch of roots) {
@@ -1518,6 +1623,8 @@ function SwitcherOverlay(props) {
 function NavigationDialog({
   mode,
   controls,
+  groupings,
+  groupingPreferences,
   t,
   useWorkspaces,
   useSessions,
@@ -1535,17 +1642,35 @@ function NavigationDialog({
   const sessions = useSessions((state) => state);
   const showMain = usePanelInfo((state) => state.activePanelId === null);
   const canAdd = useRemoteAccess("workspace/create");
-  const tree = mode === "workspaces";
-  const hero = tree && showMain ? controls.hero() : void 0;
+  const hero = mode === "workspaces" && showMain ? controls.hero() : void 0;
   const choosing = hero !== void 0;
-  const { roots, sessions: sessionRows, currentId } = useMemo(
-    () => buildNavigation(workspaces, sessions, t("defaultName"), t("untitledSession")),
-    [workspaces, sessions, t]
+  const catalog = useSyncExternalStore(groupings.subscribe, groupings.getSnapshot);
+  const [groupId, setGroupId] = useState(() => groupingPreferences.initial(mode, catalog));
+  const preferenceChoice = useRef(void 0);
+  const groupBy = activeGrouping(groupId, catalog, choosing);
+  const grouping = catalog.find((entry) => entry.id === groupBy);
+  const tree = groupBy !== FLAT;
+  const { roots, sessions: sessionRows, currentId, groupingError } = useMemo(
+    () => buildNavigation(workspaces, sessions, t("defaultName"), t("untitledSession"), groupBy, grouping),
+    [workspaces, sessions, t, groupBy, grouping]
   );
+  const displayedGroup = groupingError ? WORKSPACE_TREE : groupBy;
+  useEffect2(() => {
+    if (preferenceChoice.current !== groupId) return;
+    preferenceChoice.current = void 0;
+    if (displayedGroup === groupId) groupingPreferences.remember(groupId);
+  }, [displayedGroup, groupId, groupingPreferences]);
+  const choices = [
+    ...!choosing ? [{ id: FLAT, label: t("group.flat") }] : [],
+    { id: WORKSPACES, label: t("list.label") },
+    { id: WORKSPACE_TREE, label: t("workspaceTree") },
+    ...catalog.map((entry) => ({ id: entry.id, label: entry.label() }))
+  ];
   const [query, setQuery] = useState("");
   const [activeKey, setActiveKey] = useState();
   const [addedWorkspaceId, setAddedWorkspaceId] = useState();
-  const [expanded, setExpanded] = useState(() => /* @__PURE__ */ new Map());
+  const [expansions, setExpansions] = useState(() => /* @__PURE__ */ new Map());
+  const expanded = expansions.get(displayedGroup) ?? /* @__PURE__ */ new Map();
   const [renaming, setRenaming] = useState();
   const [writeKind, setWriteKind] = useState();
   const busy = writeKind !== void 0;
@@ -1558,7 +1683,7 @@ function NavigationDialog({
   const panelRef = useRef(null);
   const listId = useId2();
   const trimmed = query.trim();
-  const remoteQuery = tree ? "" : trimmed.replaceAll("\0", "");
+  const remoteQuery = choosing ? "" : trimmed.replaceAll("\0", "");
   const remote = useContentSearch(remoteQuery, searchContent);
   const workspaceToReveal = addedWorkspaceId ?? hero?.selectedId;
   const autoExpanded = useMemo(() => new Set(initialExpansion(
@@ -1570,7 +1695,7 @@ function NavigationDialog({
     () => new Set(initialExpansion(roots, hero?.selectedId, currentId)),
     [roots, hero?.selectedId, currentId]
   );
-  const matches = tree ? filterTree(roots, trimmed, choosing, t("ungrouped")) : [];
+  const matches = tree ? filterTree(roots, trimmed, choosing, t("ungrouped"), remote.hits) : [];
   const treeRows = tree ? flattenTree(matches, expanded, autoExpanded, trimmed !== "", t) : [];
   const flatRows = tree ? [] : searchSessions(sessionRows, trimmed, remote.hits);
   const rows = tree ? treeRows : flatRows.map((session) => ({
@@ -1588,7 +1713,7 @@ function NavigationDialog({
   const index = activeIndex >= 0 ? activeIndex : trimmed !== "" && rows.length > 0 ? Math.max(firstChoice, 0) : -1;
   const active = rows[index];
   const optionId = (i) => `${listId}-${i}`;
-  const title = t(tree ? choosing ? "dialog.title" : "workspaceTree" : "sessionSearch");
+  const title = choosing ? t("dialog.title") : tree ? choices.find((choice) => choice.id === displayedGroup)?.label ?? t("workspaceTree") : t("sessionSearch");
   const pending = rows.length === 0 && (remote.pending || workspaces.phase !== "ready" && workspaces.state !== "error" || !choosing && sessions.phase !== "ready");
   React4.useLayoutEffect(() => {
     const abort = new AbortController();
@@ -1606,16 +1731,24 @@ function NavigationDialog({
     const frame = window.requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
     return () => window.cancelAnimationFrame(frame);
   }, [renameId]);
+  React4.useLayoutEffect(() => {
+    if (document.activeElement === document.body) {
+      inputRef.current?.focus({ preventScroll: true });
+    }
+  }, [displayedGroup]);
   useEffect2(() => {
     panelRef.current?.querySelector('[data-active="true"]')?.scrollIntoView({ block: "nearest" });
   }, [active?.key]);
   const changeQuery = (value) => {
     setQuery(value);
     setActiveKey(void 0);
-    setExpanded(/* @__PURE__ */ new Map());
+    setExpansions(/* @__PURE__ */ new Map());
   };
   const toggle = (row, open = !row.expanded) => {
-    if (row.expandable) setExpanded((previous) => new Map(previous).set(row.key, open));
+    if (row.expandable) setExpansions((previous) => new Map(previous).set(
+      displayedGroup,
+      new Map(previous.get(displayedGroup)).set(row.key, open)
+    ));
   };
   const choose = (row) => {
     if (pendingWrite.current) return;
@@ -1647,6 +1780,25 @@ function NavigationDialog({
       pendingWrite.current = false;
       if (mounted.current) setWriteKind(void 0);
     }
+  };
+  const add = () => {
+    if (addWorkspace === void 0) return;
+    void write("add", t("addFailed"), async () => {
+      const signal = lifetime.current?.signal;
+      if (signal === void 0) return;
+      const id = await addWorkspace(signal);
+      if (!mounted.current || id === void 0) return;
+      if (choosing && controls.hero() !== void 0) {
+        controls.pickWorkspace(id);
+        controls.close();
+        return;
+      }
+      changeQuery("");
+      if (!tree) setGroupId(groupingPreferences.initial("workspaces", groupings.getSnapshot()));
+      setAddedWorkspaceId(id);
+      setActiveKey(`workspace:${id}`);
+      inputRef.current?.focus({ preventScroll: true });
+    });
   };
   const onKeyDown = (event) => {
     if (event.nativeEvent.isComposing || event.keyCode === 229) return;
@@ -1704,12 +1856,12 @@ function NavigationDialog({
     const renderGroup = (parentKey) => (children.get(parentKey) ?? []).map((i) => {
       const row = rows[i];
       const id = optionId(i);
-      const groupId = children.has(row.key) ? `${id}-children` : void 0;
+      const groupId2 = children.has(row.key) ? `${id}-children` : void 0;
       const option = h4(ResultRow, {
         key: row.key,
         row,
         id,
-        groupId,
+        groupId: groupId2,
         t,
         now,
         choosing,
@@ -1732,7 +1884,7 @@ function NavigationDialog({
         "div",
         { key: row.key, role: "presentation" },
         option,
-        groupId === void 0 ? null : h4("div", { id: groupId, role: "group", className: "wsp-tree-children" }, renderGroup(row.key))
+        groupId2 === void 0 ? null : h4("div", { id: groupId2, role: "group", className: "wsp-tree-children" }, renderGroup(row.key))
       );
     });
     return renderGroup();
@@ -1787,6 +1939,7 @@ function NavigationDialog({
     status: h4(
       React4.Fragment,
       null,
+      groupingError ? h4("div", { className: "wsp-warning", role: "status" }, t("group.failed")) : null,
       catalogError && rows.length > 0 ? h4("div", { className: "wsp-warning", role: "status" }, t("listUnavailable")) : null,
       status === void 0 ? null : h4(ErrorBanner, {
         ...status,
@@ -1794,29 +1947,33 @@ function NavigationDialog({
         onDismiss: error === void 0 ? remote.dismiss : () => setError(void 0)
       })
     ),
+    toolbar: renaming === void 0 ? h4(
+      "div",
+      { className: "wsp-navigation-toolbar" },
+      h4(
+        "label",
+        { className: "wsp-group-label" },
+        t("group.options"),
+        h4("select", {
+          className: "wsp-group-select",
+          value: displayedGroup,
+          disabled: busy,
+          onChange: (event) => {
+            const id = event.currentTarget.value;
+            preferenceChoice.current = id;
+            setGroupId(id);
+            setActiveKey(void 0);
+          }
+        }, choices.map((choice) => h4("option", { key: choice.id, value: choice.id }, choice.label)))
+      ),
+      canAdd && addWorkspace !== void 0 ? h4(AddWorkspaceButton, { busy: writeKind === "add", t, onClick: add }) : null
+    ) : null,
     footer: h4(
       React4.Fragment,
       null,
       h4(
         "div",
         { className: "wsp-navigation-actions" },
-        tree && canAdd && addWorkspace !== void 0 && renaming === void 0 ? h4(AddWorkspaceButton, { busy: writeKind === "add", t, onClick: () => {
-          void write("add", t("addFailed"), async () => {
-            const signal = lifetime.current?.signal;
-            if (signal === void 0) return;
-            const id = await addWorkspace(signal);
-            if (!mounted.current || id === void 0) return;
-            if (choosing && controls.hero() !== void 0) {
-              controls.pickWorkspace(id);
-              controls.close();
-            } else {
-              changeQuery("");
-              setAddedWorkspaceId(id);
-              setActiveKey(`workspace:${id}`);
-              inputRef.current?.focus({ preventScroll: true });
-            }
-          });
-        } }) : null,
         choosing || focusedWorkspace === void 0 || renaming !== void 0 ? null : h4(RenameButton, {
           useWorkspaceAccess,
           workspaceId: focusedWorkspace.id,
@@ -1897,7 +2054,7 @@ function ResultRow({
   const title = branch?.title ?? session?.title;
   const path = workspace?.path ?? directory?.path ?? session?.path;
   const splitDisclosure = choosing && workspace !== void 0 && branch?.expandable === true;
-  const hasSearchMeta = !tree && Boolean(session?.workspace || session?.path || session?.snippet);
+  const hasSearchMeta = Boolean(session?.snippet || !tree && (session?.workspace || session?.path));
   const option = h4(
     "button",
     {
@@ -1942,7 +2099,7 @@ function ResultRow({
       hasSearchMeta ? h4(
         "span",
         { className: "wsp-search-meta" },
-        h4("span", { className: "wsp-row-path" }, session?.workspace || session?.path),
+        tree ? null : h4("span", { className: "wsp-row-path" }, session?.workspace || session?.path),
         session?.snippet ? h4("span", { className: "wsp-row-path wsp-session-snippet" }, session.snippet) : null
       ) : null
     ),
@@ -2553,9 +2710,14 @@ var inject = ["slots", "locale", "uiWorkspace", "workspaces", "remote", "session
 function apply(ctx) {
   ctx.effect(() => registerLocale(ctx), `${NS}: locale`);
   const controls = createSwitcherControls();
+  const groupings = createGroupingRegistry();
+  const groupingPreferences = createGroupingPreferences();
+  ctx.provide("workspaceSwitcherGrouping", { register: groupings.register });
   const injected = heroInjection(ctx);
   const actions = {
     controls,
+    groupings,
+    groupingPreferences,
     statusLabel: ctx.locale.bind("workspace"),
     searchContent: (query, signal) => ctx.sessions.search(query, signal),
     openSession: (id) => ctx.uiWorkspace.openSession(id),
@@ -2595,6 +2757,9 @@ function apply(ctx) {
 }
 var __test = {
   SHORTLIST,
+  createGroupingRegistry,
+  createGroupingPreferences,
+  activeGrouping,
   buildRows,
   buildNavigation,
   filterTree,

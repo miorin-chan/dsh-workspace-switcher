@@ -10,7 +10,7 @@ Requires DeepSeek Harness 0.2.2-rc.3 or newer.
 
 - **Mod+K** opens recent sessions.
   Search by title, workspace, path, ID, or message content, then open a result.
-- **Mod+Shift+K** opens the workspace tree.
+- **Mod+Shift+K** opens the last selected workspace grouping and defaults to the workspace tree.
   Expand a workspace to open one of its sessions, or select a workspace to rename it.
   On a New Session screen, choosing a workspace switches the draft to that workspace.
 - The workspace chip on a New Session screen opens the searchable five-row shortlist.
@@ -18,6 +18,9 @@ Requires DeepSeek Harness 0.2.2-rc.3 or newer.
 
 Use ↑ and ↓ to move, ← and → to collapse or expand a focused tree row, Enter to activate, and Esc to dismiss.
 Mod is Command on macOS and Ctrl elsewhere.
+
+Open **View options** in the dialog to choose a grouping.
+The optional [directory tree plugin](../dsh-workspace-file-tree/README.md) adds a directory tree to this menu.
 
 ## Limits
 
