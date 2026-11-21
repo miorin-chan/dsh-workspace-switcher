@@ -49,6 +49,7 @@ import { SwitcherOverlay, type NavigationActions } from './navigation'
 import { buildNavigation, filterTree, initialExpansion, searchSessions } from './navigation-model'
 import { HERO_SLOT, heroInjection, registerLocale } from './remote'
 import { createSwitcherControls, installSwitcherShortcuts } from './shortcuts'
+import { createViewPreferences, moveSession } from './view-preferences'
 import { WorkspacePicker, type WorkspacePickerProps } from './view'
 
 /** Services this module needs before `apply` runs. */
@@ -70,9 +71,11 @@ export function apply(ctx: Context): void {
     controls,
     groupings,
     groupingPreferences,
+    viewPreferences: createViewPreferences(),
     statusLabel: ctx.locale.bind('workspace'),
     searchContent: (query, signal) => ctx.sessions.search(query, signal),
     openSession: id => ctx.uiWorkspace.openSession(id),
+    unarchiveSession: id => ctx.uiWorkspace.unarchiveSession(id),
     renameWorkspace: (id, title) => ctx.workspaces.rename(id, title),
   }
   ctx.effect(() => ctx.slots.inject('shell.overlay', () => ctx.slots.register({
@@ -112,6 +115,8 @@ export const __test = {
   SHORTLIST,
   createGroupingRegistry,
   createGroupingPreferences,
+  createViewPreferences,
+  moveSession,
   activeGrouping,
   buildRows,
   buildNavigation,

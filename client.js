@@ -3,6 +3,29 @@
  * do not edit by hand. React and the seeded platform modules come from the
  * host module table.
  */
+/*!
+MIT License
+
+Copyright (c) 2026 DeepSeek
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 window.__ModuleLoader__.load({
   id: '@miorin/dsh-workspace-welcome-switcher',
   factory(require) {
@@ -21,9 +44,9 @@ var __export = (target, all) => {
 };
 var __copyProps = (to, from, except, desc) => {
   if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    for (let key2 of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key2) && key2 !== except)
+        __defProp(to, key2, { get: () => from[key2], enumerable: !(desc = __getOwnPropDesc(from, key2)) || desc.enumerable });
   }
   return to;
 };
@@ -112,6 +135,18 @@ var en = {
   "group.heading": "Group by",
   "group.flat": "Flat sessions",
   "group.failed": "Could not apply this grouping. Showing the workspace tree.",
+  "order.heading": "Order by",
+  "order.manual": "Manual",
+  "order.updated": "Last updated",
+  "filter.heading": "Filter sessions",
+  "filter.hideArchived": "Hide archived",
+  "filter.showArchived": "All conversations (show archived)",
+  "filter.onlyArchived": "Archived only",
+  "session.unarchive": "Unarchive",
+  "session.archived": "Archived",
+  "session.unarchiveFailed": "Could not unarchive session",
+  "session.moveUp": "Move session up",
+  "session.moveDown": "Move session down",
   "defaultName": "Default workspace",
   "search.placeholder": "Search workspaces",
   "search.label": "Search workspaces",
@@ -180,6 +215,18 @@ var zh = {
   "group.heading": "\u5206\u7EC4\u65B9\u5F0F",
   "group.flat": "\u5E73\u94FA\u4F1A\u8BDD",
   "group.failed": "\u65E0\u6CD5\u5E94\u7528\u6B64\u5206\u7EC4\uFF0C\u5DF2\u663E\u793A\u5DE5\u4F5C\u533A\u6811",
+  "order.heading": "\u6392\u5E8F\u65B9\u5F0F",
+  "order.manual": "\u624B\u52A8\u6392\u5E8F",
+  "order.updated": "\u6700\u8FD1\u66F4\u65B0",
+  "filter.heading": "\u7B5B\u9009\u4F1A\u8BDD",
+  "filter.hideArchived": "\u9690\u85CF\u5DF2\u5F52\u6863",
+  "filter.showArchived": "\u5168\u90E8\u5BF9\u8BDD\uFF08\u663E\u793A\u5DF2\u5F52\u6863\uFF09",
+  "filter.onlyArchived": "\u4EC5\u663E\u793A\u5DF2\u5F52\u6863",
+  "session.unarchive": "\u53D6\u6D88\u5F52\u6863",
+  "session.archived": "\u5DF2\u5F52\u6863",
+  "session.unarchiveFailed": "\u65E0\u6CD5\u53D6\u6D88\u5F52\u6863",
+  "session.moveUp": "\u4E0A\u79FB\u4F1A\u8BDD",
+  "session.moveDown": "\u4E0B\u79FB\u4F1A\u8BDD",
   "defaultName": "\u9ED8\u8BA4\u5DE5\u4F5C\u533A",
   "search.placeholder": "\u641C\u7D22\u5DE5\u4F5C\u533A",
   "search.label": "\u641C\u7D22\u5DE5\u4F5C\u533A",
@@ -248,6 +295,18 @@ var ja = {
   "group.heading": "\u30B0\u30EB\u30FC\u30D7\u5316",
   "group.flat": "\u30BB\u30C3\u30B7\u30E7\u30F3\u4E00\u89A7",
   "group.failed": "\u3053\u306E\u30B0\u30EB\u30FC\u30D7\u5316\u3092\u9069\u7528\u3067\u304D\u306A\u304B\u3063\u305F\u305F\u3081\u3001\u30EF\u30FC\u30AF\u30B9\u30DA\u30FC\u30B9\u30C4\u30EA\u30FC\u3092\u8868\u793A\u3057\u3066\u3044\u307E\u3059\u3002",
+  "order.heading": "\u4E26\u3073\u9806",
+  "order.manual": "\u624B\u52D5",
+  "order.updated": "\u6700\u7D42\u66F4\u65B0",
+  "filter.heading": "\u30BB\u30C3\u30B7\u30E7\u30F3\u3092\u7D5E\u308A\u8FBC\u3080",
+  "filter.hideArchived": "\u30A2\u30FC\u30AB\u30A4\u30D6\u3092\u975E\u8868\u793A",
+  "filter.showArchived": "\u3059\u3079\u3066\u306E\u4F1A\u8A71\uFF08\u30A2\u30FC\u30AB\u30A4\u30D6\u3092\u8868\u793A\uFF09",
+  "filter.onlyArchived": "\u30A2\u30FC\u30AB\u30A4\u30D6\u306E\u307F",
+  "session.unarchive": "\u30A2\u30FC\u30AB\u30A4\u30D6\u3092\u89E3\u9664",
+  "session.archived": "\u30A2\u30FC\u30AB\u30A4\u30D6\u6E08\u307F",
+  "session.unarchiveFailed": "\u30BB\u30C3\u30B7\u30E7\u30F3\u306E\u30A2\u30FC\u30AB\u30A4\u30D6\u3092\u89E3\u9664\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F",
+  "session.moveUp": "\u30BB\u30C3\u30B7\u30E7\u30F3\u3092\u4E0A\u3078\u79FB\u52D5",
+  "session.moveDown": "\u30BB\u30C3\u30B7\u30E7\u30F3\u3092\u4E0B\u3078\u79FB\u52D5",
   "defaultName": "\u30C7\u30D5\u30A9\u30EB\u30C8\u306E\u30EF\u30FC\u30AF\u30B9\u30DA\u30FC\u30B9",
   "search.placeholder": "\u30EF\u30FC\u30AF\u30B9\u30DA\u30FC\u30B9\u3092\u691C\u7D22",
   "search.label": "\u30EF\u30FC\u30AF\u30B9\u30DA\u30FC\u30B9\u3092\u691C\u7D22",
@@ -316,6 +375,18 @@ var de = {
   "group.heading": "Gruppieren nach",
   "group.flat": "Flache Sitzungsliste",
   "group.failed": "Die Gruppierung konnte nicht angewendet werden. Der Arbeitsbereichsbaum wird angezeigt.",
+  "order.heading": "Sortieren nach",
+  "order.manual": "Manuell",
+  "order.updated": "Zuletzt aktualisiert",
+  "filter.heading": "Sitzungen filtern",
+  "filter.hideArchived": "Archiviert ausblenden",
+  "filter.showArchived": "Alle Gespr\xE4che (archiviert anzeigen)",
+  "filter.onlyArchived": "Nur archiviert",
+  "session.unarchive": "Dearchivieren",
+  "session.archived": "Archiviert",
+  "session.unarchiveFailed": "Sitzung konnte nicht dearchiviert werden",
+  "session.moveUp": "Sitzung nach oben verschieben",
+  "session.moveDown": "Sitzung nach unten verschieben",
   "defaultName": "Standardarbeitsbereich",
   "search.placeholder": "Arbeitsbereiche durchsuchen",
   "search.label": "Arbeitsbereiche durchsuchen",
@@ -384,6 +455,18 @@ var es = {
   "group.heading": "Agrupar por",
   "group.flat": "Lista de sesiones",
   "group.failed": "No se pudo aplicar la agrupaci\xF3n. Se muestra el \xE1rbol de espacios de trabajo.",
+  "order.heading": "Ordenar por",
+  "order.manual": "Manual",
+  "order.updated": "\xDAltima actualizaci\xF3n",
+  "filter.heading": "Filtrar sesiones",
+  "filter.hideArchived": "Ocultar archivado",
+  "filter.showArchived": "Todas las conversaciones (mostrar archivadas)",
+  "filter.onlyArchived": "S\xF3lo archivado",
+  "session.unarchive": "Desarchivar",
+  "session.archived": "Archivado",
+  "session.unarchiveFailed": "No se pudo desarchivar la sesi\xF3n",
+  "session.moveUp": "Mover sesi\xF3n hacia arriba",
+  "session.moveDown": "Mover sesi\xF3n hacia abajo",
   "defaultName": "Espacio de trabajo predeterminado",
   "search.placeholder": "Buscar espacios de trabajo",
   "search.label": "Buscar espacios de trabajo",
@@ -452,6 +535,18 @@ var fr = {
   "group.heading": "Regrouper par",
   "group.flat": "Liste des sessions",
   "group.failed": "Impossible d\u2019appliquer ce regroupement. L\u2019arborescence des espaces de travail est affich\xE9e.",
+  "order.heading": "Trier par",
+  "order.manual": "Manuel",
+  "order.updated": "Derni\xE8re mise \xE0 jour",
+  "filter.heading": "Filtrer les sessions",
+  "filter.hideArchived": "Masquer les archives",
+  "filter.showArchived": "Toutes les conversations (afficher les archives)",
+  "filter.onlyArchived": "Archiv\xE9 uniquement",
+  "session.unarchive": "D\xE9sarchiver",
+  "session.archived": "Archiv\xE9",
+  "session.unarchiveFailed": "Impossible de d\xE9sarchiver la session",
+  "session.moveUp": "D\xE9placer la session vers le haut",
+  "session.moveDown": "D\xE9placer la session vers le bas",
   "defaultName": "Espace de travail par d\xE9faut",
   "search.placeholder": "Rechercher des espaces de travail",
   "search.label": "Rechercher des espaces de travail",
@@ -520,6 +615,18 @@ var pt = {
   "group.heading": "Agrupar por",
   "group.flat": "Lista de sess\xF5es",
   "group.failed": "N\xE3o foi poss\xEDvel aplicar este agrupamento. A \xE1rvore de espa\xE7os de trabalho est\xE1 sendo exibida.",
+  "order.heading": "Ordenar por",
+  "order.manual": "Manual",
+  "order.updated": "\xDAltima atualiza\xE7\xE3o",
+  "filter.heading": "Filtrar sess\xF5es",
+  "filter.hideArchived": "Ocultar arquivado",
+  "filter.showArchived": "Todas as conversas (mostrar arquivadas)",
+  "filter.onlyArchived": "Somente arquivado",
+  "session.unarchive": "Desarquivar",
+  "session.archived": "Arquivado",
+  "session.unarchiveFailed": "N\xE3o foi poss\xEDvel desarquivar a sess\xE3o",
+  "session.moveUp": "Mover sess\xE3o para cima",
+  "session.moveDown": "Mover sess\xE3o para baixo",
   "defaultName": "\xC1rea de trabalho padr\xE3o",
   "search.placeholder": "Pesquisar \xE1reas de trabalho",
   "search.label": "Pesquisar \xE1reas de trabalho",
@@ -588,6 +695,18 @@ var ru = {
   "group.heading": "\u0413\u0440\u0443\u043F\u043F\u0438\u0440\u043E\u0432\u043A\u0430",
   "group.flat": "\u0421\u043F\u0438\u0441\u043E\u043A \u0441\u0435\u0441\u0441\u0438\u0439",
   "group.failed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u0440\u0438\u043C\u0435\u043D\u0438\u0442\u044C \u0433\u0440\u0443\u043F\u043F\u0438\u0440\u043E\u0432\u043A\u0443. \u041F\u043E\u043A\u0430\u0437\u0430\u043D\u043E \u0434\u0435\u0440\u0435\u0432\u043E \u0440\u0430\u0431\u043E\u0447\u0438\u0445 \u043E\u0431\u043B\u0430\u0441\u0442\u0435\u0439.",
+  "order.heading": "\u0421\u043E\u0440\u0442\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u043F\u043E",
+  "order.manual": "\u0412\u0440\u0443\u0447\u043D\u0443\u044E",
+  "order.updated": "\u041F\u043E\u0441\u043B\u0435\u0434\u043D\u0435\u0435 \u043E\u0431\u043D\u043E\u0432\u043B\u0435\u043D\u0438\u0435",
+  "filter.heading": "\u0424\u0438\u043B\u044C\u0442\u0440\u043E\u0432\u0430\u0442\u044C \u0441\u0435\u0430\u043D\u0441\u044B",
+  "filter.hideArchived": "\u0421\u043A\u0440\u044B\u0442\u044C \u0432 \u0430\u0440\u0445\u0438\u0432\u0435",
+  "filter.showArchived": "\u0412\u0441\u0435 \u0440\u0430\u0437\u0433\u043E\u0432\u043E\u0440\u044B (\u043F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0432 \u0430\u0440\u0445\u0438\u0432\u0435)",
+  "filter.onlyArchived": "\u0422\u043E\u043B\u044C\u043A\u043E \u0432 \u0430\u0440\u0445\u0438\u0432\u0435",
+  "session.unarchive": "\u0420\u0430\u0437\u0430\u0440\u0445\u0438\u0432\u0438\u0440\u043E\u0432\u0430\u0442\u044C",
+  "session.archived": "\u0412 \u0430\u0440\u0445\u0438\u0432\u0435",
+  "session.unarchiveFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0440\u0430\u0437\u0430\u0440\u0445\u0438\u0432\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0441\u0435\u0430\u043D\u0441",
+  "session.moveUp": "\u041F\u0435\u0440\u0435\u043C\u0435\u0441\u0442\u0438\u0442\u044C \u0441\u0435\u0430\u043D\u0441 \u0432\u0432\u0435\u0440\u0445",
+  "session.moveDown": "\u041F\u0435\u0440\u0435\u043C\u0435\u0441\u0442\u0438\u0442\u044C \u0441\u0435\u0430\u043D\u0441 \u0432\u043D\u0438\u0437",
   "defaultName": "\u0420\u0430\u0431\u043E\u0447\u0435\u0435 \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E \u043F\u043E \u0443\u043C\u043E\u043B\u0447\u0430\u043D\u0438\u044E",
   "search.placeholder": "\u041F\u043E\u0438\u0441\u043A \u0440\u0430\u0431\u043E\u0447\u0438\u0445 \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432",
   "search.label": "\u041F\u043E\u0438\u0441\u043A \u0440\u0430\u0431\u043E\u0447\u0438\u0445 \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432",
@@ -739,6 +858,7 @@ function relativeTime(at, now, t) {
 }
 
 // src/client/navigation.ts
+var import_dsh_client_ui_primitives2 = require("@deepseek-ai/dsh-client-ui-primitives");
 var React5 = __toESM(require("react"), 1);
 
 // src/client/components.ts
@@ -798,22 +918,6 @@ var GridGlyph = (props) => h(Glyph, {
     "M2.6 9.3h4.1v4.1H2.6z",
     "M9.3 9.3h4.1v4.1H9.3z"
   ]
-});
-var SlidersGlyph = (props) => h(Glyph, {
-  ...props,
-  paths: ["M2 5h5m4 0h3M2 11h2m4 0h6", "M7 5a2 2 0 1 0 4 0 2 2 0 1 0-4 0ZM4 11a2 2 0 1 0 4 0 2 2 0 1 0-4 0Z"]
-});
-var FolderAddGlyph = (props) => h(Glyph, {
-  ...props,
-  paths: ["M8 4.5 6.5 3H3a1 1 0 0 0-1 1v8.5a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V10", "M9 6h6m-3-3v6"]
-});
-var ListGlyph = (props) => h(Glyph, {
-  ...props,
-  paths: ["M5.5 4h8m-8 4h8m-8 4h8M2.5 4h.05m-.05 4h.05m-.05 4h.05"]
-});
-var WorkspaceTreeGlyph = (props) => h(Glyph, {
-  ...props,
-  paths: ["M2 5a1 1 0 0 1 1-1h3l1 1.5h6a1 1 0 0 1 1 1V12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1Z", "M6 7.5v3h4m-1-3h2"]
 });
 var DirectoryTreeGlyph = (props) => h(Glyph, {
   ...props,
@@ -1009,11 +1113,8 @@ function createPortal(children, container) {
 
 // src/client/styles.ts
 var CSS = `
-/* Surface vocabulary borrowed from the host primitives, not restyled to taste:
- * the compact popover is a Menu card (4px padding, translucent menu material,
- * 34px rows with a trailing check) and the expanded chooser is a Modal card
- * (l2 surface, panel radius, hairline rules, 28px buttons). Only theme tokens
- * are referenced, so both themes and future host revisions carry over. */
+/* The compact popover follows the host Menu surface and the expanded chooser
+ * follows the host Modal surface. Both use host theme tokens. */
 .wsp-layer { position: fixed; inset: 0; z-index: 1099; }
 .wsp-popover {
   position: fixed; z-index: 1100; box-sizing: border-box;
@@ -1269,17 +1370,17 @@ var CSS = `
 .wsp-tool-button:focus-visible { outline: 2px solid var(--dsw-alias-state-business-primary); outline-offset: 1px; }
 .wsp-tool-button[aria-expanded='true'] { background: var(--dsw-alias-interactive-bg-hover); color: var(--dsw-alias-label-primary); }
 .wsp-tool-button:disabled, .wsp-tool-button[aria-disabled='true'] { opacity: .45; cursor: default; }
-.wsp-group-menu {
-  position: absolute; z-index: 2; inset-block-start: calc(100% - 6px); inset-inline-end: var(--wsp-menu-inset);
-  width: min(248px, calc(100% - 2 * var(--wsp-menu-inset)));
-  max-height: min(220px, max(66px, calc(100dvh - 220px)));
-  overflow: auto; overscroll-behavior: contain;
+/* Keep the official Menu in the modal's DOM and anchor its list within the
+ * dialog gutters. The Menu's own scrolling viewport contains every section. */
+.wsp-view-options.wsp-view-options { position: static; }
+.wsp-view-options .wsp-view-options-menu {
+  inset-block-start: calc(100% - 6px); inset-inline: auto var(--wsp-menu-inset);
+  min-width: min(200px, calc(100% - 2 * var(--wsp-menu-inset)));
+  max-width: min(360px, calc(100% - 2 * var(--wsp-menu-inset)));
+  max-height: clamp(64px, calc(100dvh - 180px), 366px);
 }
-.wsp-group-heading { padding: 5px 8px; font-size: 12px; color: var(--dsw-alias-label-tertiary); }
-.wsp-group-item { flex: none; text-align: start; }
-.wsp-group-item:focus { background: var(--dsw-alias-interactive-bg-hover); }
-.wsp-group-item:focus-visible { outline: 2px solid var(--dsw-alias-state-business-primary); outline-offset: -2px; }
-.wsp-group-item-name { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.wsp-view-options-menu > [role='presentation'] { overscroll-behavior: contain; }
+.wsp-view-options-label { display: block; white-space: normal; overflow-wrap: anywhere; }
 .wsp-dialog-search .wsp-search {
   height: 32px; margin: 0; padding: 0 8px;
   border: .5px solid var(--dsw-alias-border-l4);
@@ -1333,6 +1434,11 @@ var CSS = `
 .wsp-dialog-body .wsp-navigation-row[data-search-meta='true'] { min-height: 48px; padding-block: 4px; }
 .wsp-navigation-row .wsp-row-title { font-size: 14px; }
 .wsp-navigation-row[data-selected='true'] { background-color: var(--dsw-alias-interactive-bg-hover); }
+.wsp-navigation-row[data-archived='true'] .wsp-row-title { color: var(--dsw-alias-label-secondary); }
+.wsp-navigation-row[draggable='true'] { cursor: grab; }
+.wsp-navigation-row[draggable='true']:active { cursor: grabbing; }
+.wsp-navigation-row[data-drop-target='before'] { box-shadow: inset 0 2px var(--dsw-alias-state-business-primary); }
+.wsp-navigation-row[data-drop-target='after'] { box-shadow: inset 0 -2px var(--dsw-alias-state-business-primary); }
 .wsp-navigation-row:focus-visible { outline: 1px solid var(--dsw-focus-ring-color); outline-offset: -1px; }
 .wsp-search-meta { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
 .wsp-search-meta .wsp-row-path { font-size: 12px; line-height: 17px; }
@@ -1379,7 +1485,7 @@ var CSS = `
   .wsp-skeleton-bar, .wsp-spinner { animation: none; }
 }
 @media (max-width: 640px) {
-  .wsp-popover:not(.wsp-group-menu) {
+  .wsp-popover {
     left: 12px !important; right: 12px !important;
     top: auto !important;
     bottom: max(12px, env(safe-area-inset-bottom)) !important;
@@ -1505,124 +1611,164 @@ function SwitcherDialog({
 
 // src/client/grouping-menu.ts
 var React4 = __toESM(require("react"), 1);
+var import_dsh_client_ui_primitives = require("@deepseek-ai/dsh-client-ui-primitives");
 var h4 = React4.createElement;
-function groupingGlyph(id) {
-  switch (id) {
-    case FLAT:
-      return ListGlyph;
-    case WORKSPACES:
-      return FolderGlyph;
-    case WORKSPACE_TREE:
-      return WorkspaceTreeGlyph;
-    default:
-      return DirectoryTreeGlyph;
+function optionIcon(sectionIndex, id) {
+  if (sectionIndex === 1) {
+    if (id === "manual") return h4(import_dsh_client_ui_primitives.IconChevronsUpDownOutlineRegular);
+    if (id === "updated") return h4(import_dsh_client_ui_primitives.IconClockOutlineRegular);
+  } else if (sectionIndex === 2) {
+    if (id === "hide-archived") return h4(import_dsh_client_ui_primitives.IconArchiveOffOutlineRegular);
+    if (id === "show-archived") return h4(import_dsh_client_ui_primitives.IconQueueOutlineRegular);
+    if (id === "only-archived") return h4(import_dsh_client_ui_primitives.IconArchiveCheckOutlineRegular);
+  } else {
+    if (id === FLAT) return h4(import_dsh_client_ui_primitives.IconFlatListOutlineRegular);
+    if (id === WORKSPACES) return h4(import_dsh_client_ui_primitives.IconFolderCloseRegular);
+    if (id === WORKSPACE_TREE) return h4(import_dsh_client_ui_primitives.IconWorkspaceTreeOutlineRegular);
   }
+  return h4(DirectoryTreeGlyph);
 }
-function GroupingMenu({ label, heading, choices, selected, disabled, onSelect }) {
+function GroupingMenu({ label, sections, disabled }) {
   const [open, setOpen] = React4.useState(false);
-  const root = React4.useRef(null);
   const trigger = React4.useRef(null);
-  const menu = React4.useRef(null);
-  const menuId = React4.useId();
-  const close = () => {
-    setOpen(false);
-    trigger.current?.focus({ preventScroll: true });
-  };
-  React4.useLayoutEffect(() => {
-    const list = menu.current;
-    if (list === null || list.contains(document.activeElement)) return;
-    const item = list.querySelector('[aria-checked="true"]') ?? list.querySelector("button");
-    item?.focus();
-  }, [open, choices, selected]);
-  React4.useEffect(() => {
-    if (!open) return;
-    const dismiss = (event) => {
-      if (!(event.target instanceof Node) || root.current?.contains(event.target)) return;
-      const dialog = root.current?.closest('[role="dialog"]');
-      if (dialog?.contains(event.target) && !dialog.contains(document.activeElement)) close();
-      else setOpen(false);
-    };
-    document.addEventListener("click", dismiss, true);
-    return () => document.removeEventListener("click", dismiss, true);
-  }, [open]);
-  return h4(
-    "div",
-    {
-      className: "wsp-group-control",
-      ref: root,
-      onBlur: (event) => {
-        if (event.relatedTarget !== null && !event.currentTarget.contains(event.relatedTarget)) setOpen(false);
-      }
+  const close = () => setOpen(false);
+  const actions = /* @__PURE__ */ new Map();
+  const items = sections.flatMap((section, index) => [
+    ...index === 0 ? [] : [{ type: "separator", id: `separator:${index}` }],
+    { type: "label", id: `label:${index}`, text: section.heading },
+    ...section.choices.map((choice) => {
+      const id = `${index}:${choice.id}`;
+      actions.set(id, () => section.onSelect(choice.id));
+      return { id, label: h4("span", { className: "wsp-view-options-label" }, choice.label), icon: optionIcon(index, choice.id) };
+    })
+  ]);
+  return h4("div", {
+    onBlur: (event) => {
+      if (event.relatedTarget !== null && !event.currentTarget.contains(event.relatedTarget)) close();
     },
-    h4("button", {
+    onKeyDown: (event) => {
+      if (!open || event.key !== "Tab" || event.nativeEvent.isComposing) return;
+      close();
+      trigger.current?.focus({ preventScroll: true });
+      event.nativeEvent.stopPropagation();
+    }
+  }, h4(import_dsh_client_ui_primitives.Menu, {
+    open: open && !disabled,
+    onClose: close,
+    items,
+    selectedIds: sections.map((section, index) => `${index}:${section.selected}`),
+    onSelect: (id) => {
+      actions.get(id)?.();
+      close();
+    },
+    align: "end",
+    autoFocus: true,
+    dense: true,
+    className: "wsp-view-options",
+    listClassName: "wsp-view-options-menu",
+    anchor: h4("button", {
       type: "button",
       className: "wsp-icon-btn wsp-tool-button",
       ref: trigger,
       title: label,
       "aria-label": label,
       "aria-haspopup": "menu",
-      "aria-expanded": open,
-      "aria-controls": open ? menuId : void 0,
+      "aria-expanded": open && !disabled,
       disabled,
-      onClick: () => {
-        if (open) close();
-        else setOpen(true);
-      },
+      onClick: () => setOpen((value) => !value),
       onKeyDown: (event) => {
-        if (event.key !== "ArrowDown" || event.nativeEvent.isComposing) return;
+        if (open || event.nativeEvent.isComposing || event.key !== "ArrowDown") return;
         event.preventDefault();
         setOpen(true);
       }
-    }, h4(SlidersGlyph)),
-    open ? h4(
-      "div",
-      {
-        className: "wsp-popover wsp-group-menu",
-        role: "menu",
-        "aria-label": label,
-        id: menuId,
-        ref: menu,
-        onKeyDown: (event) => {
-          if (event.nativeEvent.isComposing) return;
-          if (event.key === "Tab") {
-            close();
-            return;
-          }
-          if (event.key === "Escape") {
-            event.preventDefault();
-            event.stopPropagation();
-            close();
-            return;
-          }
-          if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
-          const items = Array.from(event.currentTarget.querySelectorAll("button"));
-          const current = items.findIndex((item) => item === event.target);
-          const next = event.key === "Home" ? 0 : event.key === "End" ? items.length - 1 : (current + (event.key === "ArrowDown" ? 1 : -1) + items.length) % items.length;
-          event.preventDefault();
-          items[next]?.focus();
-        }
-      },
-      h4("div", { className: "wsp-group-heading", "aria-hidden": true }, heading),
-      choices.map(({ id, label: name }) => h4(
-        "button",
-        {
-          key: id,
-          type: "button",
-          role: "menuitemradio",
-          tabIndex: -1,
-          className: "wsp-row wsp-group-item",
-          "aria-checked": id === selected,
-          onClick: () => {
-            onSelect(id);
-            close();
-          }
-        },
-        h4("span", { className: "wsp-row-icon" }, h4(groupingGlyph(id))),
-        h4("span", { className: "wsp-group-item-name" }, name),
-        h4("span", { className: "wsp-row-check", "aria-hidden": true }, id === selected ? h4(CheckGlyph, { size: 14 }) : null)
-      ))
-    ) : null
-  );
+    }, h4(import_dsh_client_ui_primitives.IconSlidersTwoOutlineRegular))
+  }));
+}
+
+// src/client/session-order.ts
+function orderByRecency(sessionIds, summaries) {
+  return sessionIds.flatMap((id) => {
+    const summary = summaries[id];
+    if (summary === void 0) return [];
+    return [{ id, rank: summary.updatedAt }];
+  }).sort((a, b) => {
+    if (a.rank !== b.rank) return b.rank - a.rank;
+    return a.id < b.id ? -1 : 1;
+  }).map((member) => member.id);
+}
+function reconcileManualOrder(memberIds, savedOrder, summaries, rowState) {
+  const members = new Map(memberIds.map((id) => [id, id]));
+  const included = /* @__PURE__ */ new Set();
+  const ordered = [];
+  for (const key2 of savedOrder ?? []) {
+    const id = members.get(key2);
+    if (id === void 0 || included.has(key2)) continue;
+    ordered.push(id);
+    included.add(key2);
+  }
+  const archived = new Set(rowState?.archivedSessionIds);
+  const pins = [];
+  for (const sessionId of rowState?.pinnedSessionIds ?? []) {
+    const id = members.get(sessionId);
+    if (id === void 0 || included.has(id) || archived.has(id) || summaries[id] === void 0) continue;
+    pins.push(id);
+    included.add(id);
+  }
+  const ordinary = [];
+  const archives = [];
+  for (const id of orderByRecency([...members.values()].filter((id2) => !included.has(id2)), summaries)) {
+    if (archived.has(id)) archives.push(id);
+    else ordinary.push(id);
+  }
+  return [...pins, ...ordered, ...ordinary, ...archives];
+}
+
+// src/client/view-preferences.ts
+var FLAT_ORDER = "flat";
+var UNGROUPED_ORDER = "ungrouped";
+var key = "dsh-workspace-welcome-switcher.session-view";
+function isOrderBy(value) {
+  return value === "updated" || value === "manual";
+}
+function isArchiveFilter(value) {
+  return value === "hide-archived" || value === "show-archived" || value === "only-archived";
+}
+function createViewPreferences(storage = () => localStorage) {
+  let value = { orderBy: "updated", archiveFilter: "hide-archived", orders: {} };
+  try {
+    const saved = JSON.parse(storage().getItem(key) ?? "null");
+    if (saved !== null && typeof saved === "object") {
+      const { orderBy, archiveFilter, orders } = saved;
+      const validOrders = orders !== null && typeof orders === "object" && !Array.isArray(orders) ? Object.fromEntries(Object.entries(orders).filter((entry) => Array.isArray(entry[1]) && entry[1].every((id) => typeof id === "string"))) : {};
+      value = {
+        orderBy: isOrderBy(orderBy) ? orderBy : value.orderBy,
+        archiveFilter: isArchiveFilter(archiveFilter) ? archiveFilter : value.archiveFilter,
+        orders: validOrders
+      };
+    }
+  } catch (error) {
+  }
+  return {
+    get: () => value,
+    set(next) {
+      value = next;
+      try {
+        storage().setItem(key, JSON.stringify(next));
+      } catch (error) {
+      }
+    }
+  };
+}
+function moveSession(order, from, to, side) {
+  const fromIndex = order.indexOf(from);
+  const toIndex = order.indexOf(to);
+  if (fromIndex < 0 || toIndex < 0 || fromIndex === toIndex) return order;
+  const next = order.filter((id) => id !== from);
+  const after = side === void 0 ? fromIndex < toIndex : side === "after";
+  const index = next.indexOf(to) + Number(after);
+  if (index === fromIndex) return order;
+  next.splice(index, 0, from);
+  return next;
 }
 
 // src/client/navigation-model.ts
@@ -1640,8 +1786,8 @@ function workspaceRoots(branches) {
   for (const branch of branches) {
     const path = branch.workspace?.path;
     if (path) {
-      const key = directoryKey(path);
-      if (!byPath.has(key)) byPath.set(key, branch);
+      const key2 = directoryKey(path);
+      if (!byPath.has(key2)) byPath.set(key2, branch);
     }
   }
   const roots = [];
@@ -1659,12 +1805,12 @@ function projectedRoots(grouping, branches) {
   const input = [...branches.values()].flatMap(({ workspace }) => workspace === void 0 ? [] : [{ workspaceId: workspace.id, path: workspace.path }]);
   const seen = /* @__PURE__ */ new Set();
   const convert = (node) => {
-    const key = node.kind === "workspace" ? `workspace:${node.workspaceId}` : `directory:${node.key}`;
-    if (seen.has(key)) throw new Error(`Repeated node: ${key}`);
-    seen.add(key);
+    const key2 = node.kind === "workspace" ? `workspace:${node.workspaceId}` : `directory:${node.key}`;
+    if (seen.has(key2)) throw new Error(`Repeated node: ${key2}`);
+    seen.add(key2);
     const children = (node.children ?? []).map(convert);
     if (node.kind === "directory") {
-      return { key, directory: { title: node.title, path: node.path }, workspace: void 0, sessions: [], children };
+      return { key: key2, directory: { title: node.title, path: node.path }, workspace: void 0, sessions: [], children };
     }
     const branch = branches.get(node.workspaceId);
     if (branch === void 0) throw new Error(`Unknown workspace: ${node.workspaceId}`);
@@ -1676,7 +1822,11 @@ function projectedRoots(grouping, branches) {
   }
   return roots;
 }
-function buildNavigation(snapshot, catalog, defaultName, untitled, groupId, grouping) {
+function buildNavigation(snapshot, catalog, defaultName, untitled, groupId, grouping, view = {
+  orderBy: "updated",
+  archiveFilter: "hide-archived",
+  orders: {}
+}) {
   const { byId } = catalog;
   const workspaceRows = buildRows(snapshot.items, byId, defaultName);
   const branchById = new Map(workspaceRows.map((workspace) => [workspace.id, {
@@ -1694,29 +1844,55 @@ function buildNavigation(snapshot, catalog, defaultName, untitled, groupId, grou
     }
   }
   const archived = new Set(snapshot.archivedSessionIds);
-  const sessions = [];
+  const pinned = new Set(snapshot.pinnedSessionIds);
+  const rowsById = /* @__PURE__ */ new Map();
+  const members = /* @__PURE__ */ new Map([[FLAT_ORDER, []], [UNGROUPED_ORDER, []]]);
   const currentId = Object.values(byId).find(({ retainedBy }) => "mainView" in retainedBy && typeof retainedBy.mainView === "number" && retainedBy.mainView > 0)?.id;
   for (const id of catalog.ids) {
     const session = byId[id];
-    if (session === void 0) continue;
-    if (session.blank || session.origin === "subagent" || archived.has(session.id)) continue;
+    if (session === void 0 || session.blank || session.origin === "subagent") continue;
     const workspace = workspaceBySession.get(session.id);
-    sessions.push({
-      id: session.id,
+    const isArchived = archived.has(id);
+    rowsById.set(id, {
+      id,
       title: session.title?.trim() || untitled,
       path: workspace?.path || session.cwd || "",
       workspace: workspace?.title ?? "",
       workspaceId: workspace?.id,
       latest: toMillis(session.updatedAt),
-      running: session.running === true
+      running: session.running === true,
+      archived: isArchived,
+      pinned: !isArchived && pinned.has(id)
     });
+    members.get(FLAT_ORDER)?.push(id);
+    const key2 = workspace === void 0 ? UNGROUPED_ORDER : `workspace:${workspace.id}`;
+    const account = members.get(key2);
+    if (account === void 0) members.set(key2, [id]);
+    else account.push(id);
   }
-  sessions.sort((a, b) => b.latest - a.latest || a.id.localeCompare(b.id));
-  const ungrouped = { key: "ungrouped", workspace: void 0, children: [], sessions: [] };
-  for (const session of sessions) {
-    const branch = session.workspaceId === void 0 ? ungrouped : branchById.get(session.workspaceId) ?? ungrouped;
-    branch.sessions.push(session);
-  }
+  const orders = Object.fromEntries([...members].map(([key2, ids]) => {
+    const order = view.orderBy === "manual" ? reconcileManualOrder(ids, view.orders[key2], byId, snapshot) : orderByRecency(ids, byId);
+    return [key2, order];
+  }));
+  const visible = (key2) => {
+    const leading = [];
+    const rest = [];
+    for (const id of orders[key2] ?? []) {
+      const row = rowsById.get(id);
+      if (row === void 0 || view.archiveFilter === "hide-archived" && row.archived || view.archiveFilter === "only-archived" && !row.archived) continue;
+      if (row.pinned) leading.push(row);
+      else rest.push(row);
+    }
+    return [...leading, ...rest];
+  };
+  const sessions = visible(FLAT_ORDER);
+  const ungrouped = {
+    key: UNGROUPED_ORDER,
+    workspace: void 0,
+    children: [],
+    sessions: visible(UNGROUPED_ORDER)
+  };
+  for (const branch of branchById.values()) branch.sessions.push(...visible(branch.key));
   const branches = [...branchById.values()];
   let roots;
   let groupingError = false;
@@ -1730,7 +1906,14 @@ function buildNavigation(snapshot, catalog, defaultName, untitled, groupId, grou
   }
   roots ?? (roots = groupId === WORKSPACES ? branches : workspaceRoots(branches));
   if (ungrouped.sessions.length > 0) roots.push(ungrouped);
-  return { roots, sessions, currentId, groupingError };
+  if (view.archiveFilter === "only-archived") roots = keepArchivedBranches(roots);
+  return { roots, sessions, currentId, groupingError, orders };
+}
+function keepArchivedBranches(roots) {
+  return roots.flatMap((branch) => {
+    const children = keepArchivedBranches(branch.children);
+    return branch.sessions.length > 0 || children.length > 0 ? [{ ...branch, children }] : [];
+  });
 }
 function searchSessions(rows, query, hits) {
   const snippets = new Map(hits.map((hit) => [hit.sessionId, hit.snippet]));
@@ -1771,7 +1954,7 @@ function initialExpansion(roots, workspaceId, currentId) {
 
 // src/client/navigation.ts
 var h5 = React5.createElement;
-var { useEffect: useEffect3, useId: useId3, useMemo, useRef: useRef2, useState: useState2, useSyncExternalStore } = React5;
+var { useEffect: useEffect2, useId: useId2, useMemo, useRef: useRef2, useState: useState2, useSyncExternalStore } = React5;
 var NO_HITS = [];
 function SwitcherOverlay(props) {
   const mode = useSyncExternalStore(props.controls.subscribe, props.controls.getSnapshot);
@@ -1782,16 +1965,19 @@ function NavigationDialog({
   controls,
   groupings,
   groupingPreferences,
+  viewPreferences,
   t,
   useWorkspaces,
   useSessions,
   usePanelInfo,
   useWorkspaceAccess,
+  useSessionAccess,
   useRemoteAccess,
   useSessionStatus,
   statusLabel,
   searchContent,
   openSession,
+  unarchiveSession,
   renameWorkspace,
   addWorkspace
 }) {
@@ -1807,12 +1993,25 @@ function NavigationDialog({
   const groupBy = activeGrouping(groupId, catalog, choosing);
   const grouping = catalog.find((entry) => entry.id === groupBy);
   const tree = groupBy !== FLAT;
-  const { roots, sessions: sessionRows, currentId, groupingError } = useMemo(
-    () => buildNavigation(workspaces, sessions, t("defaultName"), t("untitledSession"), groupBy, grouping),
-    [workspaces, sessions, t, groupBy, grouping]
+  const [view, setView] = useState2(viewPreferences.get);
+  const changeView = (next) => {
+    setView(next);
+    viewPreferences.set(next);
+  };
+  const { roots, sessions: sessionRows, currentId, groupingError, orders } = useMemo(
+    () => buildNavigation(
+      workspaces,
+      sessions,
+      t("defaultName"),
+      t("untitledSession"),
+      groupBy,
+      grouping,
+      choosing ? void 0 : view
+    ),
+    [workspaces, sessions, t, groupBy, grouping, choosing, view]
   );
   const displayedGroup = groupingError ? WORKSPACE_TREE : groupBy;
-  useEffect3(() => {
+  useEffect2(() => {
     if (preferenceChoice.current !== groupId) return;
     preferenceChoice.current = void 0;
     if (displayedGroup === groupId) groupingPreferences.remember(groupId);
@@ -1838,7 +2037,7 @@ function NavigationDialog({
   const [now, setNow] = useState2(Date.now);
   const inputRef = useRef2(null);
   const panelRef = useRef2(null);
-  const listId = useId3();
+  const listId = useId2();
   const trimmed = query.trim();
   const remoteQuery = choosing ? "" : trimmed.replaceAll("\0", "");
   const remote = useContentSearch(remoteQuery, searchContent);
@@ -1884,7 +2083,7 @@ function NavigationDialog({
     };
   }, []);
   const renameId = renaming?.id;
-  useEffect3(() => {
+  useEffect2(() => {
     const frame = window.requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
     return () => window.cancelAnimationFrame(frame);
   }, [renameId]);
@@ -1893,7 +2092,7 @@ function NavigationDialog({
       inputRef.current?.focus({ preventScroll: true });
     }
   }, [displayedGroup]);
-  useEffect3(() => {
+  useEffect2(() => {
     panelRef.current?.querySelector('[data-active="true"]')?.scrollIntoView({ block: "nearest" });
   }, [active?.key]);
   const changeQuery = (value) => {
@@ -1910,6 +2109,10 @@ function NavigationDialog({
   const choose = (row) => {
     if (pendingWrite.current) return;
     if (row.kind === "session") {
+      if (row.session.archived) {
+        setActiveKey(row.key);
+        return;
+      }
       try {
         openSession(row.session.id);
         controls.close();
@@ -1958,7 +2161,7 @@ function NavigationDialog({
     });
   };
   const onKeyDown = (event) => {
-    if (event.nativeEvent.isComposing || event.keyCode === 229) return;
+    if (event.defaultPrevented || event.nativeEvent.isComposing || event.keyCode === 229) return;
     if (event.key === "Escape") {
       event.preventDefault();
       event.stopPropagation();
@@ -1998,17 +2201,44 @@ function NavigationDialog({
   };
   const focused = active ?? rows[selectedIndex] ?? (tree ? rows[0] : void 0);
   const focusedWorkspace = focused?.kind === "branch" ? focused.match.branch.workspace : void 0;
+  const focusedSession = focused?.kind === "session" ? focused : void 0;
+  const reorderable = view.orderBy === "manual" && trimmed === "" && !busy && renaming === void 0;
+  const siblings = reorderable && focusedSession !== void 0 && !focusedSession.session.archived ? rows.filter((row) => row.kind === "session" && row.parentKey === focusedSession.parentKey && !row.session.archived && row.session.pinned === focusedSession.session.pinned) : [];
+  const position = siblings.findIndex((row) => row === focusedSession);
+  const shiftSession = (target) => {
+    if (focusedSession === void 0 || target?.kind !== "session") return;
+    reorder(focusedSession, target);
+  };
+  const dragged = useRef2(null);
+  const [dropTarget, setDropTarget] = useState2();
+  const clearDrag = () => {
+    dragged.current = null;
+    setDropTarget(void 0);
+  };
+  const canDrop = (target) => {
+    const from = dragged.current;
+    return reorderable && from !== null && target.kind === "session" && from.key !== target.key && from.parentKey === target.parentKey && !target.session.archived && from.session.pinned === target.session.pinned;
+  };
+  function reorder(from, to, half) {
+    const key2 = from.parentKey ?? FLAT_ORDER;
+    const order = orders[key2];
+    if (order === void 0) return;
+    const next = moveSession(order, from.session.id, to.session.id, half);
+    if (order === next) return;
+    setActiveKey(from.key);
+    changeView({ ...view, orders: { ...view.orders, [key2]: next } });
+  }
   const status = error ?? (remote.error === void 0 ? void 0 : { label: t("contentSearchFailed"), message: remote.error });
   const renameTitle = renaming?.title.trim();
   const canSaveRename = renameTitle !== void 0 && renameTitle !== "" && renameTitle !== renaming?.original && !busy;
   const catalogError = workspaces.state === "error";
-  const empty = pending ? h5(Skeleton, { rows: 5 }) : h5("div", { className: "wsp-empty", role: "status" }, t(catalogError ? "listUnavailable" : trimmed !== "" ? "noMatches" : tree ? "empty.noWorkspacesTitle" : "noSessions"));
+  const empty = pending ? h5(Skeleton, { rows: 5 }) : h5("div", { className: "wsp-empty", role: "status" }, t(catalogError ? "listUnavailable" : trimmed !== "" ? "noMatches" : tree && (choosing || view.archiveFilter !== "only-archived") ? "empty.noWorkspacesTitle" : "noSessions"));
   function renderRows() {
     const children = /* @__PURE__ */ new Map();
     for (const [i, row] of rows.entries()) {
-      const siblings = children.get(row.parentKey);
-      if (siblings === void 0) children.set(row.parentKey, [i]);
-      else siblings.push(i);
+      const siblings2 = children.get(row.parentKey);
+      if (siblings2 === void 0) children.set(row.parentKey, [i]);
+      else siblings2.push(i);
     }
     const renderGroup = (parentKey) => (children.get(parentKey) ?? []).map((i) => {
       const row = rows[i];
@@ -2027,6 +2257,34 @@ function NavigationDialog({
         currentBranch: currentBranches.has(row.key),
         useSessionStatus,
         statusLabel,
+        dropTarget: dropTarget?.key === row.key ? dropTarget.half : void 0,
+        ...reorderable && row.kind === "session" && !row.session.archived ? { drag: {
+          draggable: true,
+          onDragStart: (event) => {
+            dragged.current = row;
+            event.dataTransfer.effectAllowed = "move";
+            event.dataTransfer.setData("text/plain", row.session.id);
+          },
+          onDragOver: (event) => {
+            if (!canDrop(row)) return;
+            event.preventDefault();
+            event.dataTransfer.dropEffect = "move";
+            const half = sessionDropHalf(event);
+            setDropTarget((current) => current?.key === row.key && current.half === half ? current : { key: row.key, half });
+          },
+          onDragLeave: (event) => {
+            if (!(event.relatedTarget instanceof Node) || !event.currentTarget.contains(event.relatedTarget)) {
+              setDropTarget((target) => target?.key === row.key ? void 0 : target);
+            }
+          },
+          onDrop: (event) => {
+            if (!canDrop(row) || dragged.current === null) return;
+            event.preventDefault();
+            reorder(dragged.current, row, sessionDropHalf(event));
+            clearDrag();
+          },
+          onDragEnd: clearDrag
+        } } : {},
         tree,
         busy,
         onChoose: () => choose(row),
@@ -2109,15 +2367,38 @@ function NavigationDialog({
       { className: "wsp-navigation-toolbar" },
       h5(GroupingMenu, {
         label: t("group.options"),
-        heading: t("group.heading"),
-        selected: displayedGroup,
-        choices,
         disabled: busy,
-        onSelect: (id) => {
-          preferenceChoice.current = id;
-          setGroupId(id);
-          setActiveKey(void 0);
-        }
+        sections: [{
+          heading: t("group.heading"),
+          choices,
+          selected: displayedGroup,
+          onSelect: (id) => {
+            preferenceChoice.current = id;
+            setGroupId(id);
+            setActiveKey(void 0);
+          }
+        }, ...!choosing ? [{
+          heading: t("order.heading"),
+          selected: view.orderBy,
+          choices: [{ id: "manual", label: t("order.manual") }, { id: "updated", label: t("order.updated") }],
+          onSelect: (id) => {
+            if (!isOrderBy(id) || id === view.orderBy) return;
+            changeView({ ...view, orderBy: id, orders: id === "manual" ? { ...orders, ...view.orders } : view.orders });
+          }
+        }, {
+          heading: t("filter.heading"),
+          selected: view.archiveFilter,
+          choices: [
+            { id: "hide-archived", label: t("filter.hideArchived") },
+            { id: "show-archived", label: t("filter.showArchived") },
+            { id: "only-archived", label: t("filter.onlyArchived") }
+          ],
+          onSelect: (id) => {
+            if (!isArchiveFilter(id)) return;
+            setActiveKey(void 0);
+            changeView({ ...view, archiveFilter: id });
+          }
+        }] : []]
       }),
       canAdd && addWorkspace !== void 0 ? h5("button", {
         type: "button",
@@ -2127,7 +2408,7 @@ function NavigationDialog({
         "aria-busy": writeKind === "add" || void 0,
         "aria-disabled": busy || void 0,
         onClick: add
-      }, h5(FolderAddGlyph)) : null
+      }, h5(import_dsh_client_ui_primitives2.IconProjectAddOutlineRegular, { size: 16 })) : null
     ) : null,
     footer: h5(
       React5.Fragment,
@@ -2135,6 +2416,38 @@ function NavigationDialog({
       h5(
         "div",
         { className: "wsp-navigation-actions" },
+        focusedSession?.session.archived ? h5(RestoreButton, {
+          useSessionAccess,
+          id: focusedSession.session.id,
+          t,
+          busy,
+          onRestore: () => {
+            inputRef.current?.focus({ preventScroll: true });
+            void write("unarchive", t("session.unarchiveFailed"), () => unarchiveSession(focusedSession.session.id));
+          }
+        }) : null,
+        position >= 0 && siblings.length > 1 ? h5(
+          React5.Fragment,
+          null,
+          h5("button", {
+            type: "button",
+            className: "wsp-icon-btn wsp-tool-button",
+            title: t("session.moveUp"),
+            "aria-label": t("session.moveUp"),
+            "aria-disabled": position === 0 || void 0,
+            onClick: () => {
+              if (position > 0) shiftSession(siblings[position - 1]);
+            }
+          }, h5(import_dsh_client_ui_primitives2.IconChevronUpOutlineRegular, { size: 16 })),
+          h5("button", {
+            type: "button",
+            className: "wsp-icon-btn wsp-tool-button",
+            title: t("session.moveDown"),
+            "aria-label": t("session.moveDown"),
+            "aria-disabled": position === siblings.length - 1 || void 0,
+            onClick: () => shiftSession(siblings[position + 1])
+          }, h5(import_dsh_client_ui_primitives2.IconChevronDownOutlineRegular, { size: 16 }))
+        ) : null,
         choosing || focusedWorkspace === void 0 || renaming !== void 0 ? null : h5(RenameButton, {
           useWorkspaceAccess,
           workspaceId: focusedWorkspace.id,
@@ -2152,6 +2465,17 @@ function NavigationDialog({
     )
   });
 }
+function RestoreButton({ useSessionAccess, id, t, busy, onRestore }) {
+  if (!useSessionAccess(id, "workspace/unarchiveSession")) return null;
+  return h5("button", {
+    type: "button",
+    className: "wsp-icon-btn wsp-tool-button",
+    title: t("session.unarchive"),
+    "aria-label": t("session.unarchive"),
+    disabled: busy,
+    onClick: onRestore
+  }, h5(import_dsh_client_ui_primitives2.IconUnarchiveOutlineRegular, { size: 16 }));
+}
 function RenameButton({ useWorkspaceAccess, workspaceId, name, t, busy, onClick }) {
   return useWorkspaceAccess(workspaceId, "workspace/rename") ? h5("button", {
     type: "button",
@@ -2161,14 +2485,18 @@ function RenameButton({ useWorkspaceAccess, workspaceId, name, t, busy, onClick 
     title: t("renameNamedWorkspace", { name })
   }, h5("span", null, t("renameNamedWorkspace", { name }))) : null;
 }
+function sessionDropHalf(event) {
+  const bounds = event.currentTarget.getBoundingClientRect();
+  return event.clientY < bounds.top + bounds.height / 2 ? "before" : "after";
+}
 function flattenTree(matches, expanded, auto, filtering, t, depth = 0, parentKey) {
   return matches.flatMap((match) => {
-    const { key, workspace } = match.branch;
+    const { key: key2, workspace } = match.branch;
     const expandable = match.children.length + match.sessions.length > 0;
-    const open = expandable && (expanded.get(key) ?? (filtering || auto.has(key) || match.branch.directory !== void 0));
+    const open = expandable && (expanded.get(key2) ?? (filtering || auto.has(key2) || match.branch.directory !== void 0));
     const row = {
       kind: "branch",
-      key,
+      key: key2,
       depth,
       ...parentKey === void 0 ? {} : { parentKey },
       match,
@@ -2179,12 +2507,12 @@ function flattenTree(matches, expanded, auto, filtering, t, depth = 0, parentKey
     if (!open) return [row];
     return [
       row,
-      ...flattenTree(match.children, expanded, auto, filtering, t, depth + 1, key),
+      ...flattenTree(match.children, expanded, auto, filtering, t, depth + 1, key2),
       ...match.sessions.map((session) => ({
         kind: "session",
         key: `session:${session.id}`,
         depth: depth + 1,
-        parentKey: key,
+        parentKey: key2,
         session
       }))
     ];
@@ -2204,6 +2532,8 @@ function ResultRow({
   statusLabel,
   tree,
   busy,
+  dropTarget,
+  drag,
   onChoose,
   onFocus,
   onToggle
@@ -2231,13 +2561,17 @@ function ResultRow({
       "data-wsp-navigation-row": true,
       "data-active": active || void 0,
       "data-selected": selected || void 0,
+      "data-archived": session?.archived || void 0,
+      "data-drop-target": dropTarget || void 0,
+      "aria-label": session?.archived ? `${title} \xB7 ${t("session.archived")}` : void 0,
+      ...drag,
       "data-search-meta": hasSearchMeta || void 0,
       className: "wsp-row wsp-navigation-row",
       title: path || title,
       onClick: onChoose,
       onFocus
     },
-    branch === void 0 ? session && h5(SessionMarker, { session, useSessionStatus, statusLabel }) : h5(
+    branch === void 0 ? session?.archived ? h5("span", { className: "wsp-row-icon" }, h5(import_dsh_client_ui_primitives2.IconArchiveOutlineRegular, { size: 14 })) : session && h5(SessionMarker, { session, useSessionStatus, statusLabel }) : h5(
       "span",
       {
         className: "wsp-row-icon wsp-tree-icon",
@@ -2315,7 +2649,7 @@ function errorMessage(error) {
 }
 function useContentSearch(query, search) {
   const [result, setResult] = useState2();
-  useEffect3(() => {
+  useEffect2(() => {
     setResult(void 0);
     if (query === "" || query.length > 500) return;
     const abort = new AbortController();
@@ -2508,9 +2842,9 @@ var React6 = __toESM(require("react"), 1);
 var h6 = React6.createElement;
 var {
   useCallback,
-  useEffect: useEffect4,
-  useId: useId4,
-  useLayoutEffect: useLayoutEffect3,
+  useEffect: useEffect3,
+  useId: useId3,
+  useLayoutEffect: useLayoutEffect2,
   useMemo: useMemo2,
   useRef: useRef3,
   useState: useState3,
@@ -2563,7 +2897,7 @@ function WorkspacePicker(props) {
   const panelRef = useRef3(null);
   const wasOpen = useRef3(false);
   const closedRef = useRef3(false);
-  const uid = useId4().replace(/[^a-zA-Z0-9_-]/g, "");
+  const uid = useId3().replace(/[^a-zA-Z0-9_-]/g, "");
   const listId = "wsp-list-" + uid;
   const rows = useMemo2(
     () => buildRows(snapshot.items, sessionState.byId, t("defaultName")),
@@ -2579,7 +2913,7 @@ function WorkspacePicker(props) {
   const listError = snapshot.state === "error";
   const listRendered = !pending && filtered.length > 0 && !(listError && rows.length === 0);
   const canAdd = localHost === true && flowAvailable && typeof pickDirectory === "function" && typeof createWorkspace === "function";
-  useEffect4(() => {
+  useEffect3(() => {
     if (open) {
       wasOpen.current = true;
       closedRef.current = false;
@@ -2598,16 +2932,16 @@ function WorkspacePicker(props) {
     const anchor = anchorRef && anchorRef.current;
     if (anchor && typeof anchor.focus === "function") anchor.focus({ preventScroll: true });
   }, [open, anchorRef]);
-  useEffect4(() => () => {
+  useEffect3(() => () => {
     closedRef.current = true;
   }, []);
-  useEffect4(() => {
+  useEffect3(() => {
     if (!open) return void 0;
     setNow(Date.now());
     const timer = window.setInterval(() => setNow(Date.now()), 6e4);
     return () => window.clearInterval(timer);
   }, [open]);
-  useLayoutEffect3(() => {
+  useLayoutEffect2(() => {
     if (!open) return void 0;
     const frame = window.requestAnimationFrame(() => {
       const input = inputRef.current;
@@ -2615,7 +2949,7 @@ function WorkspacePicker(props) {
     });
     return () => window.cancelAnimationFrame(frame);
   }, [open, expanded]);
-  useLayoutEffect3(() => {
+  useLayoutEffect2(() => {
     if (!open || expanded) return void 0;
     let frame = 0;
     const update = () => {
@@ -2643,7 +2977,7 @@ function WorkspacePicker(props) {
       window.removeEventListener("scroll", schedule, true);
     };
   }, [open, expanded, anchorRef]);
-  useEffect4(() => {
+  useEffect3(() => {
     if (!open) return;
     const root = panelRef.current;
     if (!root) return;
@@ -2879,9 +3213,11 @@ function apply(ctx) {
     controls,
     groupings,
     groupingPreferences,
+    viewPreferences: createViewPreferences(),
     statusLabel: ctx.locale.bind("workspace"),
     searchContent: (query, signal) => ctx.sessions.search(query, signal),
     openSession: (id) => ctx.uiWorkspace.openSession(id),
+    unarchiveSession: (id) => ctx.uiWorkspace.unarchiveSession(id),
     renameWorkspace: (id, title) => ctx.workspaces.rename(id, title)
   };
   ctx.effect(() => ctx.slots.inject("shell.overlay", () => ctx.slots.register({
@@ -2920,6 +3256,8 @@ var __test = {
   SHORTLIST,
   createGroupingRegistry,
   createGroupingPreferences,
+  createViewPreferences,
+  moveSession,
   activeGrouping,
   buildRows,
   buildNavigation,

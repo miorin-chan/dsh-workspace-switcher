@@ -1,6 +1,8 @@
 import { WORKSPACES, type WorkspaceGrouping, type WorkspaceGroupNode } from './grouping'
 import type { SessionListState, SessionSearchResultItem } from '@deepseek-ai/dsh-api-session-controller/client'
 import type { WorkspaceId, WorkspaceSnapshot } from '@deepseek-ai/dsh-api-workspace-controller/client'
+import { orderByRecency, reconcileManualOrder } from './session-order'
+import { FLAT_ORDER, UNGROUPED_ORDER, type ArchiveFilter, type OrderBy, type SessionOrders } from './view-preferences'
 import { buildRows, filterRows, toMillis, type WorkspaceRow } from './model'
 
 export type SessionId = SessionListState['ids'][number]
@@ -14,6 +16,8 @@ export interface SessionRow {
   readonly workspaceId: WorkspaceId | undefined
   readonly latest: number
   readonly running: boolean
+  readonly archived: boolean
+  readonly pinned: boolean
 }
 
 export interface WorkspaceBranch {
@@ -84,7 +88,10 @@ function projectedRoots(grouping: WorkspaceGrouping, branches: ReadonlyMap<strin
 export function buildNavigation(
   snapshot: WorkspaceSnapshot, catalog: NavigationCatalog, defaultName: string, untitled: string,
   groupId?: string, grouping?: WorkspaceGrouping,
-): { roots: WorkspaceBranch[]; sessions: SessionRow[]; currentId: SessionId | undefined; groupingError: boolean } {
+  view: { orderBy: OrderBy; archiveFilter: ArchiveFilter; orders: SessionOrders } = {
+    orderBy: 'updated', archiveFilter: 'hide-archived', orders: {},
+  },
+) {
   const { byId } = catalog
   const workspaceRows = buildRows(snapshot.items, byId, defaultName)
   const branchById = new Map<string, WorkspaceBranch>(workspaceRows.map(workspace => [workspace.id, {
@@ -100,27 +107,51 @@ export function buildNavigation(
   }
 
   const archived = new Set(snapshot.archivedSessionIds)
-  const sessions: SessionRow[] = []
+  const pinned = new Set(snapshot.pinnedSessionIds)
+  const rowsById = new Map<SessionId, SessionRow>()
+  const members = new Map<string, SessionId[]>([[FLAT_ORDER, []], [UNGROUPED_ORDER, []]])
   const currentId = Object.values(byId).find(({ retainedBy }) =>
     'mainView' in retainedBy && typeof retainedBy.mainView === 'number' && retainedBy.mainView > 0)?.id
   for (const id of catalog.ids) {
     const session = byId[id]
-    if (session === undefined) continue
-    if (session.blank || session.origin === 'subagent' || archived.has(session.id)) continue
+    if (session === undefined || session.blank || session.origin === 'subagent') continue
     const workspace = workspaceBySession.get(session.id)
-    sessions.push({
-      id: session.id, title: session.title?.trim() || untitled,
+    const isArchived = archived.has(id)
+    rowsById.set(id, {
+      id, title: session.title?.trim() || untitled,
       path: workspace?.path || session.cwd || '', workspace: workspace?.title ?? '',
       workspaceId: workspace?.id, latest: toMillis(session.updatedAt), running: session.running === true,
+      archived: isArchived, pinned: !isArchived && pinned.has(id),
     })
+    members.get(FLAT_ORDER)?.push(id)
+    const key = workspace === undefined ? UNGROUPED_ORDER : `workspace:${workspace.id}`
+    const account = members.get(key)
+    if (account === undefined) members.set(key, [id])
+    else account.push(id)
   }
-  sessions.sort((a, b) => b.latest - a.latest || a.id.localeCompare(b.id))
-
-  const ungrouped: WorkspaceBranch = { key: 'ungrouped', workspace: undefined, children: [], sessions: [] }
-  for (const session of sessions) {
-    const branch = session.workspaceId === undefined ? ungrouped : branchById.get(session.workspaceId) ?? ungrouped
-    branch.sessions.push(session)
+  const orders = Object.fromEntries([...members].map(([key, ids]) => {
+    const order = view.orderBy === 'manual'
+      ? reconcileManualOrder(ids, view.orders[key], byId, snapshot)
+      : orderByRecency(ids, byId)
+    return [key, order]
+  }))
+  const visible = (key: string) => {
+    const leading: SessionRow[] = []
+    const rest: SessionRow[] = []
+    for (const id of orders[key] ?? []) {
+      const row = rowsById.get(id)
+      if (row === undefined || (view.archiveFilter === 'hide-archived' && row.archived)
+        || (view.archiveFilter === 'only-archived' && !row.archived)) continue
+      if (row.pinned) leading.push(row)
+      else rest.push(row)
+    }
+    return [...leading, ...rest]
   }
+  const sessions = visible(FLAT_ORDER)
+  const ungrouped: WorkspaceBranch = {
+    key: UNGROUPED_ORDER, workspace: undefined, children: [], sessions: visible(UNGROUPED_ORDER),
+  }
+  for (const branch of branchById.values()) branch.sessions.push(...visible(branch.key))
   const branches = [...branchById.values()]
   let roots: WorkspaceBranch[] | undefined
   let groupingError = false
@@ -134,7 +165,15 @@ export function buildNavigation(
   }
   roots ??= groupId === WORKSPACES ? branches : workspaceRoots(branches)
   if (ungrouped.sessions.length > 0) roots.push(ungrouped)
-  return { roots, sessions, currentId, groupingError }
+  if (view.archiveFilter === 'only-archived') roots = keepArchivedBranches(roots)
+  return { roots, sessions, currentId, groupingError, orders }
+}
+
+function keepArchivedBranches(roots: WorkspaceBranch[]): WorkspaceBranch[] {
+  return roots.flatMap(branch => {
+    const children = keepArchivedBranches(branch.children)
+    return branch.sessions.length > 0 || children.length > 0 ? [{ ...branch, children }] : []
+  })
 }
 
 export function searchSessions(rows: readonly SessionRow[], query: string, hits: readonly SearchHit[]) {

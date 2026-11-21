@@ -30,12 +30,13 @@ const ReactStub = {
 }
 const ReactDOMStub = { createPortal: () => null }
 const plugin = registration.factory(name => (
-  name === 'react' ? ReactStub : name === 'react-dom' ? { default: ReactDOMStub } : undefined
+  name === 'react' ? ReactStub : name === 'react-dom' ? { default: ReactDOMStub }
+    : name === '@deepseek-ai/dsh-client-ui-primitives' ? {} : undefined
 ))
 const {
   buildRows, filterRows, shortenPath, relativeTime, toMillis, SHORTLIST,
   buildNavigation, filterTree, initialExpansion, searchSessions,
-  activeGrouping, createGroupingPreferences, createGroupingRegistry,
+  activeGrouping, createGroupingPreferences, createGroupingRegistry, createViewPreferences, moveSession,
 } = plugin.__test
 
 /** A minimal host: recorded effects, a locale service, and a slot registry. */
@@ -341,7 +342,7 @@ test('the workspace chooser delegates selection to the live New Session owner', 
   assert.deepEqual(picked, ['new'])
 })
 
-function navigationFixture(groupId) {
+function navigationFixture(groupId, view) {
   const items = [
     { workspaceId: 'project', path: '/project', title: 'Project', sessionIds: ['root-session'] },
     { workspaceId: 'nested', path: '/project/app/src', title: 'Code', sessionIds: ['code', 'archived', 'draft', 'subagent'] },
@@ -358,7 +359,7 @@ function navigationFixture(groupId) {
     ['subagent', { origin: 'subagent' }],
   ].map(([id, fields]) => [id, { id, blank: false, retainedBy: {}, ...fields }])
   return buildNavigation({ items, archivedSessionIds: ['archived'] },
-    { ids: list.map(([id]) => id), byId: Object.fromEntries(list) }, 'Default workspace', 'Untitled session', groupId)
+    { ids: list.map(([id]) => id), byId: Object.fromEntries(list) }, 'Default workspace', 'Untitled session', groupId, undefined, view)
 }
 
 test('nests registered directories, preserves ancestors in search, and omits drafts and archives', () => {
@@ -486,4 +487,44 @@ test('merges metadata and content hits without duplicate or non-openable rows', 
   assert.deepEqual(results.map(({ id, snippet }) => [id, snippet]), [
     ['code', 'metadata plus content'], ['root-session', 'body-only match'],
   ])
+})
+
+
+test('archive filter controls paths, metadata search and message matches', () => {
+  const only = navigationFixture('workspace-tree', { orderBy: 'updated', archiveFilter: 'only-archived', orders: {} })
+  assert.deepEqual(only.sessions.map(({ id, archived }) => [id, archived]), [['archived', true]])
+  assert.deepEqual(only.roots.map(root => root.key), ['workspace:project'])
+  assert.deepEqual(only.roots[0].children[0].sessions.map(row => row.id), ['archived'])
+  assert.deepEqual(searchSessions(only.sessions, 'message', [
+    { sessionId: 'archived', snippet: 'match' }, { sessionId: 'code', snippet: 'other match' },
+  ]).map(row => row.id), ['archived'])
+  const all = navigationFixture('flat', { orderBy: 'updated', archiveFilter: 'show-archived', orders: {} })
+  assert.deepEqual(all.sessions.map(row => row.id), ['archived', 'code', 'loose', 'root-session'])
+})
+
+test('manual ordering retains hidden archive positions and reconciles missing IDs', () => {
+  const savedOrder = ['root-session', 'archived', 'loose', 'missing']
+  const view = { orderBy: 'manual', archiveFilter: 'hide-archived', orders: { flat: savedOrder } }
+  const { sessions, orders } = navigationFixture('flat', view)
+  assert.deepEqual(sessions.map(row => row.id), ['root-session', 'loose', 'code'])
+  assert.deepEqual(orders.flat, ['root-session', 'archived', 'loose', 'code'])
+  const moved = moveSession(orders.flat, 'loose', 'root-session')
+  assert.deepEqual(moved, ['loose', 'root-session', 'archived', 'code'])
+  assert.equal(moveSession(orders.flat, 'loose', 'missing'), orders.flat)
+  assert.equal(moveSession(orders.flat, 'loose', 'code', 'before'), orders.flat)
+  assert.deepEqual(moveSession(orders.flat, 'loose', 'code', 'after'), ['root-session', 'archived', 'code', 'loose'])
+  const shown = navigationFixture('flat', { ...view, archiveFilter: 'show-archived', orders: { flat: moved } })
+  assert.deepEqual(shown.sessions.map(row => row.id), moved)
+})
+
+test('view preferences survive reload and reject malformed values', () => {
+  let saved = ''
+  const storage = () => ({ getItem: () => saved, setItem: (_key, value) => { saved = value } })
+  const first = createViewPreferences(storage)
+  assert.deepEqual(first.get(), { orderBy: 'updated', archiveFilter: 'hide-archived', orders: {} })
+  const next = { orderBy: 'manual', archiveFilter: 'only-archived', orders: { flat: ['session'] } }
+  first.set(next)
+  assert.deepEqual(createViewPreferences(storage).get(), next)
+  saved = '{"orderBy":"invalid","archiveFilter":"invalid","orders":{"flat":[5]}}'
+  assert.deepEqual(createViewPreferences(storage).get(), { orderBy: 'updated', archiveFilter: 'hide-archived', orders: {} })
 })

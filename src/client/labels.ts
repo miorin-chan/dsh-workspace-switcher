@@ -6,6 +6,8 @@
  * key set, so a missing translation is a compile error rather than an English
  * fallback surfacing at render time.
  */
+// View-options labels and archive terminology adapted from src/client/locales.ts
+// in @deepseek-ai/dsh-client-ui-workspace 0.2.2-rc.5 (MIT, Copyright (c) 2026 DeepSeek).
 import type {} from '@deepseek-ai/dsh-client-ui-slots'
 
 /** Locale registration namespace of this bundle. */
@@ -62,6 +64,18 @@ export type LabelKey =
   | 'group.heading'
   | 'group.flat'
   | 'group.failed'
+  | 'order.heading'
+  | 'order.manual'
+  | 'order.updated'
+  | 'filter.heading'
+  | 'filter.hideArchived'
+  | 'filter.showArchived'
+  | 'filter.onlyArchived'
+  | 'session.unarchive'
+  | 'session.unarchiveFailed'
+  | 'session.archived'
+  | 'session.moveUp'
+  | 'session.moveDown'
   | 'searchWorkspaceTree'
   | 'untitledSession'
   | 'ungrouped'
@@ -91,6 +105,18 @@ const en: LabelDict = {
   "group.heading": "Group by",
   "group.flat": "Flat sessions",
   "group.failed": "Could not apply this grouping. Showing the workspace tree.",
+  "order.heading": "Order by",
+  "order.manual": "Manual",
+  "order.updated": "Last updated",
+  "filter.heading": "Filter sessions",
+  "filter.hideArchived": "Hide archived",
+  "filter.showArchived": "All conversations (show archived)",
+  "filter.onlyArchived": "Archived only",
+  "session.unarchive": "Unarchive",
+  "session.archived": "Archived",
+  "session.unarchiveFailed": "Could not unarchive session",
+  "session.moveUp": "Move session up",
+  "session.moveDown": "Move session down",
   "defaultName": "Default workspace",
   "search.placeholder": "Search workspaces",
   "search.label": "Search workspaces",
@@ -160,6 +186,18 @@ const zh: LabelDict = {
   "group.heading": "分组方式",
   "group.flat": "平铺会话",
   "group.failed": "无法应用此分组，已显示工作区树",
+  "order.heading": "排序方式",
+  "order.manual": "手动排序",
+  "order.updated": "最近更新",
+  "filter.heading": "筛选会话",
+  "filter.hideArchived": "隐藏已归档",
+  "filter.showArchived": "全部对话（显示已归档）",
+  "filter.onlyArchived": "仅显示已归档",
+  "session.unarchive": "取消归档",
+  "session.archived": "已归档",
+  "session.unarchiveFailed": "无法取消归档",
+  "session.moveUp": "上移会话",
+  "session.moveDown": "下移会话",
   "defaultName": "默认工作区",
   "search.placeholder": "搜索工作区",
   "search.label": "搜索工作区",
@@ -229,6 +267,18 @@ const ja: LabelDict = {
   "group.heading": "グループ化",
   "group.flat": "セッション一覧",
   "group.failed": "このグループ化を適用できなかったため、ワークスペースツリーを表示しています。",
+  "order.heading": "並び順",
+  "order.manual": "手動",
+  "order.updated": "最終更新",
+  "filter.heading": "セッションを絞り込む",
+  "filter.hideArchived": "アーカイブを非表示",
+  "filter.showArchived": "すべての会話（アーカイブを表示）",
+  "filter.onlyArchived": "アーカイブのみ",
+  "session.unarchive": "アーカイブを解除",
+  "session.archived": "アーカイブ済み",
+  "session.unarchiveFailed": "セッションのアーカイブを解除できませんでした",
+  "session.moveUp": "セッションを上へ移動",
+  "session.moveDown": "セッションを下へ移動",
   "defaultName": "デフォルトのワークスペース",
   "search.placeholder": "ワークスペースを検索",
   "search.label": "ワークスペースを検索",
@@ -298,6 +348,18 @@ const de: LabelDict = {
   "group.heading": "Gruppieren nach",
   "group.flat": "Flache Sitzungsliste",
   "group.failed": "Die Gruppierung konnte nicht angewendet werden. Der Arbeitsbereichsbaum wird angezeigt.",
+  "order.heading": "Sortieren nach",
+  "order.manual": "Manuell",
+  "order.updated": "Zuletzt aktualisiert",
+  "filter.heading": "Sitzungen filtern",
+  "filter.hideArchived": "Archiviert ausblenden",
+  "filter.showArchived": "Alle Gespräche (archiviert anzeigen)",
+  "filter.onlyArchived": "Nur archiviert",
+  "session.unarchive": "Dearchivieren",
+  "session.archived": "Archiviert",
+  "session.unarchiveFailed": "Sitzung konnte nicht dearchiviert werden",
+  "session.moveUp": "Sitzung nach oben verschieben",
+  "session.moveDown": "Sitzung nach unten verschieben",
   "defaultName": "Standardarbeitsbereich",
   "search.placeholder": "Arbeitsbereiche durchsuchen",
   "search.label": "Arbeitsbereiche durchsuchen",
@@ -367,6 +429,18 @@ const es: LabelDict = {
   "group.heading": "Agrupar por",
   "group.flat": "Lista de sesiones",
   "group.failed": "No se pudo aplicar la agrupación. Se muestra el árbol de espacios de trabajo.",
+  "order.heading": "Ordenar por",
+  "order.manual": "Manual",
+  "order.updated": "Última actualización",
+  "filter.heading": "Filtrar sesiones",
+  "filter.hideArchived": "Ocultar archivado",
+  "filter.showArchived": "Todas las conversaciones (mostrar archivadas)",
+  "filter.onlyArchived": "Sólo archivado",
+  "session.unarchive": "Desarchivar",
+  "session.archived": "Archivado",
+  "session.unarchiveFailed": "No se pudo desarchivar la sesión",
+  "session.moveUp": "Mover sesión hacia arriba",
+  "session.moveDown": "Mover sesión hacia abajo",
   "defaultName": "Espacio de trabajo predeterminado",
   "search.placeholder": "Buscar espacios de trabajo",
   "search.label": "Buscar espacios de trabajo",
@@ -436,6 +510,18 @@ const fr: LabelDict = {
   "group.heading": "Regrouper par",
   "group.flat": "Liste des sessions",
   "group.failed": "Impossible d’appliquer ce regroupement. L’arborescence des espaces de travail est affichée.",
+  "order.heading": "Trier par",
+  "order.manual": "Manuel",
+  "order.updated": "Dernière mise à jour",
+  "filter.heading": "Filtrer les sessions",
+  "filter.hideArchived": "Masquer les archives",
+  "filter.showArchived": "Toutes les conversations (afficher les archives)",
+  "filter.onlyArchived": "Archivé uniquement",
+  "session.unarchive": "Désarchiver",
+  "session.archived": "Archivé",
+  "session.unarchiveFailed": "Impossible de désarchiver la session",
+  "session.moveUp": "Déplacer la session vers le haut",
+  "session.moveDown": "Déplacer la session vers le bas",
   "defaultName": "Espace de travail par défaut",
   "search.placeholder": "Rechercher des espaces de travail",
   "search.label": "Rechercher des espaces de travail",
@@ -505,6 +591,18 @@ const pt: LabelDict = {
   "group.heading": "Agrupar por",
   "group.flat": "Lista de sessões",
   "group.failed": "Não foi possível aplicar este agrupamento. A árvore de espaços de trabalho está sendo exibida.",
+  "order.heading": "Ordenar por",
+  "order.manual": "Manual",
+  "order.updated": "Última atualização",
+  "filter.heading": "Filtrar sessões",
+  "filter.hideArchived": "Ocultar arquivado",
+  "filter.showArchived": "Todas as conversas (mostrar arquivadas)",
+  "filter.onlyArchived": "Somente arquivado",
+  "session.unarchive": "Desarquivar",
+  "session.archived": "Arquivado",
+  "session.unarchiveFailed": "Não foi possível desarquivar a sessão",
+  "session.moveUp": "Mover sessão para cima",
+  "session.moveDown": "Mover sessão para baixo",
   "defaultName": "Área de trabalho padrão",
   "search.placeholder": "Pesquisar áreas de trabalho",
   "search.label": "Pesquisar áreas de trabalho",
@@ -574,6 +672,18 @@ const ru: LabelDict = {
   "group.heading": "Группировка",
   "group.flat": "Список сессий",
   "group.failed": "Не удалось применить группировку. Показано дерево рабочих областей.",
+  "order.heading": "Сортировать по",
+  "order.manual": "Вручную",
+  "order.updated": "Последнее обновление",
+  "filter.heading": "Фильтровать сеансы",
+  "filter.hideArchived": "Скрыть в архиве",
+  "filter.showArchived": "Все разговоры (показать в архиве)",
+  "filter.onlyArchived": "Только в архиве",
+  "session.unarchive": "Разархивировать",
+  "session.archived": "В архиве",
+  "session.unarchiveFailed": "Не удалось разархивировать сеанс",
+  "session.moveUp": "Переместить сеанс вверх",
+  "session.moveDown": "Переместить сеанс вниз",
   "defaultName": "Рабочее пространство по умолчанию",
   "search.placeholder": "Поиск рабочих пространств",
   "search.label": "Поиск рабочих пространств",

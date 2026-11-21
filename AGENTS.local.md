@@ -48,7 +48,8 @@ The aggregate and this bundle insert the same row id, so do not install both.
 - `src/host/index.ts` is the inert Host half that lets the bundle row load.
 - `tsconfig.json`, `scripts/build.mjs`, and `scripts/sync-types.mjs` are the TypeScript base,
   copied from the workspace `tools/dsh-plugin-ts/` template.
-  Types appear only as `import type`, and the built artifacts carry no `@deepseek-ai/*` runtime import.
+  Import DSH declarations as types. The Client build may use `@deepseek-ai/dsh-client-ui-primitives`
+  from the DSH Web shell's shared platform module table for public menu controls and icons.
 - [test/client.test.mjs](test/client.test.mjs) drives the pure model through the built `client.js`
   with a fake `ctx` that checks registration, resources, and cleanup.
   The test loads the artifact, so the source migration does not change it.

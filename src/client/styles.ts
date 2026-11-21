@@ -9,11 +9,8 @@
  * over.
  */
 export const CSS = `
-/* Surface vocabulary borrowed from the host primitives, not restyled to taste:
- * the compact popover is a Menu card (4px padding, translucent menu material,
- * 34px rows with a trailing check) and the expanded chooser is a Modal card
- * (l2 surface, panel radius, hairline rules, 28px buttons). Only theme tokens
- * are referenced, so both themes and future host revisions carry over. */
+/* The compact popover follows the host Menu surface and the expanded chooser
+ * follows the host Modal surface. Both use host theme tokens. */
 .wsp-layer { position: fixed; inset: 0; z-index: 1099; }
 .wsp-popover {
   position: fixed; z-index: 1100; box-sizing: border-box;
@@ -269,17 +266,17 @@ export const CSS = `
 .wsp-tool-button:focus-visible { outline: 2px solid var(--dsw-alias-state-business-primary); outline-offset: 1px; }
 .wsp-tool-button[aria-expanded='true'] { background: var(--dsw-alias-interactive-bg-hover); color: var(--dsw-alias-label-primary); }
 .wsp-tool-button:disabled, .wsp-tool-button[aria-disabled='true'] { opacity: .45; cursor: default; }
-.wsp-group-menu {
-  position: absolute; z-index: 2; inset-block-start: calc(100% - 6px); inset-inline-end: var(--wsp-menu-inset);
-  width: min(248px, calc(100% - 2 * var(--wsp-menu-inset)));
-  max-height: min(220px, max(66px, calc(100dvh - 220px)));
-  overflow: auto; overscroll-behavior: contain;
+/* Keep the official Menu in the modal's DOM and anchor its list within the
+ * dialog gutters. The Menu's own scrolling viewport contains every section. */
+.wsp-view-options.wsp-view-options { position: static; }
+.wsp-view-options .wsp-view-options-menu {
+  inset-block-start: calc(100% - 6px); inset-inline: auto var(--wsp-menu-inset);
+  min-width: min(200px, calc(100% - 2 * var(--wsp-menu-inset)));
+  max-width: min(360px, calc(100% - 2 * var(--wsp-menu-inset)));
+  max-height: clamp(64px, calc(100dvh - 180px), 366px);
 }
-.wsp-group-heading { padding: 5px 8px; font-size: 12px; color: var(--dsw-alias-label-tertiary); }
-.wsp-group-item { flex: none; text-align: start; }
-.wsp-group-item:focus { background: var(--dsw-alias-interactive-bg-hover); }
-.wsp-group-item:focus-visible { outline: 2px solid var(--dsw-alias-state-business-primary); outline-offset: -2px; }
-.wsp-group-item-name { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.wsp-view-options-menu > [role='presentation'] { overscroll-behavior: contain; }
+.wsp-view-options-label { display: block; white-space: normal; overflow-wrap: anywhere; }
 .wsp-dialog-search .wsp-search {
   height: 32px; margin: 0; padding: 0 8px;
   border: .5px solid var(--dsw-alias-border-l4);
@@ -333,6 +330,11 @@ export const CSS = `
 .wsp-dialog-body .wsp-navigation-row[data-search-meta='true'] { min-height: 48px; padding-block: 4px; }
 .wsp-navigation-row .wsp-row-title { font-size: 14px; }
 .wsp-navigation-row[data-selected='true'] { background-color: var(--dsw-alias-interactive-bg-hover); }
+.wsp-navigation-row[data-archived='true'] .wsp-row-title { color: var(--dsw-alias-label-secondary); }
+.wsp-navigation-row[draggable='true'] { cursor: grab; }
+.wsp-navigation-row[draggable='true']:active { cursor: grabbing; }
+.wsp-navigation-row[data-drop-target='before'] { box-shadow: inset 0 2px var(--dsw-alias-state-business-primary); }
+.wsp-navigation-row[data-drop-target='after'] { box-shadow: inset 0 -2px var(--dsw-alias-state-business-primary); }
 .wsp-navigation-row:focus-visible { outline: 1px solid var(--dsw-focus-ring-color); outline-offset: -1px; }
 .wsp-search-meta { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
 .wsp-search-meta .wsp-row-path { font-size: 12px; line-height: 17px; }
@@ -379,7 +381,7 @@ export const CSS = `
   .wsp-skeleton-bar, .wsp-spinner { animation: none; }
 }
 @media (max-width: 640px) {
-  .wsp-popover:not(.wsp-group-menu) {
+  .wsp-popover {
     left: 12px !important; right: 12px !important;
     top: auto !important;
     bottom: max(12px, env(safe-area-inset-bottom)) !important;

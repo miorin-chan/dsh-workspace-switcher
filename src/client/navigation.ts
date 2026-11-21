@@ -1,9 +1,10 @@
+import { IconArchiveOutlineRegular, IconChevronDownOutlineRegular, IconChevronUpOutlineRegular, IconProjectAddOutlineRegular, IconUnarchiveOutlineRegular } from '@deepseek-ai/dsh-client-ui-primitives'
 import * as React from 'react'
 import type { ReactNode } from 'react'
 import type { WorkspaceId, WorkspaceSnapshot } from '@deepseek-ai/dsh-api-workspace-controller/client'
 import { ErrorBanner, SearchField, Skeleton } from './components'
 import { SwitcherDialog, trapTab } from './dialog'
-import { CheckGlyph, DisclosureGlyph, FolderAddGlyph, FolderGlyph, OpenFolderGlyph } from './glyphs'
+import { CheckGlyph, DisclosureGlyph, FolderGlyph, OpenFolderGlyph } from './glyphs'
 import { GroupingMenu } from './grouping-menu'
 import { activeGrouping, FLAT, WORKSPACES, WORKSPACE_TREE, type createGroupingPreferences, type createGroupingRegistry } from './grouping'
 import type { TranslateSeat } from './labels'
@@ -14,6 +15,7 @@ import {
 } from './navigation-model'
 import type { createSwitcherControls, SwitcherMode } from './shortcuts'
 import type { SnapshotHook } from './view'
+import { FLAT_ORDER, createViewPreferences, isArchiveFilter, isOrderBy, moveSession } from './view-preferences'
 
 const h = React.createElement
 const { useEffect, useId, useMemo, useRef, useState, useSyncExternalStore } = React
@@ -32,9 +34,11 @@ export interface NavigationActions {
   readonly controls: Controls
   readonly groupings: ReturnType<typeof createGroupingRegistry>
   readonly groupingPreferences: ReturnType<typeof createGroupingPreferences>
+  readonly viewPreferences: ReturnType<typeof createViewPreferences>
   readonly statusLabel: (key: StatusLabel) => string
   readonly searchContent: Search
   readonly openSession: (id: SessionId) => void
+  readonly unarchiveSession: (id: SessionId) => Promise<void>
   readonly renameWorkspace: (id: WorkspaceId, title: string) => Promise<unknown>
   readonly addWorkspace?: (signal: AbortSignal) => Promise<WorkspaceId | undefined>
 }
@@ -45,6 +49,7 @@ interface OverlayProps extends NavigationActions {
   readonly useSessions: SnapshotHook<NavigationCatalog>
   readonly useSessionStatus: SnapshotHook<ReadonlyMap<SessionId, SessionStatus>>
   readonly usePanelInfo: SnapshotHook<{ readonly activePanelId: string | null }>
+  readonly useSessionAccess: (id: SessionId, action: 'workspace/unarchiveSession') => boolean
   readonly useWorkspaceAccess: (id: WorkspaceId, action: 'workspace/rename') => boolean
   readonly useRemoteAccess: (action: 'workspace/create') => boolean
 }
@@ -54,8 +59,9 @@ export function SwitcherOverlay(props: OverlayProps): ReactNode {
   return mode === null ? null : h(NavigationDialog, { ...props, key: mode, mode })
 }
 
-function NavigationDialog({ mode, controls, groupings, groupingPreferences, t, useWorkspaces, useSessions, usePanelInfo,
-  useWorkspaceAccess, useRemoteAccess, useSessionStatus, statusLabel, searchContent, openSession, renameWorkspace, addWorkspace,
+function NavigationDialog({ mode, controls, groupings, groupingPreferences, viewPreferences, t, useWorkspaces, useSessions, usePanelInfo,
+  useWorkspaceAccess, useSessionAccess, useRemoteAccess, useSessionStatus, statusLabel, searchContent, openSession,
+  unarchiveSession, renameWorkspace, addWorkspace,
 }: OverlayProps & { mode: SwitcherMode }): ReactNode {
   const workspaces = useWorkspaces(state => state)
   const sessions = useSessions(state => state)
@@ -69,9 +75,15 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, t, u
   const groupBy = activeGrouping(groupId, catalog, choosing)
   const grouping = catalog.find(entry => entry.id === groupBy)
   const tree = groupBy !== FLAT
-  const { roots, sessions: sessionRows, currentId, groupingError } = useMemo(
-    () => buildNavigation(workspaces, sessions, t('defaultName'), t('untitledSession'), groupBy, grouping),
-    [workspaces, sessions, t, groupBy, grouping],
+  const [view, setView] = useState(viewPreferences.get)
+  const changeView = (next: typeof view) => {
+    setView(next)
+    viewPreferences.set(next)
+  }
+  const { roots, sessions: sessionRows, currentId, groupingError, orders } = useMemo(
+    () => buildNavigation(workspaces, sessions, t('defaultName'), t('untitledSession'), groupBy, grouping,
+      choosing ? undefined : view),
+    [workspaces, sessions, t, groupBy, grouping, choosing, view],
   )
   const displayedGroup = groupingError ? WORKSPACE_TREE : groupBy
   useEffect(() => {
@@ -91,7 +103,7 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, t, u
   const [expansions, setExpansions] = useState<ReadonlyMap<string, ReadonlyMap<string, boolean>>>(() => new Map())
   const expanded = expansions.get(displayedGroup) ?? new Map<string, boolean>()
   const [renaming, setRenaming] = useState<{ readonly id: WorkspaceId; readonly title: string; readonly original: string }>()
-  const [writeKind, setWriteKind] = useState<'add' | 'rename'>()
+  const [writeKind, setWriteKind] = useState<'add' | 'rename' | 'unarchive'>()
   const busy = writeKind !== undefined
   const pendingWrite = useRef(false)
   const lifetime = useRef<AbortController | null>(null)
@@ -170,6 +182,10 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, t, u
   const choose = (row: NavigationRow) => {
     if (pendingWrite.current) return
     if (row.kind === 'session') {
+      if (row.session.archived) {
+        setActiveKey(row.key)
+        return
+      }
       try {
         openSession(row.session.id)
         controls.close()
@@ -184,7 +200,7 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, t, u
       toggle(row)
     }
   }
-  const write = async (kind: 'add' | 'rename', failed: string, operation: () => Promise<void>) => {
+  const write = async (kind: 'add' | 'rename' | 'unarchive', failed: string, operation: () => Promise<void>) => {
     if (pendingWrite.current) return
     pendingWrite.current = true
     setWriteKind(kind)
@@ -220,7 +236,7 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, t, u
   }
 
   const onKeyDown: React.KeyboardEventHandler<HTMLDivElement> = event => {
-    if (event.nativeEvent.isComposing || event.keyCode === 229) return
+    if (event.defaultPrevented || event.nativeEvent.isComposing || event.keyCode === 229) return
     if (event.key === 'Escape') {
       event.preventDefault()
       event.stopPropagation()
@@ -263,13 +279,41 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, t, u
 
   const focused = active ?? rows[selectedIndex] ?? (tree ? rows[0] : undefined)
   const focusedWorkspace = focused?.kind === 'branch' ? focused.match.branch.workspace : undefined
+  const focusedSession = focused?.kind === 'session' ? focused : undefined
+  const reorderable = view.orderBy === 'manual' && trimmed === '' && !busy && renaming === undefined
+  const siblings = reorderable && focusedSession !== undefined && !focusedSession.session.archived
+    ? rows.filter(row => row.kind === 'session' && row.parentKey === focusedSession.parentKey
+      && !row.session.archived && row.session.pinned === focusedSession.session.pinned) : []
+  const position = siblings.findIndex(row => row === focusedSession)
+  const shiftSession = (target: NavigationRow | undefined) => {
+    if (focusedSession === undefined || target?.kind !== 'session') return
+    reorder(focusedSession, target)
+  }
+  const dragged = useRef<SessionResult | null>(null)
+  const [dropTarget, setDropTarget] = useState<{ key: string; half: DropHalf }>()
+  const clearDrag = () => { dragged.current = null; setDropTarget(undefined) }
+  const canDrop = (target: NavigationRow) => {
+    const from = dragged.current
+    return reorderable && from !== null && target.kind === 'session' && from.key !== target.key
+      && from.parentKey === target.parentKey && !target.session.archived && from.session.pinned === target.session.pinned
+  }
+  function reorder(from: SessionResult, to: SessionResult, half?: DropHalf) {
+    const key = from.parentKey ?? FLAT_ORDER
+    const order = orders[key]
+    if (order === undefined) return
+    const next = moveSession(order, from.session.id, to.session.id, half)
+    if (order === next) return
+    setActiveKey(from.key)
+    changeView({ ...view, orders: { ...view.orders, [key]: next } })
+  }
   const status = error ?? (remote.error === undefined ? undefined : { label: t('contentSearchFailed'), message: remote.error })
   const renameTitle = renaming?.title.trim()
   const canSaveRename = renameTitle !== undefined && renameTitle !== '' && renameTitle !== renaming?.original && !busy
   const catalogError = workspaces.state === 'error'
   const empty = pending ? h(Skeleton, { rows: 5 })
     : h('div', { className: 'wsp-empty', role: 'status' }, t(catalogError ? 'listUnavailable'
-      : trimmed !== '' ? 'noMatches' : tree ? 'empty.noWorkspacesTitle' : 'noSessions'))
+      : trimmed !== '' ? 'noMatches'
+        : tree && (choosing || view.archiveFilter !== 'only-archived') ? 'empty.noWorkspacesTitle' : 'noSessions'))
 
   function renderRows() {
     const children = new Map<string | undefined, number[]>()
@@ -287,6 +331,34 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, t, u
         selected: row.kind === 'session' ? row.session.id === currentId
           : row.match.branch.workspace?.id !== undefined && row.match.branch.workspace.id === hero?.selectedId,
         currentBranch: currentBranches.has(row.key), useSessionStatus, statusLabel,
+        dropTarget: dropTarget?.key === row.key ? dropTarget.half : undefined,
+        ...(reorderable && row.kind === 'session' && !row.session.archived ? { drag: {
+          draggable: true,
+          onDragStart: (event: React.DragEvent<HTMLButtonElement>) => {
+            dragged.current = row
+            event.dataTransfer.effectAllowed = 'move'
+            event.dataTransfer.setData('text/plain', row.session.id)
+          },
+          onDragOver: (event: React.DragEvent<HTMLButtonElement>) => {
+            if (!canDrop(row)) return
+            event.preventDefault()
+            event.dataTransfer.dropEffect = 'move'
+            const half = sessionDropHalf(event)
+            setDropTarget(current => current?.key === row.key && current.half === half ? current : { key: row.key, half })
+          },
+          onDragLeave: (event: React.DragEvent<HTMLButtonElement>) => {
+            if (!(event.relatedTarget instanceof Node) || !event.currentTarget.contains(event.relatedTarget)) {
+              setDropTarget(target => target?.key === row.key ? undefined : target)
+            }
+          },
+          onDrop: (event: React.DragEvent<HTMLButtonElement>) => {
+            if (!canDrop(row) || dragged.current === null) return
+            event.preventDefault()
+            reorder(dragged.current, row, sessionDropHalf(event))
+            clearDrag()
+          },
+          onDragEnd: clearDrag,
+        } } : {}),
         tree, busy, onChoose: () => choose(row), onFocus: () => setActiveKey(row.key),
         onToggle: row.kind === 'branch' ? () => { setActiveKey(row.key); toggle(row) } : undefined,
       })
@@ -337,21 +409,62 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, t, u
     ),
     toolbar: renaming === undefined ? h('div', { className: 'wsp-navigation-toolbar' },
       h(GroupingMenu, {
-        label: t('group.options'), heading: t('group.heading'), selected: displayedGroup, choices, disabled: busy,
-        onSelect: (id: string) => {
-          preferenceChoice.current = id
-          setGroupId(id)
-          setActiveKey(undefined)
-        },
+        label: t('group.options'), disabled: busy,
+        sections: [{
+          heading: t('group.heading'), choices, selected: displayedGroup,
+          onSelect: (id: string) => {
+            preferenceChoice.current = id
+            setGroupId(id)
+            setActiveKey(undefined)
+          },
+        }, ...(!choosing ? [{
+          heading: t('order.heading'), selected: view.orderBy,
+          choices: [{ id: 'manual', label: t('order.manual') }, { id: 'updated', label: t('order.updated') }],
+          onSelect: (id: string) => {
+            if (!isOrderBy(id) || id === view.orderBy) return
+            changeView({ ...view, orderBy: id, orders: id === 'manual' ? { ...orders, ...view.orders } : view.orders })
+          },
+        }, {
+          heading: t('filter.heading'), selected: view.archiveFilter,
+          choices: [
+            { id: 'hide-archived', label: t('filter.hideArchived') },
+            { id: 'show-archived', label: t('filter.showArchived') },
+            { id: 'only-archived', label: t('filter.onlyArchived') },
+          ],
+          onSelect: (id: string) => {
+            if (!isArchiveFilter(id)) return
+            setActiveKey(undefined)
+            changeView({ ...view, archiveFilter: id })
+          },
+        }] : [])],
       }),
       canAdd && addWorkspace !== undefined ? h('button', {
         type: 'button', className: 'wsp-icon-btn wsp-tool-button',
         title: t(writeKind === 'add' ? 'adding' : 'add'), 'aria-label': t('add'),
         'aria-busy': writeKind === 'add' || undefined, 'aria-disabled': busy || undefined, onClick: add,
-      }, h(FolderAddGlyph)) : null,
+      }, h(IconProjectAddOutlineRegular, { size: 16 })) : null,
     ) : null,
     footer: h(React.Fragment, null,
       h('div', { className: 'wsp-navigation-actions' },
+        focusedSession?.session.archived ? h(RestoreButton, {
+          useSessionAccess, id: focusedSession.session.id, t, busy,
+          onRestore: () => {
+            inputRef.current?.focus({ preventScroll: true })
+            void write('unarchive', t('session.unarchiveFailed'), () => unarchiveSession(focusedSession.session.id))
+          },
+        }) : null,
+        position >= 0 && siblings.length > 1 ? h(React.Fragment, null,
+          h('button', {
+            type: 'button', className: 'wsp-icon-btn wsp-tool-button', title: t('session.moveUp'),
+            'aria-label': t('session.moveUp'), 'aria-disabled': position === 0 || undefined,
+            onClick: () => { if (position > 0) shiftSession(siblings[position - 1]) },
+          }, h(IconChevronUpOutlineRegular, { size: 16 })),
+          h('button', {
+            type: 'button', className: 'wsp-icon-btn wsp-tool-button', title: t('session.moveDown'),
+            'aria-label': t('session.moveDown'), 'aria-disabled': position === siblings.length - 1 || undefined,
+            onClick: () => shiftSession(siblings[position + 1]),
+          }, h(IconChevronDownOutlineRegular, { size: 16 })),
+        ) : null,
         choosing || focusedWorkspace === undefined || renaming !== undefined ? null : h(RenameButton, {
           useWorkspaceAccess, workspaceId: focusedWorkspace.id, name: focusedWorkspace.title, t, busy,
           onClick: () => setRenaming({ id: focusedWorkspace.id, title: focusedWorkspace.title, original: focusedWorkspace.title }),
@@ -362,6 +475,16 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, t, u
           : pending ? t('loadingList') : trimmed === '' && tree ? null : t('countResults', { n: rows.length })),
     ),
   })
+}
+
+function RestoreButton({ useSessionAccess, id, t, busy, onRestore }: {
+  useSessionAccess: OverlayProps['useSessionAccess']; id: SessionId; t: TranslateSeat; busy: boolean; onRestore: () => void
+}): ReactNode {
+  if (!useSessionAccess(id, 'workspace/unarchiveSession')) return null
+  return h('button', {
+    type: 'button', className: 'wsp-icon-btn wsp-tool-button', title: t('session.unarchive'),
+    'aria-label': t('session.unarchive'), disabled: busy, onClick: onRestore,
+  }, h(IconUnarchiveOutlineRegular, { size: 16 }))
 }
 
 function RenameButton({ useWorkspaceAccess, workspaceId, name, t, busy, onClick }: {
@@ -378,9 +501,17 @@ type BranchRow = {
   kind: 'branch'; key: string; depth: number; parentKey?: string; title: string
   match: TreeMatch; expanded: boolean; expandable: boolean
 }
-type NavigationRow = BranchRow | {
+type NavigationRow = BranchRow | SessionResult
+type SessionResult = {
   kind: 'session'; key: string; depth: number; parentKey?: string
   session: SessionRow & { snippet?: string | undefined }
+}
+
+type DropHalf = 'before' | 'after'
+
+function sessionDropHalf(event: React.DragEvent<HTMLButtonElement>): DropHalf {
+  const bounds = event.currentTarget.getBoundingClientRect()
+  return event.clientY < bounds.top + bounds.height / 2 ? 'before' : 'after'
 }
 
 function flattenTree(matches: readonly TreeMatch[], expanded: ReadonlyMap<string, boolean>, auto: ReadonlySet<string>,
@@ -402,11 +533,12 @@ function flattenTree(matches: readonly TreeMatch[], expanded: ReadonlyMap<string
 }
 
 function ResultRow({ row, id, groupId, t, now, choosing, active, selected, currentBranch,
-  useSessionStatus, statusLabel, tree, busy, onChoose, onFocus, onToggle,
+  useSessionStatus, statusLabel, tree, busy, dropTarget, drag, onChoose, onFocus, onToggle,
 }: {
   row: NavigationRow; id: string; groupId: string | undefined; t: TranslateSeat; now: number;
   choosing: boolean; active: boolean; selected: boolean; currentBranch: boolean; tree: boolean; busy: boolean;
   useSessionStatus: OverlayProps['useSessionStatus']; statusLabel: NavigationActions['statusLabel'];
+  drag?: React.HTMLAttributes<HTMLButtonElement>; dropTarget: DropHalf | undefined;
   onChoose: () => void; onFocus: () => void; onToggle?: (() => void) | undefined
 }): ReactNode {
   const branch = row.kind === 'branch' ? row : undefined
@@ -423,10 +555,14 @@ function ResultRow({ row, id, groupId, t, now, choosing, active, selected, curre
     'aria-expanded': branch?.expandable ? branch.expanded : undefined,
     'aria-selected': selected, 'aria-disabled': busy || undefined, 'data-wsp-navigation-row': true,
     'data-active': active || undefined, 'data-selected': selected || undefined,
+    'data-archived': session?.archived || undefined, 'data-drop-target': dropTarget || undefined,
+    'aria-label': session?.archived ? `${title} · ${t('session.archived')}` : undefined,
+    ...drag,
     'data-search-meta': hasSearchMeta || undefined,
     className: 'wsp-row wsp-navigation-row', title: path || title, onClick: onChoose, onFocus,
   },
-    branch === undefined ? (session && h(SessionMarker, { session, useSessionStatus, statusLabel }))
+    branch === undefined ? session?.archived ? h('span', { className: 'wsp-row-icon' }, h(IconArchiveOutlineRegular, { size: 14 }))
+      : session && h(SessionMarker, { session, useSessionStatus, statusLabel })
       : h('span', {
         className: 'wsp-row-icon wsp-tree-icon', 'data-current': currentBranch || undefined,
         'data-swap': branch.expandable && !splitDisclosure || undefined, 'data-expanded': branch.expanded,

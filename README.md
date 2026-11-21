@@ -19,8 +19,10 @@ Requires DeepSeek Harness 0.2.2-rc.3 or newer.
 Use ↑ and ↓ to move, ← and → to collapse or expand a focused tree row, Enter to activate, and Esc to dismiss.
 Mod is Command on macOS and Ctrl elsewhere.
 
-Open **View options** in the dialog to choose a grouping.
-The optional [directory tree plugin](../dsh-workspace-file-tree/README.md) adds a directory tree to this menu.
+Open **View options** in the dialog to choose a grouping, session order, or archive filter.
+The optional [directory tree plugin](../dsh-workspace-file-tree/README.md) adds a grouping.
+In manual mode, drag sessions within one group, or select a session and use the move buttons.
+Select an archived session to reveal its unarchive action.
 
 ## Limits
 

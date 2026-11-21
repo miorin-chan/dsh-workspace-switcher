@@ -29,6 +29,7 @@ const { build } = require('esbuild')
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const CHECK = process.argv.includes('--check')
 const pkg = JSON.parse(await readFile(resolve(ROOT, 'package.json'), 'utf8'))
+const upstreamLicense = (await readFile(resolve(ROOT, 'LICENSE.deepseek-harness'), 'utf8')).trimEnd()
 
 /** Packages the Web shell seeds into its module table; every other import is bundled. */
 const CLIENT_EXTERNAL = [
@@ -36,7 +37,7 @@ const CLIENT_EXTERNAL = [
   'react/jsx-runtime',
   'react-dom',
   'react-dom/client',
-  '@deepseek-ai/*',
+  '@deepseek-ai/dsh-client-ui-primitives',
 ]
 
 const HOST_EXTERNAL = ['node:*']
@@ -48,6 +49,7 @@ function envelope(code) {
  * do not edit by hand. React and the seeded platform modules come from the
  * host module table.
  */
+/*!\n${upstreamLicense}\n*/
 window.__ModuleLoader__.load({
   id: '${pkg.name}',
   factory(require) {
