@@ -40,6 +40,7 @@
 import type { Context } from '@deepseek-ai/cordis'
 import type {} from '@deepseek-ai/dsh-api-session-controller/client'
 import type {} from '@deepseek-ai/dsh-client-ui-layout/client'
+import type {} from '@deepseek-ai/dsh-client-ui-context-menu/client'
 import * as React from 'react'
 
 import { createGroupingPreferences, createGroupingRegistry, activeGrouping } from './grouping'
@@ -48,6 +49,7 @@ import { buildRows, filterRows, relativeTime, shortenPath, toMillis, SHORTLIST }
 import { SwitcherOverlay, type NavigationActions } from './navigation'
 import { buildNavigation, filterTree, initialExpansion, searchSessions } from './navigation-model'
 import { HERO_SLOT, heroInjection, registerLocale } from './remote'
+import { sessionStatuses } from './session-presentation'
 import { createSwitcherControls, installSwitcherShortcuts } from './shortcuts'
 import { createViewPreferences, moveSession } from './view-preferences'
 import { WorkspacePicker, type WorkspacePickerProps } from './view'
@@ -75,8 +77,6 @@ export function apply(ctx: Context): void {
     statusLabel: ctx.locale.bind('workspace'),
     searchContent: (query, signal) => ctx.sessions.search(query, signal),
     openSession: id => ctx.uiWorkspace.openSession(id),
-    unarchiveSession: id => ctx.uiWorkspace.unarchiveSession(id),
-    renameWorkspace: (id, title) => ctx.workspaces.rename(id, title),
   }
   ctx.effect(() => ctx.slots.inject('shell.overlay', () => ctx.slots.register({
     name: 'shell.overlay', id: NS, locale: NS,
@@ -117,6 +117,7 @@ export const __test = {
   createGroupingPreferences,
   createViewPreferences,
   moveSession,
+  sessionStatuses,
   activeGrouping,
   buildRows,
   buildNavigation,

@@ -72,6 +72,7 @@
     "@deepseek-ai/dsh-api-workspace-controller": "0.2.2-rc.5",
     "@deepseek-ai/dsh-client-locale": "0.2.2-rc.5",
     "@deepseek-ai/dsh-client-shortcuts": "0.2.2-rc.5",
+    "@deepseek-ai/dsh-client-ui-context-menu": "0.2.2-rc.5",
     "@deepseek-ai/dsh-client-ui-conversation": "0.2.2-rc.5",
     "@deepseek-ai/dsh-client-ui-layout": "0.2.2-rc.5",
     "@deepseek-ai/dsh-client-ui-primitives": "0.2.2-rc.5",

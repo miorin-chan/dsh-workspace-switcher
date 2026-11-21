@@ -142,9 +142,7 @@ var en = {
   "filter.hideArchived": "Hide archived",
   "filter.showArchived": "All conversations (show archived)",
   "filter.onlyArchived": "Archived only",
-  "session.unarchive": "Unarchive",
   "session.archived": "Archived",
-  "session.unarchiveFailed": "Could not unarchive session",
   "session.moveUp": "Move session up",
   "session.moveDown": "Move session down",
   "defaultName": "Default workspace",
@@ -202,13 +200,9 @@ var en = {
   refineSearch: "Refine your search for more results",
   contentSearchFailed: "Could not search message content",
   openFailed: "Could not open session",
-  renameWorkspace: "Rename workspace",
-  renameFailed: "Could not rename workspace",
-  save: "Save",
   expandBranch: "Expand",
   collapseBranch: "Collapse",
-  loadingList: "Loading list\u2026",
-  renameNamedWorkspace: "Rename {name}"
+  loadingList: "Loading list\u2026"
 };
 var zh = {
   "group.options": "\u89C6\u56FE\u9009\u9879",
@@ -222,9 +216,7 @@ var zh = {
   "filter.hideArchived": "\u9690\u85CF\u5DF2\u5F52\u6863",
   "filter.showArchived": "\u5168\u90E8\u5BF9\u8BDD\uFF08\u663E\u793A\u5DF2\u5F52\u6863\uFF09",
   "filter.onlyArchived": "\u4EC5\u663E\u793A\u5DF2\u5F52\u6863",
-  "session.unarchive": "\u53D6\u6D88\u5F52\u6863",
   "session.archived": "\u5DF2\u5F52\u6863",
-  "session.unarchiveFailed": "\u65E0\u6CD5\u53D6\u6D88\u5F52\u6863",
   "session.moveUp": "\u4E0A\u79FB\u4F1A\u8BDD",
   "session.moveDown": "\u4E0B\u79FB\u4F1A\u8BDD",
   "defaultName": "\u9ED8\u8BA4\u5DE5\u4F5C\u533A",
@@ -282,13 +274,9 @@ var zh = {
   refineSearch: "\u7F29\u5C0F\u641C\u7D22\u8303\u56F4\u4EE5\u67E5\u627E\u66F4\u591A\u7ED3\u679C",
   contentSearchFailed: "\u65E0\u6CD5\u641C\u7D22\u6D88\u606F\u5185\u5BB9",
   openFailed: "\u65E0\u6CD5\u6253\u5F00\u4F1A\u8BDD",
-  renameWorkspace: "\u91CD\u547D\u540D\u5DE5\u4F5C\u533A",
-  renameFailed: "\u65E0\u6CD5\u91CD\u547D\u540D\u5DE5\u4F5C\u533A",
-  save: "\u4FDD\u5B58",
   expandBranch: "\u5C55\u5F00",
   collapseBranch: "\u6298\u53E0",
-  loadingList: "\u6B63\u5728\u52A0\u8F7D\u5217\u8868\u2026",
-  renameNamedWorkspace: "\u91CD\u547D\u540D\u300C{name}\u300D"
+  loadingList: "\u6B63\u5728\u52A0\u8F7D\u5217\u8868\u2026"
 };
 var ja = {
   "group.options": "\u8868\u793A\u30AA\u30D7\u30B7\u30E7\u30F3",
@@ -302,9 +290,7 @@ var ja = {
   "filter.hideArchived": "\u30A2\u30FC\u30AB\u30A4\u30D6\u3092\u975E\u8868\u793A",
   "filter.showArchived": "\u3059\u3079\u3066\u306E\u4F1A\u8A71\uFF08\u30A2\u30FC\u30AB\u30A4\u30D6\u3092\u8868\u793A\uFF09",
   "filter.onlyArchived": "\u30A2\u30FC\u30AB\u30A4\u30D6\u306E\u307F",
-  "session.unarchive": "\u30A2\u30FC\u30AB\u30A4\u30D6\u3092\u89E3\u9664",
   "session.archived": "\u30A2\u30FC\u30AB\u30A4\u30D6\u6E08\u307F",
-  "session.unarchiveFailed": "\u30BB\u30C3\u30B7\u30E7\u30F3\u306E\u30A2\u30FC\u30AB\u30A4\u30D6\u3092\u89E3\u9664\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F",
   "session.moveUp": "\u30BB\u30C3\u30B7\u30E7\u30F3\u3092\u4E0A\u3078\u79FB\u52D5",
   "session.moveDown": "\u30BB\u30C3\u30B7\u30E7\u30F3\u3092\u4E0B\u3078\u79FB\u52D5",
   "defaultName": "\u30C7\u30D5\u30A9\u30EB\u30C8\u306E\u30EF\u30FC\u30AF\u30B9\u30DA\u30FC\u30B9",
@@ -362,13 +348,9 @@ var ja = {
   refineSearch: "\u691C\u7D22\u6761\u4EF6\u3092\u7D5E\u308A\u8FBC\u3093\u3067\u304F\u3060\u3055\u3044",
   contentSearchFailed: "\u30E1\u30C3\u30BB\u30FC\u30B8\u306E\u5185\u5BB9\u3092\u691C\u7D22\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F",
   openFailed: "\u30BB\u30C3\u30B7\u30E7\u30F3\u3092\u958B\u3051\u307E\u305B\u3093\u3067\u3057\u305F",
-  renameWorkspace: "\u30EF\u30FC\u30AF\u30B9\u30DA\u30FC\u30B9\u540D\u3092\u5909\u66F4",
-  renameFailed: "\u30EF\u30FC\u30AF\u30B9\u30DA\u30FC\u30B9\u540D\u3092\u5909\u66F4\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F",
-  save: "\u4FDD\u5B58",
   expandBranch: "\u5C55\u958B",
   collapseBranch: "\u6298\u308A\u305F\u305F\u3080",
-  loadingList: "\u4E00\u89A7\u3092\u8AAD\u307F\u8FBC\u3093\u3067\u3044\u307E\u3059\u2026",
-  renameNamedWorkspace: "\u300C{name}\u300D\u306E\u540D\u524D\u3092\u5909\u66F4"
+  loadingList: "\u4E00\u89A7\u3092\u8AAD\u307F\u8FBC\u3093\u3067\u3044\u307E\u3059\u2026"
 };
 var de = {
   "group.options": "Ansichtsoptionen",
@@ -382,9 +364,7 @@ var de = {
   "filter.hideArchived": "Archiviert ausblenden",
   "filter.showArchived": "Alle Gespr\xE4che (archiviert anzeigen)",
   "filter.onlyArchived": "Nur archiviert",
-  "session.unarchive": "Dearchivieren",
   "session.archived": "Archiviert",
-  "session.unarchiveFailed": "Sitzung konnte nicht dearchiviert werden",
   "session.moveUp": "Sitzung nach oben verschieben",
   "session.moveDown": "Sitzung nach unten verschieben",
   "defaultName": "Standardarbeitsbereich",
@@ -442,13 +422,9 @@ var de = {
   refineSearch: "Suche f\xFCr weitere Ergebnisse eingrenzen",
   contentSearchFailed: "Nachrichteninhalte konnten nicht durchsucht werden",
   openFailed: "Sitzung konnte nicht ge\xF6ffnet werden",
-  renameWorkspace: "Arbeitsbereich umbenennen",
-  renameFailed: "Arbeitsbereich konnte nicht umbenannt werden",
-  save: "Speichern",
   expandBranch: "Ausklappen",
   collapseBranch: "Einklappen",
-  loadingList: "Liste wird geladen\u2026",
-  renameNamedWorkspace: "{name} umbenennen"
+  loadingList: "Liste wird geladen\u2026"
 };
 var es = {
   "group.options": "Opciones de vista",
@@ -462,9 +438,7 @@ var es = {
   "filter.hideArchived": "Ocultar archivado",
   "filter.showArchived": "Todas las conversaciones (mostrar archivadas)",
   "filter.onlyArchived": "S\xF3lo archivado",
-  "session.unarchive": "Desarchivar",
   "session.archived": "Archivado",
-  "session.unarchiveFailed": "No se pudo desarchivar la sesi\xF3n",
   "session.moveUp": "Mover sesi\xF3n hacia arriba",
   "session.moveDown": "Mover sesi\xF3n hacia abajo",
   "defaultName": "Espacio de trabajo predeterminado",
@@ -522,13 +496,9 @@ var es = {
   refineSearch: "Afina la b\xFAsqueda para ver m\xE1s resultados",
   contentSearchFailed: "No se pudo buscar en el contenido de los mensajes",
   openFailed: "No se pudo abrir la sesi\xF3n",
-  renameWorkspace: "Cambiar el nombre del espacio de trabajo",
-  renameFailed: "No se pudo cambiar el nombre del espacio de trabajo",
-  save: "Guardar",
   expandBranch: "Expandir",
   collapseBranch: "Contraer",
-  loadingList: "Cargando lista\u2026",
-  renameNamedWorkspace: "Cambiar el nombre de {name}"
+  loadingList: "Cargando lista\u2026"
 };
 var fr = {
   "group.options": "Options d\u2019affichage",
@@ -542,9 +512,7 @@ var fr = {
   "filter.hideArchived": "Masquer les archives",
   "filter.showArchived": "Toutes les conversations (afficher les archives)",
   "filter.onlyArchived": "Archiv\xE9 uniquement",
-  "session.unarchive": "D\xE9sarchiver",
   "session.archived": "Archiv\xE9",
-  "session.unarchiveFailed": "Impossible de d\xE9sarchiver la session",
   "session.moveUp": "D\xE9placer la session vers le haut",
   "session.moveDown": "D\xE9placer la session vers le bas",
   "defaultName": "Espace de travail par d\xE9faut",
@@ -602,13 +570,9 @@ var fr = {
   refineSearch: "Affinez la recherche pour voir plus de r\xE9sultats",
   contentSearchFailed: "Impossible de rechercher dans le contenu des messages",
   openFailed: "Impossible d\u2019ouvrir la session",
-  renameWorkspace: "Renommer l\u2019espace de travail",
-  renameFailed: "Impossible de renommer l\u2019espace de travail",
-  save: "Enregistrer",
   expandBranch: "D\xE9velopper",
   collapseBranch: "Replier",
-  loadingList: "Chargement de la liste\u2026",
-  renameNamedWorkspace: "Renommer {name}"
+  loadingList: "Chargement de la liste\u2026"
 };
 var pt = {
   "group.options": "Op\xE7\xF5es de visualiza\xE7\xE3o",
@@ -622,9 +586,7 @@ var pt = {
   "filter.hideArchived": "Ocultar arquivado",
   "filter.showArchived": "Todas as conversas (mostrar arquivadas)",
   "filter.onlyArchived": "Somente arquivado",
-  "session.unarchive": "Desarquivar",
   "session.archived": "Arquivado",
-  "session.unarchiveFailed": "N\xE3o foi poss\xEDvel desarquivar a sess\xE3o",
   "session.moveUp": "Mover sess\xE3o para cima",
   "session.moveDown": "Mover sess\xE3o para baixo",
   "defaultName": "\xC1rea de trabalho padr\xE3o",
@@ -682,13 +644,9 @@ var pt = {
   refineSearch: "Refine a pesquisa para ver mais resultados",
   contentSearchFailed: "N\xE3o foi poss\xEDvel pesquisar o conte\xFAdo das mensagens",
   openFailed: "N\xE3o foi poss\xEDvel abrir a sess\xE3o",
-  renameWorkspace: "Renomear \xE1rea de trabalho",
-  renameFailed: "N\xE3o foi poss\xEDvel renomear a \xE1rea de trabalho",
-  save: "Salvar",
   expandBranch: "Expandir",
   collapseBranch: "Recolher",
-  loadingList: "Carregando lista\u2026",
-  renameNamedWorkspace: "Renomear {name}"
+  loadingList: "Carregando lista\u2026"
 };
 var ru = {
   "group.options": "\u041F\u0430\u0440\u0430\u043C\u0435\u0442\u0440\u044B \u0432\u0438\u0434\u0430",
@@ -702,9 +660,7 @@ var ru = {
   "filter.hideArchived": "\u0421\u043A\u0440\u044B\u0442\u044C \u0432 \u0430\u0440\u0445\u0438\u0432\u0435",
   "filter.showArchived": "\u0412\u0441\u0435 \u0440\u0430\u0437\u0433\u043E\u0432\u043E\u0440\u044B (\u043F\u043E\u043A\u0430\u0437\u0430\u0442\u044C \u0432 \u0430\u0440\u0445\u0438\u0432\u0435)",
   "filter.onlyArchived": "\u0422\u043E\u043B\u044C\u043A\u043E \u0432 \u0430\u0440\u0445\u0438\u0432\u0435",
-  "session.unarchive": "\u0420\u0430\u0437\u0430\u0440\u0445\u0438\u0432\u0438\u0440\u043E\u0432\u0430\u0442\u044C",
   "session.archived": "\u0412 \u0430\u0440\u0445\u0438\u0432\u0435",
-  "session.unarchiveFailed": "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0440\u0430\u0437\u0430\u0440\u0445\u0438\u0432\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u0441\u0435\u0430\u043D\u0441",
   "session.moveUp": "\u041F\u0435\u0440\u0435\u043C\u0435\u0441\u0442\u0438\u0442\u044C \u0441\u0435\u0430\u043D\u0441 \u0432\u0432\u0435\u0440\u0445",
   "session.moveDown": "\u041F\u0435\u0440\u0435\u043C\u0435\u0441\u0442\u0438\u0442\u044C \u0441\u0435\u0430\u043D\u0441 \u0432\u043D\u0438\u0437",
   "defaultName": "\u0420\u0430\u0431\u043E\u0447\u0435\u0435 \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E \u043F\u043E \u0443\u043C\u043E\u043B\u0447\u0430\u043D\u0438\u044E",
@@ -762,13 +718,9 @@ var ru = {
   refineSearch: "\u0423\u0442\u043E\u0447\u043D\u0438\u0442\u0435 \u0437\u0430\u043F\u0440\u043E\u0441, \u0447\u0442\u043E\u0431\u044B \u0443\u0432\u0438\u0434\u0435\u0442\u044C \u0431\u043E\u043B\u044C\u0448\u0435 \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u043E\u0432",
   contentSearchFailed: "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0432\u044B\u043F\u043E\u043B\u043D\u0438\u0442\u044C \u043F\u043E\u0438\u0441\u043A \u043F\u043E \u0441\u043E\u0434\u0435\u0440\u0436\u0438\u043C\u043E\u043C\u0443 \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0439",
   openFailed: "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043E\u0442\u043A\u0440\u044B\u0442\u044C \u0441\u0435\u0430\u043D\u0441",
-  renameWorkspace: "\u041F\u0435\u0440\u0435\u0438\u043C\u0435\u043D\u043E\u0432\u0430\u0442\u044C \u0440\u0430\u0431\u043E\u0447\u0435\u0435 \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E",
-  renameFailed: "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043F\u0435\u0440\u0435\u0438\u043C\u0435\u043D\u043E\u0432\u0430\u0442\u044C \u0440\u0430\u0431\u043E\u0447\u0435\u0435 \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E",
-  save: "\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C",
   expandBranch: "\u0420\u0430\u0437\u0432\u0435\u0440\u043D\u0443\u0442\u044C",
   collapseBranch: "\u0421\u0432\u0435\u0440\u043D\u0443\u0442\u044C",
-  loadingList: "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430 \u0441\u043F\u0438\u0441\u043A\u0430\u2026",
-  renameNamedWorkspace: "\u041F\u0435\u0440\u0435\u0438\u043C\u0435\u043D\u043E\u0432\u0430\u0442\u044C \xAB{name}\xBB"
+  loadingList: "\u0417\u0430\u0433\u0440\u0443\u0437\u043A\u0430 \u0441\u043F\u0438\u0441\u043A\u0430\u2026"
 };
 var LABELS = { en, zh, ja, de, es, fr, pt, ru };
 
@@ -858,15 +810,29 @@ function relativeTime(at, now, t) {
 }
 
 // src/client/navigation.ts
-var import_dsh_client_ui_primitives2 = require("@deepseek-ai/dsh-client-ui-primitives");
+var import_dsh_client_ui_primitives3 = require("@deepseek-ai/dsh-client-ui-primitives");
 var React5 = __toESM(require("react"), 1);
 
 // src/client/components.ts
 var React2 = __toESM(require("react"), 1);
 
 // src/client/glyphs.ts
+var import_dsh_client_ui_primitives = require("@deepseek-ai/dsh-client-ui-primitives");
 var React = __toESM(require("react"), 1);
 var h = React.createElement;
+function platformGlyph(Icon) {
+  return ({ size = 16, className }) => h(Icon, { size, className });
+}
+var FolderGlyph = platformGlyph(import_dsh_client_ui_primitives.IconFolderCloseRegular);
+var OpenFolderGlyph = platformGlyph(import_dsh_client_ui_primitives.IconFolderOpenOutlineRegular);
+var DisclosureGlyph = platformGlyph(import_dsh_client_ui_primitives.IconTriangleRightFillRegular);
+var SearchGlyph = platformGlyph(import_dsh_client_ui_primitives.IconSearchOutlineRegular);
+var PlusGlyph = platformGlyph(import_dsh_client_ui_primitives.IconPlusOutlineRegular);
+var CheckGlyph = platformGlyph(import_dsh_client_ui_primitives.IconCheckOutlineRegular);
+var CloseGlyph = platformGlyph(import_dsh_client_ui_primitives.IconCloseOutlineRegular);
+var ChevronRightGlyph = platformGlyph(import_dsh_client_ui_primitives.IconChevronRightOutlineRegular);
+var ChevronLeftGlyph = platformGlyph(import_dsh_client_ui_primitives.IconChevronLeftOutlineRegular);
+var FolderAddGlyph = platformGlyph(import_dsh_client_ui_primitives.IconProjectAddOutlineRegular);
 function Glyph({ paths, size = 16, className }) {
   return h("svg", {
     width: size,
@@ -882,34 +848,6 @@ function Glyph({ paths, size = 16, className }) {
     className
   }, paths.map((d, index) => h("path", { key: index, d })));
 }
-var FolderGlyph = (props) => h(Glyph, {
-  ...props,
-  paths: ["M2.25 4.6c0-.75.6-1.35 1.35-1.35h3.1l1.35 1.5h5.6c.74 0 1.35.6 1.35 1.35v5.7c0 .75-.6 1.35-1.35 1.35H3.6c-.75 0-1.35-.6-1.35-1.35z"]
-});
-var OpenFolderGlyph = (props) => h(Glyph, {
-  ...props,
-  paths: ["M2 12.75V4.5A1.5 1.5 0 0 1 3.5 3h3l1.4 1.5h4.6A1.5 1.5 0 0 1 14 6v.75", "M2 12.75l1.65-5a1.25 1.25 0 0 1 1.2-.85h9.2a.75.75 0 0 1 .72.97l-1.45 4.65a1.25 1.25 0 0 1-1.2.88H3a1 1 0 0 1-1-.65Z"]
-});
-function DisclosureGlyph({ size = 16, className }) {
-  return h("svg", {
-    width: size,
-    height: size,
-    viewBox: "0 0 16 16",
-    fill: "currentColor",
-    "aria-hidden": true,
-    focusable: false,
-    className
-  }, h("path", { d: "M6 4.3a.5.5 0 0 0-.8.4v6.6a.5.5 0 0 0 .8.4l4.5-3.3a.5.5 0 0 0 0-.8Z" }));
-}
-var SearchGlyph = (props) => h(Glyph, {
-  ...props,
-  paths: ["M7.2 2.75a4.45 4.45 0 1 0 0 8.9 4.45 4.45 0 0 0 0-8.9Z", "m10.5 10.5 2.75 2.75"]
-});
-var PlusGlyph = (props) => h(Glyph, { ...props, paths: ["M8 3.25v9.5", "M3.25 8h9.5"] });
-var CheckGlyph = (props) => h(Glyph, { ...props, paths: ["M3.1 8.2 6.3 11.4 12.9 4.8"] });
-var CloseGlyph = (props) => h(Glyph, { ...props, paths: ["M4.2 4.2l7.6 7.6", "M11.8 4.2l-7.6 7.6"] });
-var ChevronRightGlyph = (props) => h(Glyph, { ...props, paths: ["M6.4 3.9 10.5 8l-4.1 4.1"] });
-var ChevronLeftGlyph = (props) => h(Glyph, { ...props, paths: ["M9.6 3.9 5.5 8l4.1 4.1"] });
 var GridGlyph = (props) => h(Glyph, {
   ...props,
   paths: [
@@ -934,7 +872,8 @@ function SearchField({
   listId,
   activeOptionId,
   label,
-  tree
+  tree,
+  onKeyDown
 }) {
   return h2(
     "div",
@@ -945,6 +884,7 @@ function SearchField({
     h2("span", { className: "wsp-search-icon" }, h2(SearchGlyph, { size: 14 })),
     h2("input", {
       ref: inputRef,
+      onKeyDown,
       className: "wsp-search-input",
       type: "search",
       value,
@@ -1414,16 +1354,6 @@ var CSS = `
   padding: 16px 24px;
   border-top: .5px solid var(--dsw-alias-border-l3);
 }
-.wsp-dialog-foot .wsp-foot-action {
-  box-sizing: border-box; justify-content: center;
-  height: 28px; min-height: 0; padding: 0 10px; gap: 4px;
-  border: .5px solid transparent;
-  border-radius: var(--dsw-radius-sm);
-  box-shadow: inset 0 0 0 var(--dsh-hairline-width, .5px) var(--dsw-alias-border-l3);
-  color: var(--dsw-alias-label-primary);
-  font-size: 12px; line-height: 18px;
-}
-.wsp-dialog-foot .wsp-foot-action svg { color: inherit; }
 .wsp-navigation-list, .wsp-tree-children { gap: 2px; }
 .wsp-tree-children {
   display: grid; grid-template-columns: minmax(0, 1fr); margin-block-start: 2px;
@@ -1444,9 +1374,9 @@ var CSS = `
 .wsp-search-meta .wsp-row-path { font-size: 12px; line-height: 17px; }
 .wsp-search-meta .wsp-row-path:first-child:not(:only-child) { max-width: 40%; }
 .wsp-search-meta .wsp-session-snippet { color: var(--dsw-alias-label-secondary); }
-.wsp-tree-option, .wsp-navigation-actions, .wsp-rename { display: flex; align-items: center; gap: 6px; }
+.wsp-tree-option, .wsp-navigation-actions { display: flex; align-items: center; gap: 6px; }
 .wsp-tree-option { gap: 0; }
-.wsp-tree-option > .wsp-row, .wsp-rename > .wsp-search { flex: 1; min-width: 0; }
+.wsp-tree-option > .wsp-row { flex: 1; min-width: 0; }
 .wsp-tree-icon { color: var(--dsw-alias-label-tertiary); }
 .wsp-tree-icon[data-current='true'] { color: var(--dsw-alias-state-business-primary); }
 .wsp-tree-arrow { color: var(--dsw-alias-label-caption); transition: transform 150ms var(--ds-ease-in-out, ease); }
@@ -1459,14 +1389,15 @@ var CSS = `
   .wsp-navigation-row:hover .wsp-tree-icon[data-swap='true'] > .wsp-tree-folder { display: none; }
   .wsp-navigation-row:hover .wsp-tree-icon[data-swap='true'] > .wsp-tree-arrow { display: block; }
 }
-.wsp-session-dot { width: 6px; height: 6px; border-radius: 50%; }
-.wsp-session-dot[data-state='running'] { background: var(--dsw-alias-state-business-primary); }
-.wsp-session-dot[data-state='waiting'] { background: var(--dsw-alias-state-warn-label); }
-.wsp-session-dot[data-state='done'] { background: var(--dsw-alias-state-success-primary); }
+.wsp-menu-row { gap: 2px; }
+.wsp-row-menu { flex: none; width: 24px; height: 24px; }
+.wsp-row-menu > svg { width: 14px; height: 14px; }
+@media (hover: hover) and (pointer: fine) {
+  .wsp-menu-row:not(:hover):not(:focus-within):not([data-active='true']) > .wsp-row-menu:not([aria-expanded='true']) {
+    visibility: hidden;
+  }
+}
 .wsp-navigation-actions { min-width: 0; flex-wrap: wrap; }
-.wsp-rename-action { min-width: 0; max-width: 100%; }
-.wsp-rename-action span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.wsp-dialog .wsp-foot-action:disabled { opacity: .45; cursor: default; }
 @media (prefers-reduced-motion: reduce) { .wsp-tree-arrow { transition: none; } }
 .wsp-dialog-count { margin-inline-start: auto; font-size: 12px; line-height: 18px; color: var(--dsw-alias-label-tertiary); }
 .wsp-spinner {
@@ -1611,20 +1542,20 @@ function SwitcherDialog({
 
 // src/client/grouping-menu.ts
 var React4 = __toESM(require("react"), 1);
-var import_dsh_client_ui_primitives = require("@deepseek-ai/dsh-client-ui-primitives");
+var import_dsh_client_ui_primitives2 = require("@deepseek-ai/dsh-client-ui-primitives");
 var h4 = React4.createElement;
 function optionIcon(sectionIndex, id) {
   if (sectionIndex === 1) {
-    if (id === "manual") return h4(import_dsh_client_ui_primitives.IconChevronsUpDownOutlineRegular);
-    if (id === "updated") return h4(import_dsh_client_ui_primitives.IconClockOutlineRegular);
+    if (id === "manual") return h4(import_dsh_client_ui_primitives2.IconChevronsUpDownOutlineRegular);
+    if (id === "updated") return h4(import_dsh_client_ui_primitives2.IconClockOutlineRegular);
   } else if (sectionIndex === 2) {
-    if (id === "hide-archived") return h4(import_dsh_client_ui_primitives.IconArchiveOffOutlineRegular);
-    if (id === "show-archived") return h4(import_dsh_client_ui_primitives.IconQueueOutlineRegular);
-    if (id === "only-archived") return h4(import_dsh_client_ui_primitives.IconArchiveCheckOutlineRegular);
+    if (id === "hide-archived") return h4(import_dsh_client_ui_primitives2.IconArchiveOffOutlineRegular);
+    if (id === "show-archived") return h4(import_dsh_client_ui_primitives2.IconQueueOutlineRegular);
+    if (id === "only-archived") return h4(import_dsh_client_ui_primitives2.IconArchiveCheckOutlineRegular);
   } else {
-    if (id === FLAT) return h4(import_dsh_client_ui_primitives.IconFlatListOutlineRegular);
-    if (id === WORKSPACES) return h4(import_dsh_client_ui_primitives.IconFolderCloseRegular);
-    if (id === WORKSPACE_TREE) return h4(import_dsh_client_ui_primitives.IconWorkspaceTreeOutlineRegular);
+    if (id === FLAT) return h4(import_dsh_client_ui_primitives2.IconFlatListOutlineRegular);
+    if (id === WORKSPACES) return h4(import_dsh_client_ui_primitives2.IconFolderCloseRegular);
+    if (id === WORKSPACE_TREE) return h4(import_dsh_client_ui_primitives2.IconWorkspaceTreeOutlineRegular);
   }
   return h4(DirectoryTreeGlyph);
 }
@@ -1652,7 +1583,7 @@ function GroupingMenu({ label, sections, disabled }) {
       trigger.current?.focus({ preventScroll: true });
       event.nativeEvent.stopPropagation();
     }
-  }, h4(import_dsh_client_ui_primitives.Menu, {
+  }, h4(import_dsh_client_ui_primitives2.Menu, {
     open: open && !disabled,
     onClose: close,
     items,
@@ -1681,7 +1612,7 @@ function GroupingMenu({ label, sections, disabled }) {
         event.preventDefault();
         setOpen(true);
       }
-    }, h4(import_dsh_client_ui_primitives.IconSlidersTwoOutlineRegular))
+    }, h4(import_dsh_client_ui_primitives2.IconSlidersTwoOutlineRegular))
   }));
 }
 
@@ -1772,29 +1703,46 @@ function moveSession(order, from, to, side) {
 }
 
 // src/client/navigation-model.ts
-function directoryKey(path) {
+function mainSessionId(byId) {
+  return Object.values(byId).find(({ retainedBy }) => "mainView" in retainedBy && typeof retainedBy.mainView === "number" && retainedBy.mainView > 0)?.id;
+}
+function folderPath(path) {
   const windows = /^[A-Za-z]:[/\\]/.test(path) || path.startsWith("\\\\");
   return (windows ? path.replaceAll("\\", "/") : path).replace(/\/+$/, "");
 }
-function parentPath(path) {
-  const separator = path.lastIndexOf("/");
-  if (separator < 0 || path.startsWith("//") && separator <= path.indexOf("/", 2)) return void 0;
-  return path.slice(0, separator);
+function owningParentFolder(path, parents) {
+  const child = folderPath(path);
+  let owner;
+  let length = -1;
+  for (const parent of parents) {
+    const root = folderPath(parent);
+    if (root.length > length && child !== root && child.startsWith(`${root}/`)) {
+      owner = parent;
+      length = root.length;
+    }
+  }
+  return owner;
 }
 function workspaceRoots(branches) {
   const byPath = /* @__PURE__ */ new Map();
+  const localPaths = [];
+  const uncPaths = [];
   for (const branch of branches) {
     const path = branch.workspace?.path;
-    if (path) {
-      const key2 = directoryKey(path);
-      if (!byPath.has(key2)) byPath.set(key2, branch);
-    }
+    if (!path) continue;
+    const key2 = folderPath(path);
+    const unc = key2.startsWith("//");
+    if (unc && key2.indexOf("/", 2) < 0 || byPath.has(key2)) continue;
+    byPath.set(key2, branch);
+    if (unc) uncPaths.push(key2);
+    else localPaths.push(key2);
   }
   const roots = [];
   for (const branch of branches) {
-    const path = branch.workspace?.path;
-    let parent = path ? parentPath(directoryKey(path)) : void 0;
-    while (parent !== void 0 && !byPath.has(parent)) parent = parentPath(parent);
+    const path = branch.workspace?.path ?? "";
+    const key2 = folderPath(path);
+    const parents = key2.startsWith("//") && key2.indexOf("/", 2) >= 0 ? uncPaths : localPaths;
+    const parent = owningParentFolder(key2, parents);
     const owner = parent === void 0 ? void 0 : byPath.get(parent);
     if (owner === void 0) roots.push(branch);
     else owner.children.push(branch);
@@ -1847,7 +1795,7 @@ function buildNavigation(snapshot, catalog, defaultName, untitled, groupId, grou
   const pinned = new Set(snapshot.pinnedSessionIds);
   const rowsById = /* @__PURE__ */ new Map();
   const members = /* @__PURE__ */ new Map([[FLAT_ORDER, []], [UNGROUPED_ORDER, []]]);
-  const currentId = Object.values(byId).find(({ retainedBy }) => "mainView" in retainedBy && typeof retainedBy.mainView === "number" && retainedBy.mainView > 0)?.id;
+  const currentId = mainSessionId(byId);
   for (const id of catalog.ids) {
     const session = byId[id];
     if (session === void 0 || session.blank || session.origin === "subagent") continue;
@@ -1952,6 +1900,39 @@ function initialExpansion(roots, workspaceId, currentId) {
   return [];
 }
 
+// src/client/session-presentation.ts
+var PENDING_LABELS = {
+  approval: ["status.waitingApproval", "status.compact.approval"],
+  "plan-review": ["status.planReview", "status.compact.planReview"],
+  question: ["status.waitingAnswer", "status.compact.answer"]
+};
+function sessionStatuses(session, catalog, statuses, t) {
+  const live = statuses.get(session.id);
+  const runningSubagentCount = catalog.projectionsBySession?.[session.id]?.values.subagentCatalog?.reduce(
+    (count, child) => count + ((statuses.get(child.id)?.running ?? catalog.byId[child.id]?.running) === true ? 1 : 0),
+    0
+  ) ?? 0;
+  const subagents = runningSubagentCount === 0 ? void 0 : {
+    state: "ongoing",
+    label: t(runningSubagentCount === 1 ? "status.subagentsRunning.one" : "status.subagentsRunning.other", {
+      n: runningSubagentCount
+    })
+  };
+  const pending = live?.pendingInteraction?.kind;
+  if (pending === "approval" || pending === "plan-review" || pending === "question") {
+    const [label, trailingLabel] = PENDING_LABELS[pending];
+    const primary = { state: "warning", label: t(label), trailingLabel: t(trailingLabel) };
+    return subagents === void 0 ? [primary] : [primary, subagents];
+  }
+  if (live?.running ?? session.running) {
+    const primary = { state: "ongoing", label: t("status.running") };
+    return subagents === void 0 ? [primary] : [primary, subagents];
+  }
+  if (subagents !== void 0) return [subagents];
+  if (live?.completionUnread) return [{ state: "done", label: t("status.completed") }];
+  return [{ state: "idle", label: t("status.idle") }];
+}
+
 // src/client/navigation.ts
 var h5 = React5.createElement;
 var { useEffect: useEffect2, useId: useId2, useMemo, useRef: useRef2, useState: useState2, useSyncExternalStore } = React5;
@@ -1970,20 +1951,20 @@ function NavigationDialog({
   useWorkspaces,
   useSessions,
   usePanelInfo,
-  useWorkspaceAccess,
-  useSessionAccess,
+  useContextMenu,
+  renderFactorySlot,
   useRemoteAccess,
   useSessionStatus,
   statusLabel,
   searchContent,
   openSession,
-  unarchiveSession,
-  renameWorkspace,
   addWorkspace
 }) {
   const workspaces = useWorkspaces((state) => state);
   const sessions = useSessions((state) => state);
+  const statuses = useSessionStatus((state) => state);
   const showMain = usePanelInfo((state) => state.activePanelId === null);
+  const { getTriggerProps } = useContextMenu();
   const canAdd = useRemoteAccess("workspace/create");
   const hero = mode === "workspaces" && showMain ? controls.hero() : void 0;
   const choosing = hero !== void 0;
@@ -2027,9 +2008,7 @@ function NavigationDialog({
   const [addedWorkspaceId, setAddedWorkspaceId] = useState2();
   const [expansions, setExpansions] = useState2(() => /* @__PURE__ */ new Map());
   const expanded = expansions.get(displayedGroup) ?? /* @__PURE__ */ new Map();
-  const [renaming, setRenaming] = useState2();
-  const [writeKind, setWriteKind] = useState2();
-  const busy = writeKind !== void 0;
+  const [busy, setBusy] = useState2(false);
   const pendingWrite = useRef2(false);
   const lifetime = useRef2(null);
   const mounted = useRef2(false);
@@ -2082,16 +2061,15 @@ function NavigationDialog({
       window.clearInterval(timer);
     };
   }, []);
-  const renameId = renaming?.id;
   useEffect2(() => {
     const frame = window.requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
     return () => window.cancelAnimationFrame(frame);
-  }, [renameId]);
+  }, []);
   React5.useLayoutEffect(() => {
     if (document.activeElement === document.body) {
       inputRef.current?.focus({ preventScroll: true });
     }
-  }, [displayedGroup]);
+  }, [displayedGroup, activeIndex]);
   useEffect2(() => {
     panelRef.current?.querySelector('[data-active="true"]')?.scrollIntoView({ block: "nearest" });
   }, [active?.key]);
@@ -2127,23 +2105,12 @@ function NavigationDialog({
       toggle(row);
     }
   };
-  const write = async (kind, failed, operation) => {
-    if (pendingWrite.current) return;
+  const add = async () => {
+    if (addWorkspace === void 0 || pendingWrite.current) return;
     pendingWrite.current = true;
-    setWriteKind(kind);
+    setBusy(true);
     setError(void 0);
     try {
-      await operation();
-    } catch (reason) {
-      if (mounted.current) setError({ label: failed, message: errorMessage(reason) });
-    } finally {
-      pendingWrite.current = false;
-      if (mounted.current) setWriteKind(void 0);
-    }
-  };
-  const add = () => {
-    if (addWorkspace === void 0) return;
-    void write("add", t("addFailed"), async () => {
       const signal = lifetime.current?.signal;
       if (signal === void 0) return;
       const id = await addWorkspace(signal);
@@ -2158,19 +2125,23 @@ function NavigationDialog({
       setAddedWorkspaceId(id);
       setActiveKey(`workspace:${id}`);
       inputRef.current?.focus({ preventScroll: true });
-    });
+    } catch (reason) {
+      if (mounted.current) setError({ label: t("addFailed"), message: errorMessage(reason) });
+    } finally {
+      pendingWrite.current = false;
+      if (mounted.current) setBusy(false);
+    }
   };
   const onKeyDown = (event) => {
     if (event.defaultPrevented || event.nativeEvent.isComposing || event.keyCode === 229) return;
     if (event.key === "Escape") {
       event.preventDefault();
       event.stopPropagation();
-      if (renaming !== void 0) setRenaming(void 0);
-      else controls.close();
+      controls.close();
       return;
     }
     trapTab(event, panelRef.current);
-    if (renaming !== void 0 || event.target !== inputRef.current && !(event.target instanceof HTMLElement && event.target.matches("[data-wsp-navigation-row]"))) return;
+    if (event.target !== inputRef.current && !(event.target instanceof HTMLElement && event.target.matches("[data-wsp-navigation-row]"))) return;
     const focusRow = (next) => {
       const row = rows[next];
       if (row === void 0) return;
@@ -2200,9 +2171,8 @@ function NavigationDialog({
     }
   };
   const focused = active ?? rows[selectedIndex] ?? (tree ? rows[0] : void 0);
-  const focusedWorkspace = focused?.kind === "branch" ? focused.match.branch.workspace : void 0;
   const focusedSession = focused?.kind === "session" ? focused : void 0;
-  const reorderable = view.orderBy === "manual" && trimmed === "" && !busy && renaming === void 0;
+  const reorderable = view.orderBy === "manual" && trimmed === "" && !busy;
   const siblings = reorderable && focusedSession !== void 0 && !focusedSession.session.archived ? rows.filter((row) => row.kind === "session" && row.parentKey === focusedSession.parentKey && !row.session.archived && row.session.pinned === focusedSession.session.pinned) : [];
   const position = siblings.findIndex((row) => row === focusedSession);
   const shiftSession = (target) => {
@@ -2229,8 +2199,6 @@ function NavigationDialog({
     changeView({ ...view, orders: { ...view.orders, [key2]: next } });
   }
   const status = error ?? (remote.error === void 0 ? void 0 : { label: t("contentSearchFailed"), message: remote.error });
-  const renameTitle = renaming?.title.trim();
-  const canSaveRename = renameTitle !== void 0 && renameTitle !== "" && renameTitle !== renaming?.original && !busy;
   const catalogError = workspaces.state === "error";
   const empty = pending ? h5(Skeleton, { rows: 5 }) : h5("div", { className: "wsp-empty", role: "status" }, t(catalogError ? "listUnavailable" : trimmed !== "" ? "noMatches" : tree && (choosing || view.archiveFilter !== "only-archived") ? "empty.noWorkspacesTitle" : "noSessions"));
   function renderRows() {
@@ -2244,6 +2212,7 @@ function NavigationDialog({
       const row = rows[i];
       const id = optionId(i);
       const groupId2 = children.has(row.key) ? `${id}-children` : void 0;
+      const target = busy || choosing ? void 0 : rowMenuTarget(row, sessions.byId);
       const option = h5(ResultRow, {
         key: row.key,
         row,
@@ -2255,8 +2224,17 @@ function NavigationDialog({
         active: i === index,
         selected: row.kind === "session" ? row.session.id === currentId : row.match.branch.workspace?.id !== void 0 && row.match.branch.workspace.id === hero?.selectedId,
         currentBranch: currentBranches.has(row.key),
-        useSessionStatus,
-        statusLabel,
+        statuses: row.kind === "session" ? sessionStatuses(row.session, sessions, statuses, statusLabel) : void 0,
+        pinnedLabel: statusLabel("row.pinned"),
+        menuTrigger: getTriggerProps(target, { tabIndex: -1 }),
+        rowMenu: target === void 0 ? void 0 : renderFactorySlot("contextMenu.button", {
+          target,
+          className: "wsp-icon-btn wsp-row-menu",
+          label: statusLabel(
+            target.kind === "session" ? "actions.session.aria" : "actions.workspace.aria",
+            { name: row.kind === "session" ? row.session.title : row.title }
+          )
+        }),
         dropTarget: dropTarget?.key === row.key ? dropTarget.half : void 0,
         ...reorderable && row.kind === "session" && !row.session.archived ? { drag: {
           draggable: true,
@@ -2274,7 +2252,7 @@ function NavigationDialog({
           },
           onDragLeave: (event) => {
             if (!(event.relatedTarget instanceof Node) || !event.currentTarget.contains(event.relatedTarget)) {
-              setDropTarget((target) => target?.key === row.key ? void 0 : target);
+              setDropTarget((target2) => target2?.key === row.key ? void 0 : target2);
             }
           },
           onDrop: (event) => {
@@ -2312,7 +2290,7 @@ function NavigationDialog({
     onClose: controls.close,
     onKeyDown,
     ...choosing ? { subtitle: t("dialog.subtitle") } : {},
-    search: renaming === void 0 ? h5(SearchField, {
+    search: h5(SearchField, {
       t,
       value: query,
       onChange: changeQuery,
@@ -2320,31 +2298,9 @@ function NavigationDialog({
       tree,
       label: t(tree ? choosing ? "search.label" : "searchWorkspaceTree" : "sessionSearch"),
       listId: rows.length === 0 ? void 0 : listId,
-      activeOptionId: active === void 0 ? void 0 : optionId(index)
-    }) : h5(
-      "form",
-      {
-        className: "wsp-rename",
-        onSubmit: (event) => {
-          event.preventDefault();
-          if (!canSaveRename || renameTitle === void 0) return;
-          void write("rename", t("renameFailed"), async () => {
-            await renameWorkspace(renaming.id, renameTitle);
-            if (mounted.current) setRenaming(void 0);
-          });
-        }
-      },
-      h5("div", { className: "wsp-search" }, h5("input", {
-        className: "wsp-search-input",
-        ref: inputRef,
-        "aria-label": t("renameWorkspace"),
-        value: renaming.title,
-        readOnly: busy,
-        onChange: (event) => setRenaming({ ...renaming, title: event.target.value })
-      })),
-      h5("button", { type: "submit", className: "wsp-foot-action", disabled: !canSaveRename }, t("save")),
-      h5("button", { type: "button", className: "wsp-foot-action", onClick: () => setRenaming(void 0) }, t("back"))
-    ),
+      activeOptionId: active === void 0 ? void 0 : optionId(index),
+      onKeyDown: busy || choosing || active === void 0 ? void 0 : getTriggerProps(rowMenuTarget(active, sessions.byId)).onKeyDown
+    }),
     body: rows.length === 0 ? empty : h5("div", {
       className: "wsp-list wsp-navigation-list",
       role: tree ? "tree" : "listbox",
@@ -2362,7 +2318,7 @@ function NavigationDialog({
         onDismiss: error === void 0 ? remote.dismiss : () => setError(void 0)
       })
     ),
-    toolbar: renaming === void 0 ? h5(
+    toolbar: h5(
       "div",
       { className: "wsp-navigation-toolbar" },
       h5(GroupingMenu, {
@@ -2403,29 +2359,21 @@ function NavigationDialog({
       canAdd && addWorkspace !== void 0 ? h5("button", {
         type: "button",
         className: "wsp-icon-btn wsp-tool-button",
-        title: t(writeKind === "add" ? "adding" : "add"),
+        title: t(busy ? "adding" : "add"),
         "aria-label": t("add"),
-        "aria-busy": writeKind === "add" || void 0,
+        "aria-busy": busy || void 0,
         "aria-disabled": busy || void 0,
-        onClick: add
-      }, h5(import_dsh_client_ui_primitives2.IconProjectAddOutlineRegular, { size: 16 })) : null
-    ) : null,
+        onClick: () => {
+          void add();
+        }
+      }, h5(import_dsh_client_ui_primitives3.IconProjectAddOutlineRegular, { size: 16 })) : null
+    ),
     footer: h5(
       React5.Fragment,
       null,
       h5(
         "div",
         { className: "wsp-navigation-actions" },
-        focusedSession?.session.archived ? h5(RestoreButton, {
-          useSessionAccess,
-          id: focusedSession.session.id,
-          t,
-          busy,
-          onRestore: () => {
-            inputRef.current?.focus({ preventScroll: true });
-            void write("unarchive", t("session.unarchiveFailed"), () => unarchiveSession(focusedSession.session.id));
-          }
-        }) : null,
         position >= 0 && siblings.length > 1 ? h5(
           React5.Fragment,
           null,
@@ -2438,7 +2386,7 @@ function NavigationDialog({
             onClick: () => {
               if (position > 0) shiftSession(siblings[position - 1]);
             }
-          }, h5(import_dsh_client_ui_primitives2.IconChevronUpOutlineRegular, { size: 16 })),
+          }, h5(import_dsh_client_ui_primitives3.IconChevronUpOutlineRegular, { size: 16 })),
           h5("button", {
             type: "button",
             className: "wsp-icon-btn wsp-tool-button",
@@ -2446,16 +2394,8 @@ function NavigationDialog({
             "aria-label": t("session.moveDown"),
             "aria-disabled": position === siblings.length - 1 || void 0,
             onClick: () => shiftSession(siblings[position + 1])
-          }, h5(import_dsh_client_ui_primitives2.IconChevronDownOutlineRegular, { size: 16 }))
-        ) : null,
-        choosing || focusedWorkspace === void 0 || renaming !== void 0 ? null : h5(RenameButton, {
-          useWorkspaceAccess,
-          workspaceId: focusedWorkspace.id,
-          name: focusedWorkspace.title,
-          t,
-          busy,
-          onClick: () => setRenaming({ id: focusedWorkspace.id, title: focusedWorkspace.title, original: focusedWorkspace.title })
-        })
+          }, h5(import_dsh_client_ui_primitives3.IconChevronDownOutlineRegular, { size: 16 }))
+        ) : null
       ),
       h5(
         "span",
@@ -2465,25 +2405,13 @@ function NavigationDialog({
     )
   });
 }
-function RestoreButton({ useSessionAccess, id, t, busy, onRestore }) {
-  if (!useSessionAccess(id, "workspace/unarchiveSession")) return null;
-  return h5("button", {
-    type: "button",
-    className: "wsp-icon-btn wsp-tool-button",
-    title: t("session.unarchive"),
-    "aria-label": t("session.unarchive"),
-    disabled: busy,
-    onClick: onRestore
-  }, h5(import_dsh_client_ui_primitives2.IconUnarchiveOutlineRegular, { size: 16 }));
-}
-function RenameButton({ useWorkspaceAccess, workspaceId, name, t, busy, onClick }) {
-  return useWorkspaceAccess(workspaceId, "workspace/rename") ? h5("button", {
-    type: "button",
-    className: "wsp-foot-action wsp-rename-action",
-    disabled: busy,
-    onClick,
-    title: t("renameNamedWorkspace", { name })
-  }, h5("span", null, t("renameNamedWorkspace", { name }))) : null;
+function rowMenuTarget(row, byId) {
+  if (row.kind === "session") {
+    const { id } = row.session;
+    return { kind: "session", value: { sessionId: id, displayTitle: byId[id]?.title ?? "" } };
+  }
+  const workspace = row.match.branch.workspace;
+  if (workspace?.path) return { kind: "workspace", value: { workspaceId: workspace.id, path: workspace.path, displayTitle: row.title } };
 }
 function sessionDropHalf(event) {
   const bounds = event.currentTarget.getBoundingClientRect();
@@ -2528,12 +2456,14 @@ function ResultRow({
   active,
   selected,
   currentBranch,
-  useSessionStatus,
-  statusLabel,
+  statuses,
+  pinnedLabel,
   tree,
   busy,
   dropTarget,
   drag,
+  menuTrigger,
+  rowMenu,
   onChoose,
   onFocus,
   onToggle
@@ -2546,13 +2476,15 @@ function ResultRow({
   const path = workspace?.path ?? directory?.path ?? session?.path;
   const splitDisclosure = choosing && workspace !== void 0 && branch?.expandable === true;
   const hasSearchMeta = Boolean(session?.snippet || !tree && (session?.workspace || session?.path));
+  const status = statuses?.[0];
+  const statusTitle = statuses?.map((item) => item.label).join(" \xB7 ");
   const option = h5(
     "button",
     {
       id,
       type: "button",
       role: tree ? "treeitem" : "option",
-      tabIndex: -1,
+      ...menuTrigger,
       "aria-level": tree ? row.depth + 1 : void 0,
       "aria-owns": groupId,
       "aria-expanded": branch?.expandable ? branch.expanded : void 0,
@@ -2571,7 +2503,7 @@ function ResultRow({
       onClick: onChoose,
       onFocus
     },
-    branch === void 0 ? session?.archived ? h5("span", { className: "wsp-row-icon" }, h5(import_dsh_client_ui_primitives2.IconArchiveOutlineRegular, { size: 14 })) : session && h5(SessionMarker, { session, useSessionStatus, statusLabel }) : h5(
+    branch === void 0 ? session?.archived ? h5("span", { className: "wsp-row-icon" }, h5(import_dsh_client_ui_primitives3.IconArchiveOutlineRegular, { size: 14 })) : h5("span", { className: "wsp-row-icon" }, status === void 0 || status.state === "idle" ? null : h5("span", { role: "img", "aria-label": statusTitle, title: statusTitle }, h5(import_dsh_client_ui_primitives3.StateDot, { state: status.state, size: 12 }))) : h5(
       "span",
       {
         className: "wsp-row-icon wsp-tree-icon",
@@ -2598,10 +2530,25 @@ function ResultRow({
         session?.snippet ? h5("span", { className: "wsp-row-path wsp-session-snippet" }, session.snippet) : null
       ) : null
     ),
-    session === void 0 ? null : h5("span", { className: "wsp-row-time" }, relativeTime(session.latest, now, t)),
+    session === void 0 ? null : h5(
+      "span",
+      { className: "wsp-row-time", title: status?.trailingLabel ? statusTitle : void 0 },
+      session.archived ? relativeTime(session.latest, now, t) : status?.trailingLabel ?? relativeTime(session.latest, now, t)
+    ),
+    session?.pinned && !session.archived ? h5("span", {
+      className: "wsp-row-icon",
+      role: "img",
+      title: pinnedLabel,
+      "aria-label": pinnedLabel
+    }, h5(import_dsh_client_ui_primitives3.IconPinFillRegular, { size: 12 })) : null,
     choosing && selected ? h5("span", { className: "wsp-row-check", "aria-hidden": true }, h5(CheckGlyph, { size: 14 })) : null
   );
-  if (!splitDisclosure) return option;
+  if (!splitDisclosure) return rowMenu === void 0 ? option : h5("div", {
+    className: "wsp-tree-option wsp-menu-row",
+    role: "presentation",
+    "data-active": active || void 0,
+    onFocus
+  }, option, rowMenu);
   const action = t(branch.expanded ? "collapseBranch" : "expandBranch");
   return h5(
     "div",
@@ -2621,28 +2568,6 @@ function ResultRow({
       }
     }, h5(DisclosureGlyph, { className: "wsp-tree-arrow" }))
   );
-}
-function SessionMarker({ session, useSessionStatus, statusLabel }) {
-  const label = useSessionStatus((statuses) => {
-    const status = statuses.get(session.id);
-    switch (status?.pendingInteraction?.kind) {
-      case "approval":
-        return "status.waitingApproval";
-      case "plan-review":
-        return "status.planReview";
-      case "question":
-        return "status.waitingAnswer";
-    }
-    if (status?.running ?? session.running) return "status.running";
-    return status?.completionUnread ? "status.completed" : void 0;
-  });
-  return h5("span", { className: "wsp-row-icon" }, label === void 0 ? null : h5("span", {
-    className: "wsp-session-dot",
-    role: "img",
-    "aria-label": statusLabel(label),
-    title: statusLabel(label),
-    "data-state": label === "status.running" ? "running" : label === "status.completed" ? "done" : "waiting"
-  }));
 }
 function errorMessage(error) {
   return error instanceof Error ? error.message : String(error);
@@ -3216,9 +3141,7 @@ function apply(ctx) {
     viewPreferences: createViewPreferences(),
     statusLabel: ctx.locale.bind("workspace"),
     searchContent: (query, signal) => ctx.sessions.search(query, signal),
-    openSession: (id) => ctx.uiWorkspace.openSession(id),
-    unarchiveSession: (id) => ctx.uiWorkspace.unarchiveSession(id),
-    renameWorkspace: (id, title) => ctx.workspaces.rename(id, title)
+    openSession: (id) => ctx.uiWorkspace.openSession(id)
   };
   ctx.effect(() => ctx.slots.inject("shell.overlay", () => ctx.slots.register({
     name: "shell.overlay",
@@ -3258,6 +3181,7 @@ var __test = {
   createGroupingPreferences,
   createViewPreferences,
   moveSession,
+  sessionStatuses,
   activeGrouping,
   buildRows,
   buildNavigation,

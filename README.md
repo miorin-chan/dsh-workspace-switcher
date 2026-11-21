@@ -11,7 +11,7 @@ Requires DeepSeek Harness 0.2.2-rc.3 or newer.
 - **Mod+K** opens recent sessions.
   Search by title, workspace, path, ID, or message content, then open a result.
 - **Mod+Shift+K** opens the last selected workspace grouping and defaults to the workspace tree.
-  Expand a workspace to open one of its sessions, or select a workspace to rename it.
+  Expand a workspace to browse and open its sessions.
   On a New Session screen, choosing a workspace switches the draft to that workspace.
 - The workspace chip on a New Session screen opens the searchable five-row shortlist.
   **All N** expands it.
@@ -22,7 +22,9 @@ Mod is Command on macOS and Ctrl elsewhere.
 Open **View options** in the dialog to choose a grouping, session order, or archive filter.
 The optional [directory tree plugin](../dsh-workspace-file-tree/README.md) adds a grouping.
 In manual mode, drag sessions within one group, or select a session and use the move buttons.
-Select an archived session to reveal its unarchive action.
+Use the row’s ellipsis or right-click to open DSH’s action menu.
+With a row focused or highlighted by search, **Shift+F10** opens the same menu.
+The menu offers the actions available for that row, including unarchiving.
 
 ## Limits
 

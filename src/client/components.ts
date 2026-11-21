@@ -20,6 +20,7 @@ export interface SearchFieldProps {
   readonly value: string
   readonly onChange: (value: string) => void
   readonly inputRef: RefObject<HTMLInputElement>
+  readonly onKeyDown?: React.KeyboardEventHandler<HTMLInputElement> | undefined
   /** The listbox id, present only while a list renders. */
   readonly listId: string | undefined
   /** The keyboard-highlighted option id, if any. */
@@ -34,7 +35,7 @@ export interface SearchFieldProps {
  * @returns the field element.
  */
 export function SearchField({
-  t, value, onChange, inputRef, listId, activeOptionId, label, tree,
+  t, value, onChange, inputRef, listId, activeOptionId, label, tree, onKeyDown,
 }: SearchFieldProps): ReactNode {
   return h('div', {
     className: 'wsp-search',
@@ -42,7 +43,7 @@ export function SearchField({
   },
     h('span', { className: 'wsp-search-icon' }, h(SearchGlyph, { size: 14 })),
     h('input', {
-      ref: inputRef,
+      ref: inputRef, onKeyDown,
       className: 'wsp-search-input',
       type: 'search',
       value,

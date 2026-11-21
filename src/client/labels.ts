@@ -71,8 +71,6 @@ export type LabelKey =
   | 'filter.hideArchived'
   | 'filter.showArchived'
   | 'filter.onlyArchived'
-  | 'session.unarchive'
-  | 'session.unarchiveFailed'
   | 'session.archived'
   | 'session.moveUp'
   | 'session.moveDown'
@@ -86,13 +84,9 @@ export type LabelKey =
   | 'refineSearch'
   | 'contentSearchFailed'
   | 'openFailed'
-  | 'renameWorkspace'
-  | 'renameFailed'
-  | 'save'
   | 'expandBranch'
   | 'collapseBranch'
   | 'loadingList'
-  | 'renameNamedWorkspace'
 
 /** One locale's complete dictionary. */
 export type LabelDict = Record<LabelKey, string>
@@ -112,9 +106,7 @@ const en: LabelDict = {
   "filter.hideArchived": "Hide archived",
   "filter.showArchived": "All conversations (show archived)",
   "filter.onlyArchived": "Archived only",
-  "session.unarchive": "Unarchive",
   "session.archived": "Archived",
-  "session.unarchiveFailed": "Could not unarchive session",
   "session.moveUp": "Move session up",
   "session.moveDown": "Move session down",
   "defaultName": "Default workspace",
@@ -172,13 +164,9 @@ const en: LabelDict = {
   refineSearch: "Refine your search for more results",
   contentSearchFailed: "Could not search message content",
   openFailed: "Could not open session",
-  renameWorkspace: "Rename workspace",
-  renameFailed: "Could not rename workspace",
-  save: "Save",
   expandBranch: "Expand",
   collapseBranch: "Collapse",
   loadingList: "Loading list…",
-  renameNamedWorkspace: "Rename {name}",
 }
 
 const zh: LabelDict = {
@@ -193,9 +181,7 @@ const zh: LabelDict = {
   "filter.hideArchived": "隐藏已归档",
   "filter.showArchived": "全部对话（显示已归档）",
   "filter.onlyArchived": "仅显示已归档",
-  "session.unarchive": "取消归档",
   "session.archived": "已归档",
-  "session.unarchiveFailed": "无法取消归档",
   "session.moveUp": "上移会话",
   "session.moveDown": "下移会话",
   "defaultName": "默认工作区",
@@ -253,13 +239,9 @@ const zh: LabelDict = {
   refineSearch: "缩小搜索范围以查找更多结果",
   contentSearchFailed: "无法搜索消息内容",
   openFailed: "无法打开会话",
-  renameWorkspace: "重命名工作区",
-  renameFailed: "无法重命名工作区",
-  save: "保存",
   expandBranch: "展开",
   collapseBranch: "折叠",
   loadingList: "正在加载列表…",
-  renameNamedWorkspace: "重命名「{name}」",
 }
 
 const ja: LabelDict = {
@@ -274,9 +256,7 @@ const ja: LabelDict = {
   "filter.hideArchived": "アーカイブを非表示",
   "filter.showArchived": "すべての会話（アーカイブを表示）",
   "filter.onlyArchived": "アーカイブのみ",
-  "session.unarchive": "アーカイブを解除",
   "session.archived": "アーカイブ済み",
-  "session.unarchiveFailed": "セッションのアーカイブを解除できませんでした",
   "session.moveUp": "セッションを上へ移動",
   "session.moveDown": "セッションを下へ移動",
   "defaultName": "デフォルトのワークスペース",
@@ -334,13 +314,9 @@ const ja: LabelDict = {
   refineSearch: "検索条件を絞り込んでください",
   contentSearchFailed: "メッセージの内容を検索できませんでした",
   openFailed: "セッションを開けませんでした",
-  renameWorkspace: "ワークスペース名を変更",
-  renameFailed: "ワークスペース名を変更できませんでした",
-  save: "保存",
   expandBranch: "展開",
   collapseBranch: "折りたたむ",
   loadingList: "一覧を読み込んでいます…",
-  renameNamedWorkspace: "「{name}」の名前を変更",
 }
 
 const de: LabelDict = {
@@ -355,9 +331,7 @@ const de: LabelDict = {
   "filter.hideArchived": "Archiviert ausblenden",
   "filter.showArchived": "Alle Gespräche (archiviert anzeigen)",
   "filter.onlyArchived": "Nur archiviert",
-  "session.unarchive": "Dearchivieren",
   "session.archived": "Archiviert",
-  "session.unarchiveFailed": "Sitzung konnte nicht dearchiviert werden",
   "session.moveUp": "Sitzung nach oben verschieben",
   "session.moveDown": "Sitzung nach unten verschieben",
   "defaultName": "Standardarbeitsbereich",
@@ -415,13 +389,9 @@ const de: LabelDict = {
   refineSearch: "Suche für weitere Ergebnisse eingrenzen",
   contentSearchFailed: "Nachrichteninhalte konnten nicht durchsucht werden",
   openFailed: "Sitzung konnte nicht geöffnet werden",
-  renameWorkspace: "Arbeitsbereich umbenennen",
-  renameFailed: "Arbeitsbereich konnte nicht umbenannt werden",
-  save: "Speichern",
   expandBranch: "Ausklappen",
   collapseBranch: "Einklappen",
   loadingList: "Liste wird geladen…",
-  renameNamedWorkspace: "{name} umbenennen",
 }
 
 const es: LabelDict = {
@@ -436,9 +406,7 @@ const es: LabelDict = {
   "filter.hideArchived": "Ocultar archivado",
   "filter.showArchived": "Todas las conversaciones (mostrar archivadas)",
   "filter.onlyArchived": "Sólo archivado",
-  "session.unarchive": "Desarchivar",
   "session.archived": "Archivado",
-  "session.unarchiveFailed": "No se pudo desarchivar la sesión",
   "session.moveUp": "Mover sesión hacia arriba",
   "session.moveDown": "Mover sesión hacia abajo",
   "defaultName": "Espacio de trabajo predeterminado",
@@ -496,13 +464,9 @@ const es: LabelDict = {
   refineSearch: "Afina la búsqueda para ver más resultados",
   contentSearchFailed: "No se pudo buscar en el contenido de los mensajes",
   openFailed: "No se pudo abrir la sesión",
-  renameWorkspace: "Cambiar el nombre del espacio de trabajo",
-  renameFailed: "No se pudo cambiar el nombre del espacio de trabajo",
-  save: "Guardar",
   expandBranch: "Expandir",
   collapseBranch: "Contraer",
   loadingList: "Cargando lista…",
-  renameNamedWorkspace: "Cambiar el nombre de {name}",
 }
 
 const fr: LabelDict = {
@@ -517,9 +481,7 @@ const fr: LabelDict = {
   "filter.hideArchived": "Masquer les archives",
   "filter.showArchived": "Toutes les conversations (afficher les archives)",
   "filter.onlyArchived": "Archivé uniquement",
-  "session.unarchive": "Désarchiver",
   "session.archived": "Archivé",
-  "session.unarchiveFailed": "Impossible de désarchiver la session",
   "session.moveUp": "Déplacer la session vers le haut",
   "session.moveDown": "Déplacer la session vers le bas",
   "defaultName": "Espace de travail par défaut",
@@ -577,13 +539,9 @@ const fr: LabelDict = {
   refineSearch: "Affinez la recherche pour voir plus de résultats",
   contentSearchFailed: "Impossible de rechercher dans le contenu des messages",
   openFailed: "Impossible d’ouvrir la session",
-  renameWorkspace: "Renommer l’espace de travail",
-  renameFailed: "Impossible de renommer l’espace de travail",
-  save: "Enregistrer",
   expandBranch: "Développer",
   collapseBranch: "Replier",
   loadingList: "Chargement de la liste…",
-  renameNamedWorkspace: "Renommer {name}",
 }
 
 const pt: LabelDict = {
@@ -598,9 +556,7 @@ const pt: LabelDict = {
   "filter.hideArchived": "Ocultar arquivado",
   "filter.showArchived": "Todas as conversas (mostrar arquivadas)",
   "filter.onlyArchived": "Somente arquivado",
-  "session.unarchive": "Desarquivar",
   "session.archived": "Arquivado",
-  "session.unarchiveFailed": "Não foi possível desarquivar a sessão",
   "session.moveUp": "Mover sessão para cima",
   "session.moveDown": "Mover sessão para baixo",
   "defaultName": "Área de trabalho padrão",
@@ -658,13 +614,9 @@ const pt: LabelDict = {
   refineSearch: "Refine a pesquisa para ver mais resultados",
   contentSearchFailed: "Não foi possível pesquisar o conteúdo das mensagens",
   openFailed: "Não foi possível abrir a sessão",
-  renameWorkspace: "Renomear área de trabalho",
-  renameFailed: "Não foi possível renomear a área de trabalho",
-  save: "Salvar",
   expandBranch: "Expandir",
   collapseBranch: "Recolher",
   loadingList: "Carregando lista…",
-  renameNamedWorkspace: "Renomear {name}",
 }
 
 const ru: LabelDict = {
@@ -679,9 +631,7 @@ const ru: LabelDict = {
   "filter.hideArchived": "Скрыть в архиве",
   "filter.showArchived": "Все разговоры (показать в архиве)",
   "filter.onlyArchived": "Только в архиве",
-  "session.unarchive": "Разархивировать",
   "session.archived": "В архиве",
-  "session.unarchiveFailed": "Не удалось разархивировать сеанс",
   "session.moveUp": "Переместить сеанс вверх",
   "session.moveDown": "Переместить сеанс вниз",
   "defaultName": "Рабочее пространство по умолчанию",
@@ -739,13 +689,9 @@ const ru: LabelDict = {
   refineSearch: "Уточните запрос, чтобы увидеть больше результатов",
   contentSearchFailed: "Не удалось выполнить поиск по содержимому сообщений",
   openFailed: "Не удалось открыть сеанс",
-  renameWorkspace: "Переименовать рабочее пространство",
-  renameFailed: "Не удалось переименовать рабочее пространство",
-  save: "Сохранить",
   expandBranch: "Развернуть",
   collapseBranch: "Свернуть",
   loadingList: "Загрузка списка…",
-  renameNamedWorkspace: "Переименовать «{name}»",
 }
 
 /** The runtime dictionaries: every locale this bundle ships. */

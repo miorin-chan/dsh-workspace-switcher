@@ -30,31 +30,58 @@ export interface WorkspaceBranch {
 
 export type SearchHit = SessionSearchResultItem
 
-function directoryKey(path: string): string {
+/**
+ * folderPath, owningParentFolder, and mainSessionId are adapted from DeepSeek Harness dsh-v0.2.2-rc.5,
+ * packages/client/ui-workspace/src/client/tree.ts. Copyright (c) 2026 DeepSeek.
+ * Distributed under the MIT license in LICENSE.deepseek-harness.
+ */
+function mainSessionId(byId: NavigationCatalog['byId']): SessionId | undefined {
+  return Object.values(byId).find(({ retainedBy }) =>
+    'mainView' in retainedBy && typeof retainedBy.mainView === 'number' && retainedBy.mainView > 0)?.id
+}
+
+/** Normalize separators for comparison without interpreting POSIX backslashes as separators. */
+function folderPath(path: string): string {
   const windows = /^[A-Za-z]:[/\\]/.test(path) || path.startsWith('\\\\')
   return (windows ? path.replaceAll('\\', '/') : path).replace(/\/+$/, '')
 }
 
-function parentPath(path: string): string | undefined {
-  const separator = path.lastIndexOf('/')
-  if (separator < 0 || (path.startsWith('//') && separator <= path.indexOf('/', 2))) return undefined
-  return path.slice(0, separator)
+/** Find the nearest registered ancestor, excluding the Workspace directory itself. */
+function owningParentFolder(path: string, parents: readonly string[]): string | undefined {
+  const child = folderPath(path)
+  let owner: string | undefined
+  let length = -1
+  for (const parent of parents) {
+    const root = folderPath(parent)
+    if (root.length > length && child !== root && child.startsWith(`${root}/`)) {
+      owner = parent
+      length = root.length
+    }
+  }
+  return owner
 }
 
 function workspaceRoots(branches: readonly WorkspaceBranch[]): WorkspaceBranch[] {
   const byPath = new Map<string, WorkspaceBranch>()
+  const localPaths: string[] = []
+  const uncPaths: string[] = []
   for (const branch of branches) {
     const path = branch.workspace?.path
-    if (path) {
-      const key = directoryKey(path)
-      if (!byPath.has(key)) byPath.set(key, branch)
-    }
+    if (!path) continue
+    const key = folderPath(path)
+    const unc = key.startsWith('//')
+    // UNC shares start their own trees. A bare server cannot own a share.
+    if ((unc && key.indexOf('/', 2) < 0) || byPath.has(key)) continue
+    byPath.set(key, branch)
+    if (unc) uncPaths.push(key)
+    else localPaths.push(key)
   }
   const roots: WorkspaceBranch[] = []
   for (const branch of branches) {
-    const path = branch.workspace?.path
-    let parent = path ? parentPath(directoryKey(path)) : undefined
-    while (parent !== undefined && !byPath.has(parent)) parent = parentPath(parent)
+    const path = branch.workspace?.path ?? ''
+    const key = folderPath(path)
+    const parents = key.startsWith('//') && key.indexOf('/', 2) >= 0 ? uncPaths : localPaths
+    const parent = owningParentFolder(key, parents)
     const owner = parent === undefined ? undefined : byPath.get(parent)
     if (owner === undefined) roots.push(branch)
     else owner.children.push(branch)
@@ -110,8 +137,7 @@ export function buildNavigation(
   const pinned = new Set(snapshot.pinnedSessionIds)
   const rowsById = new Map<SessionId, SessionRow>()
   const members = new Map<string, SessionId[]>([[FLAT_ORDER, []], [UNGROUPED_ORDER, []]])
-  const currentId = Object.values(byId).find(({ retainedBy }) =>
-    'mainView' in retainedBy && typeof retainedBy.mainView === 'number' && retainedBy.mainView > 0)?.id
+  const currentId = mainSessionId(byId)
   for (const id of catalog.ids) {
     const session = byId[id]
     if (session === undefined || session.blank || session.origin === 'subagent') continue

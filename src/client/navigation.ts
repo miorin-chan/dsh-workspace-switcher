@@ -1,6 +1,9 @@
-import { IconArchiveOutlineRegular, IconChevronDownOutlineRegular, IconChevronUpOutlineRegular, IconProjectAddOutlineRegular, IconUnarchiveOutlineRegular } from '@deepseek-ai/dsh-client-ui-primitives'
+import { IconArchiveOutlineRegular, IconChevronDownOutlineRegular, IconChevronUpOutlineRegular, IconProjectAddOutlineRegular, IconPinFillRegular, StateDot } from '@deepseek-ai/dsh-client-ui-primitives'
 import * as React from 'react'
 import type { ReactNode } from 'react'
+import type { SessionListState } from '@deepseek-ai/dsh-api-session-controller/client'
+import type { ContextMenuTarget, ContextMenuTriggerProps } from '@deepseek-ai/dsh-client-ui-context-menu/client'
+import type { PropsLocale, PropsRenderFactories, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
 import type { WorkspaceId, WorkspaceSnapshot } from '@deepseek-ai/dsh-api-workspace-controller/client'
 import { ErrorBanner, SearchField, Skeleton } from './components'
 import { SwitcherDialog, trapTab } from './dialog'
@@ -13,6 +16,7 @@ import {
   buildNavigation, filterTree, initialExpansion, searchSessions,
   type NavigationCatalog, type SearchHit, type SessionId, type SessionRow, type TreeMatch,
 } from './navigation-model'
+import { sessionStatuses, type SessionStatusSnapshot } from './session-presentation'
 import type { createSwitcherControls, SwitcherMode } from './shortcuts'
 import type { SnapshotHook } from './view'
 import { FLAT_ORDER, createViewPreferences, isArchiveFilter, isOrderBy, moveSession } from './view-preferences'
@@ -20,9 +24,6 @@ import { FLAT_ORDER, createViewPreferences, isArchiveFilter, isOrderBy, moveSess
 const h = React.createElement
 const { useEffect, useId, useMemo, useRef, useState, useSyncExternalStore } = React
 const NO_HITS: readonly SearchHit[] = []
-
-type StatusLabel = 'status.running' | 'status.completed' | 'status.waitingApproval' | 'status.planReview' | 'status.waitingAnswer'
-type SessionStatus = { running: boolean | undefined; completionUnread: boolean; pendingInteraction: { kind: string } | undefined }
 
 type Controls = ReturnType<typeof createSwitcherControls>
 type Search = (query: string, signal: AbortSignal) => Promise<{
@@ -35,22 +36,18 @@ export interface NavigationActions {
   readonly groupings: ReturnType<typeof createGroupingRegistry>
   readonly groupingPreferences: ReturnType<typeof createGroupingPreferences>
   readonly viewPreferences: ReturnType<typeof createViewPreferences>
-  readonly statusLabel: (key: StatusLabel) => string
+  readonly statusLabel: PropsLocale<'workspace'>['t']
   readonly searchContent: Search
   readonly openSession: (id: SessionId) => void
-  readonly unarchiveSession: (id: SessionId) => Promise<void>
-  readonly renameWorkspace: (id: WorkspaceId, title: string) => Promise<unknown>
   readonly addWorkspace?: (signal: AbortSignal) => Promise<WorkspaceId | undefined>
 }
 
-interface OverlayProps extends NavigationActions {
+interface OverlayProps extends NavigationActions, PropsRenderFactories, Pick<PropsRuntime<'shell.overlay'>, 'useContextMenu'> {
   readonly t: TranslateSeat
   readonly useWorkspaces: SnapshotHook<WorkspaceSnapshot>
-  readonly useSessions: SnapshotHook<NavigationCatalog>
-  readonly useSessionStatus: SnapshotHook<ReadonlyMap<SessionId, SessionStatus>>
+  readonly useSessions: SnapshotHook<NavigationCatalog & Partial<Pick<SessionListState, 'projectionsBySession'>>>
+  readonly useSessionStatus: SnapshotHook<SessionStatusSnapshot>
   readonly usePanelInfo: SnapshotHook<{ readonly activePanelId: string | null }>
-  readonly useSessionAccess: (id: SessionId, action: 'workspace/unarchiveSession') => boolean
-  readonly useWorkspaceAccess: (id: WorkspaceId, action: 'workspace/rename') => boolean
   readonly useRemoteAccess: (action: 'workspace/create') => boolean
 }
 
@@ -60,12 +57,13 @@ export function SwitcherOverlay(props: OverlayProps): ReactNode {
 }
 
 function NavigationDialog({ mode, controls, groupings, groupingPreferences, viewPreferences, t, useWorkspaces, useSessions, usePanelInfo,
-  useWorkspaceAccess, useSessionAccess, useRemoteAccess, useSessionStatus, statusLabel, searchContent, openSession,
-  unarchiveSession, renameWorkspace, addWorkspace,
+  useContextMenu, renderFactorySlot, useRemoteAccess, useSessionStatus, statusLabel, searchContent, openSession, addWorkspace,
 }: OverlayProps & { mode: SwitcherMode }): ReactNode {
   const workspaces = useWorkspaces(state => state)
   const sessions = useSessions(state => state)
+  const statuses = useSessionStatus(state => state)
   const showMain = usePanelInfo(state => state.activePanelId === null)
+  const { getTriggerProps } = useContextMenu()
   const canAdd = useRemoteAccess('workspace/create')
   const hero = mode === 'workspaces' && showMain ? controls.hero() : undefined
   const choosing = hero !== undefined
@@ -102,9 +100,7 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
   const [addedWorkspaceId, setAddedWorkspaceId] = useState<WorkspaceId>()
   const [expansions, setExpansions] = useState<ReadonlyMap<string, ReadonlyMap<string, boolean>>>(() => new Map())
   const expanded = expansions.get(displayedGroup) ?? new Map<string, boolean>()
-  const [renaming, setRenaming] = useState<{ readonly id: WorkspaceId; readonly title: string; readonly original: string }>()
-  const [writeKind, setWriteKind] = useState<'add' | 'rename' | 'unarchive'>()
-  const busy = writeKind !== undefined
+  const [busy, setBusy] = useState(false)
   const pendingWrite = useRef(false)
   const lifetime = useRef<AbortController | null>(null)
   const mounted = useRef(false)
@@ -155,16 +151,15 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
       window.clearInterval(timer)
     }
   }, [])
-  const renameId = renaming?.id
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }))
     return () => window.cancelAnimationFrame(frame)
-  }, [renameId])
+  }, [])
   React.useLayoutEffect(() => {
     if (document.activeElement === document.body) {
       inputRef.current?.focus({ preventScroll: true })
     }
-  }, [displayedGroup])
+  }, [displayedGroup, activeIndex])
   useEffect(() => {
     panelRef.current?.querySelector('[data-active="true"]')?.scrollIntoView({ block: 'nearest' })
   }, [active?.key])
@@ -200,24 +195,12 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
       toggle(row)
     }
   }
-  const write = async (kind: 'add' | 'rename' | 'unarchive', failed: string, operation: () => Promise<void>) => {
-    if (pendingWrite.current) return
+  const add = async () => {
+    if (addWorkspace === undefined || pendingWrite.current) return
     pendingWrite.current = true
-    setWriteKind(kind)
+    setBusy(true)
     setError(undefined)
     try {
-      await operation()
-    } catch (reason) {
-      if (mounted.current) setError({ label: failed, message: errorMessage(reason) })
-    } finally {
-      pendingWrite.current = false
-      if (mounted.current) setWriteKind(undefined)
-    }
-  }
-
-  const add = () => {
-    if (addWorkspace === undefined) return
-    void write('add', t('addFailed'), async () => {
       const signal = lifetime.current?.signal
       if (signal === undefined) return
       const id = await addWorkspace(signal)
@@ -232,7 +215,12 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
       setAddedWorkspaceId(id)
       setActiveKey(`workspace:${id}`)
       inputRef.current?.focus({ preventScroll: true })
-    })
+    } catch (reason) {
+      if (mounted.current) setError({ label: t('addFailed'), message: errorMessage(reason) })
+    } finally {
+      pendingWrite.current = false
+      if (mounted.current) setBusy(false)
+    }
   }
 
   const onKeyDown: React.KeyboardEventHandler<HTMLDivElement> = event => {
@@ -240,13 +228,12 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
     if (event.key === 'Escape') {
       event.preventDefault()
       event.stopPropagation()
-      if (renaming !== undefined) setRenaming(undefined)
-      else controls.close()
+      controls.close()
       return
     }
     trapTab(event, panelRef.current)
-    if (renaming !== undefined || (event.target !== inputRef.current
-      && !(event.target instanceof HTMLElement && event.target.matches('[data-wsp-navigation-row]')))) return
+    if (event.target !== inputRef.current
+      && !(event.target instanceof HTMLElement && event.target.matches('[data-wsp-navigation-row]'))) return
     const focusRow = (next: number) => {
       const row = rows[next]
       if (row === undefined) return
@@ -278,9 +265,8 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
   }
 
   const focused = active ?? rows[selectedIndex] ?? (tree ? rows[0] : undefined)
-  const focusedWorkspace = focused?.kind === 'branch' ? focused.match.branch.workspace : undefined
   const focusedSession = focused?.kind === 'session' ? focused : undefined
-  const reorderable = view.orderBy === 'manual' && trimmed === '' && !busy && renaming === undefined
+  const reorderable = view.orderBy === 'manual' && trimmed === '' && !busy
   const siblings = reorderable && focusedSession !== undefined && !focusedSession.session.archived
     ? rows.filter(row => row.kind === 'session' && row.parentKey === focusedSession.parentKey
       && !row.session.archived && row.session.pinned === focusedSession.session.pinned) : []
@@ -307,8 +293,6 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
     changeView({ ...view, orders: { ...view.orders, [key]: next } })
   }
   const status = error ?? (remote.error === undefined ? undefined : { label: t('contentSearchFailed'), message: remote.error })
-  const renameTitle = renaming?.title.trim()
-  const canSaveRename = renameTitle !== undefined && renameTitle !== '' && renameTitle !== renaming?.original && !busy
   const catalogError = workspaces.state === 'error'
   const empty = pending ? h(Skeleton, { rows: 5 })
     : h('div', { className: 'wsp-empty', role: 'status' }, t(catalogError ? 'listUnavailable'
@@ -326,11 +310,20 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
       const row = rows[i]
       const id = optionId(i)
       const groupId = children.has(row.key) ? `${id}-children` : undefined
+      const target = busy || choosing ? undefined : rowMenuTarget(row, sessions.byId)
       const option = h(ResultRow, {
         key: row.key, row, id, groupId, t, now, choosing, active: i === index,
         selected: row.kind === 'session' ? row.session.id === currentId
           : row.match.branch.workspace?.id !== undefined && row.match.branch.workspace.id === hero?.selectedId,
-        currentBranch: currentBranches.has(row.key), useSessionStatus, statusLabel,
+        currentBranch: currentBranches.has(row.key),
+        statuses: row.kind === 'session' ? sessionStatuses(row.session, sessions, statuses, statusLabel) : undefined,
+        pinnedLabel: statusLabel('row.pinned'),
+        menuTrigger: getTriggerProps(target, { tabIndex: -1 }),
+        rowMenu: target === undefined ? undefined : renderFactorySlot('contextMenu.button', {
+          target, className: 'wsp-icon-btn wsp-row-menu',
+          label: statusLabel(target.kind === 'session' ? 'actions.session.aria' : 'actions.workspace.aria',
+            { name: row.kind === 'session' ? row.session.title : row.title }),
+        }),
         dropTarget: dropTarget?.key === row.key ? dropTarget.half : undefined,
         ...(reorderable && row.kind === 'session' && !row.session.archived ? { drag: {
           draggable: true,
@@ -374,29 +367,13 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
   return h(SwitcherDialog, {
     title, panelRef, busy: busy || pending, t, onClose: controls.close, onKeyDown,
     ...(choosing ? { subtitle: t('dialog.subtitle') } : {}),
-    search: renaming === undefined ? h(SearchField, {
+    search: h(SearchField, {
       t, value: query, onChange: changeQuery, inputRef, tree,
       label: t(tree ? choosing ? 'search.label' : 'searchWorkspaceTree' : 'sessionSearch'),
       listId: rows.length === 0 ? undefined : listId,
       activeOptionId: active === undefined ? undefined : optionId(index),
-    }) : h('form', {
-      className: 'wsp-rename', onSubmit: (event: React.FormEvent) => {
-        event.preventDefault()
-        if (!canSaveRename || renameTitle === undefined) return
-        void write('rename', t('renameFailed'), async () => {
-          await renameWorkspace(renaming.id, renameTitle)
-          if (mounted.current) setRenaming(undefined)
-        })
-      },
-    },
-      h('div', { className: 'wsp-search' }, h('input', {
-        className: 'wsp-search-input', ref: inputRef, 'aria-label': t('renameWorkspace'),
-        value: renaming.title, readOnly: busy,
-        onChange: event => setRenaming({ ...renaming, title: event.target.value }),
-      })),
-      h('button', { type: 'submit', className: 'wsp-foot-action', disabled: !canSaveRename }, t('save')),
-      h('button', { type: 'button', className: 'wsp-foot-action', onClick: () => setRenaming(undefined) }, t('back')),
-    ),
+      onKeyDown: busy || choosing || active === undefined ? undefined : getTriggerProps(rowMenuTarget(active, sessions.byId)).onKeyDown,
+    }),
     body: rows.length === 0 ? empty : h('div', {
       className: 'wsp-list wsp-navigation-list', role: tree ? 'tree' : 'listbox', id: listId, 'aria-label': title,
     }, renderRows()),
@@ -407,7 +384,7 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
         ...status, dismiss: t('dismiss'), onDismiss: error === undefined ? remote.dismiss : () => setError(undefined),
       }),
     ),
-    toolbar: renaming === undefined ? h('div', { className: 'wsp-navigation-toolbar' },
+    toolbar: h('div', { className: 'wsp-navigation-toolbar' },
       h(GroupingMenu, {
         label: t('group.options'), disabled: busy,
         sections: [{
@@ -440,19 +417,12 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
       }),
       canAdd && addWorkspace !== undefined ? h('button', {
         type: 'button', className: 'wsp-icon-btn wsp-tool-button',
-        title: t(writeKind === 'add' ? 'adding' : 'add'), 'aria-label': t('add'),
-        'aria-busy': writeKind === 'add' || undefined, 'aria-disabled': busy || undefined, onClick: add,
+        title: t(busy ? 'adding' : 'add'), 'aria-label': t('add'),
+        'aria-busy': busy || undefined, 'aria-disabled': busy || undefined, onClick: () => { void add() },
       }, h(IconProjectAddOutlineRegular, { size: 16 })) : null,
-    ) : null,
+    ),
     footer: h(React.Fragment, null,
       h('div', { className: 'wsp-navigation-actions' },
-        focusedSession?.session.archived ? h(RestoreButton, {
-          useSessionAccess, id: focusedSession.session.id, t, busy,
-          onRestore: () => {
-            inputRef.current?.focus({ preventScroll: true })
-            void write('unarchive', t('session.unarchiveFailed'), () => unarchiveSession(focusedSession.session.id))
-          },
-        }) : null,
         position >= 0 && siblings.length > 1 ? h(React.Fragment, null,
           h('button', {
             type: 'button', className: 'wsp-icon-btn wsp-tool-button', title: t('session.moveUp'),
@@ -465,36 +435,12 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
             onClick: () => shiftSession(siblings[position + 1]),
           }, h(IconChevronDownOutlineRegular, { size: 16 })),
         ) : null,
-        choosing || focusedWorkspace === undefined || renaming !== undefined ? null : h(RenameButton, {
-          useWorkspaceAccess, workspaceId: focusedWorkspace.id, name: focusedWorkspace.title, t, busy,
-          onClick: () => setRenaming({ id: focusedWorkspace.id, title: focusedWorkspace.title, original: focusedWorkspace.title }),
-        }),
       ),
       h('span', { className: 'wsp-dialog-count', role: 'status' },
         remote.pending ? t('searching') : remote.hasMore ? t('refineSearch')
           : pending ? t('loadingList') : trimmed === '' && tree ? null : t('countResults', { n: rows.length })),
     ),
   })
-}
-
-function RestoreButton({ useSessionAccess, id, t, busy, onRestore }: {
-  useSessionAccess: OverlayProps['useSessionAccess']; id: SessionId; t: TranslateSeat; busy: boolean; onRestore: () => void
-}): ReactNode {
-  if (!useSessionAccess(id, 'workspace/unarchiveSession')) return null
-  return h('button', {
-    type: 'button', className: 'wsp-icon-btn wsp-tool-button', title: t('session.unarchive'),
-    'aria-label': t('session.unarchive'), disabled: busy, onClick: onRestore,
-  }, h(IconUnarchiveOutlineRegular, { size: 16 }))
-}
-
-function RenameButton({ useWorkspaceAccess, workspaceId, name, t, busy, onClick }: {
-  useWorkspaceAccess: OverlayProps['useWorkspaceAccess']; workspaceId: WorkspaceId
-  name: string; t: TranslateSeat; busy: boolean; onClick: () => void
-}): ReactNode {
-  return useWorkspaceAccess(workspaceId, 'workspace/rename') ? h('button', {
-    type: 'button', className: 'wsp-foot-action wsp-rename-action', disabled: busy, onClick,
-    title: t('renameNamedWorkspace', { name }),
-  }, h('span', null, t('renameNamedWorkspace', { name }))) : null
 }
 
 type BranchRow = {
@@ -505,6 +451,15 @@ type NavigationRow = BranchRow | SessionResult
 type SessionResult = {
   kind: 'session'; key: string; depth: number; parentKey?: string
   session: SessionRow & { snippet?: string | undefined }
+}
+
+function rowMenuTarget(row: NavigationRow, byId: NavigationCatalog['byId']): ContextMenuTarget | undefined {
+  if (row.kind === 'session') {
+    const { id } = row.session
+    return { kind: 'session', value: { sessionId: id, displayTitle: byId[id]?.title ?? '' } }
+  }
+  const workspace = row.match.branch.workspace
+  if (workspace?.path) return { kind: 'workspace', value: { workspaceId: workspace.id, path: workspace.path, displayTitle: row.title } }
 }
 
 type DropHalf = 'before' | 'after'
@@ -533,12 +488,13 @@ function flattenTree(matches: readonly TreeMatch[], expanded: ReadonlyMap<string
 }
 
 function ResultRow({ row, id, groupId, t, now, choosing, active, selected, currentBranch,
-  useSessionStatus, statusLabel, tree, busy, dropTarget, drag, onChoose, onFocus, onToggle,
+  statuses, pinnedLabel, tree, busy, dropTarget, drag, menuTrigger, rowMenu, onChoose, onFocus, onToggle,
 }: {
   row: NavigationRow; id: string; groupId: string | undefined; t: TranslateSeat; now: number;
   choosing: boolean; active: boolean; selected: boolean; currentBranch: boolean; tree: boolean; busy: boolean;
-  useSessionStatus: OverlayProps['useSessionStatus']; statusLabel: NavigationActions['statusLabel'];
+  statuses: ReturnType<typeof sessionStatuses> | undefined; pinnedLabel: string;
   drag?: React.HTMLAttributes<HTMLButtonElement>; dropTarget: DropHalf | undefined;
+  menuTrigger: ContextMenuTriggerProps; rowMenu: ReactNode;
   onChoose: () => void; onFocus: () => void; onToggle?: (() => void) | undefined
 }): ReactNode {
   const branch = row.kind === 'branch' ? row : undefined
@@ -549,8 +505,10 @@ function ResultRow({ row, id, groupId, t, now, choosing, active, selected, curre
   const path = workspace?.path ?? directory?.path ?? session?.path
   const splitDisclosure = choosing && workspace !== undefined && branch?.expandable === true
   const hasSearchMeta = Boolean(session?.snippet || (!tree && (session?.workspace || session?.path)))
+  const status = statuses?.[0]
+  const statusTitle = statuses?.map(item => item.label).join(' · ')
   const option = h('button', {
-    id, type: 'button', role: tree ? 'treeitem' : 'option', tabIndex: -1,
+    id, type: 'button', role: tree ? 'treeitem' : 'option', ...menuTrigger,
     'aria-level': tree ? row.depth + 1 : undefined, 'aria-owns': groupId,
     'aria-expanded': branch?.expandable ? branch.expanded : undefined,
     'aria-selected': selected, 'aria-disabled': busy || undefined, 'data-wsp-navigation-row': true,
@@ -562,7 +520,8 @@ function ResultRow({ row, id, groupId, t, now, choosing, active, selected, curre
     className: 'wsp-row wsp-navigation-row', title: path || title, onClick: onChoose, onFocus,
   },
     branch === undefined ? session?.archived ? h('span', { className: 'wsp-row-icon' }, h(IconArchiveOutlineRegular, { size: 14 }))
-      : session && h(SessionMarker, { session, useSessionStatus, statusLabel })
+      : h('span', { className: 'wsp-row-icon' }, status === undefined || status.state === 'idle' ? null
+        : h('span', { role: 'img', 'aria-label': statusTitle, title: statusTitle }, h(StateDot, { state: status.state, size: 12 })))
       : h('span', {
         className: 'wsp-row-icon wsp-tree-icon', 'data-current': currentBranch || undefined,
         'data-swap': branch.expandable && !splitDisclosure || undefined, 'data-expanded': branch.expanded,
@@ -580,10 +539,16 @@ function ResultRow({ row, id, groupId, t, now, choosing, active, selected, curre
         session?.snippet ? h('span', { className: 'wsp-row-path wsp-session-snippet' }, session.snippet) : null,
       ) : null,
     ),
-    session === undefined ? null : h('span', { className: 'wsp-row-time' }, relativeTime(session.latest, now, t)),
+    session === undefined ? null : h('span', { className: 'wsp-row-time', title: status?.trailingLabel ? statusTitle : undefined },
+      session.archived ? relativeTime(session.latest, now, t) : status?.trailingLabel ?? relativeTime(session.latest, now, t)),
+    session?.pinned && !session.archived ? h('span', { className: 'wsp-row-icon', role: 'img',
+      title: pinnedLabel, 'aria-label': pinnedLabel }, h(IconPinFillRegular, { size: 12 })) : null,
     choosing && selected ? h('span', { className: 'wsp-row-check', 'aria-hidden': true }, h(CheckGlyph, { size: 14 })) : null,
   )
-  if (!splitDisclosure) return option
+  if (!splitDisclosure) return rowMenu === undefined ? option : h('div', {
+    className: 'wsp-tree-option wsp-menu-row', role: 'presentation', 'data-active': active || undefined,
+    onFocus,
+  }, option, rowMenu)
   const action = t(branch.expanded ? 'collapseBranch' : 'expandBranch')
   return h('div', { className: 'wsp-tree-option', role: 'presentation' },
     option,
@@ -594,25 +559,6 @@ function ResultRow({ row, id, groupId, t, now, choosing, active, selected, curre
       onClick: () => { onToggle?.(); document.getElementById(id)?.focus({ preventScroll: true }) },
     }, h(DisclosureGlyph, { className: 'wsp-tree-arrow' })),
   )
-}
-
-function SessionMarker({ session, useSessionStatus, statusLabel }: {
-  session: SessionRow; useSessionStatus: OverlayProps['useSessionStatus']; statusLabel: NavigationActions['statusLabel']
-}): ReactNode {
-  const label = useSessionStatus(statuses => {
-    const status = statuses.get(session.id)
-    switch (status?.pendingInteraction?.kind) {
-      case 'approval': return 'status.waitingApproval'
-      case 'plan-review': return 'status.planReview'
-      case 'question': return 'status.waitingAnswer'
-    }
-    if (status?.running ?? session.running) return 'status.running'
-    return status?.completionUnread ? 'status.completed' : undefined
-  })
-  return h('span', { className: 'wsp-row-icon' }, label === undefined ? null : h('span', {
-    className: 'wsp-session-dot', role: 'img', 'aria-label': statusLabel(label), title: statusLabel(label),
-    'data-state': label === 'status.running' ? 'running' : label === 'status.completed' ? 'done' : 'waiting',
-  }))
 }
 
 function errorMessage(error: unknown): string {

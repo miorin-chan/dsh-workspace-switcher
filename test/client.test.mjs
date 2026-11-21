@@ -36,7 +36,7 @@ const plugin = registration.factory(name => (
 const {
   buildRows, filterRows, shortenPath, relativeTime, toMillis, SHORTLIST,
   buildNavigation, filterTree, initialExpansion, searchSessions,
-  activeGrouping, createGroupingPreferences, createGroupingRegistry, createViewPreferences, moveSession,
+  activeGrouping, createGroupingPreferences, createGroupingRegistry, createViewPreferences, moveSession, sessionStatuses,
 } = plugin.__test
 
 /** A minimal host: recorded effects, a locale service, and a slot registry. */
@@ -527,4 +527,37 @@ test('view preferences survive reload and reject malformed values', () => {
   assert.deepEqual(createViewPreferences(storage).get(), next)
   saved = '{"orderBy":"invalid","archiveFilter":"invalid","orders":{"flat":[5]}}'
   assert.deepEqual(createViewPreferences(storage).get(), { orderBy: 'updated', archiveFilter: 'hide-archived', orders: {} })
+})
+
+
+test('workspace ancestors preserve path boundaries and the first normalized alias', () => {
+  const paths = ['/', '//server', '//server/share/', '//server/share/nested', '//server/other/peer',
+    'D:/repo/', 'D:/repo', 'D:/repo/src', 'D:/repo-copy', 'd:/repo/src']
+  const items = paths.map((path, i) => ({ workspaceId: `${i}`, path, title: `Workspace ${i}`, sessionIds: [] }))
+  const { roots } = buildNavigation({ items, archivedSessionIds: [] }, { ids: [], byId: {} },
+    'Default workspace', 'Untitled session', 'workspace-tree')
+  const parents = new Map()
+  function visit(branch, parent) {
+    parents.set(branch.workspace?.id, parent)
+    for (const child of branch.children) visit(child, branch.workspace?.id)
+  }
+  for (const branch of roots) visit(branch)
+  assert.deepEqual(paths.map((_, i) => parents.get(`${i}`)),
+    [undefined, '0', undefined, '2', undefined, undefined, undefined, '5', undefined, undefined])
+})
+
+test('session attention status precedes own activity and reports running subagents', () => {
+  const catalog = { byId: { child: { running: true } },
+    projectionsBySession: { parent: { values: { subagentCatalog: [{ id: 'child' }] } } } }
+  const session = { id: 'parent', running: true }
+  const translate = (key, params) => params ? `${key}:${params.n}` : key
+  const pending = { running: true, completionUnread: true, pendingInteraction: { kind: 'plan-review' } }
+  const statuses = new Map([['parent', pending]])
+  assert.deepEqual(sessionStatuses(session, catalog, statuses, translate), [
+    { state: 'warning', label: 'status.planReview', trailingLabel: 'status.compact.planReview' },
+    { state: 'ongoing', label: 'status.subagentsRunning.one:1' },
+  ])
+  statuses.set('child', { running: false })
+  statuses.set('parent', { running: false, completionUnread: true })
+  assert.deepEqual(sessionStatuses(session, catalog, statuses, translate), [{ state: 'done', label: 'status.completed' }])
 })
