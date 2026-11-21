@@ -59,12 +59,7 @@ export type LabelKey =
   | 'sessions.one'
   | 'sessions.other'
   | 'sessionSearch'
-  | 'recentSession.title'
-  | 'recentSession.next'
   | 'recentSession.previous'
-  | 'recentSession.release'
-  | 'recentSession.pause'
-  | 'recentSession.confirm'
   | 'workspaceTree'
   | 'group.options'
   | 'group.heading'
@@ -101,12 +96,7 @@ export type LabelDict = Record<LabelKey, string>
 export type TranslateSeat = (key: LabelKey, params?: Record<string, unknown>) => string
 
 const en: LabelDict = {
-  "recentSession.pause": "Repeat the shortcut to cycle · Pause or press Enter to open · Esc to cancel",
-  "recentSession.title": "Recently visited sessions",
-  "recentSession.next": "Switch to next recently visited session",
   "recentSession.previous": "Switch to previous recently visited session",
-  "recentSession.release": "Release Ctrl or press Enter to open · Esc to cancel",
-  "recentSession.confirm": "Enter to open · Esc to cancel",
   "group.options": "View options",
   "group.heading": "Group by",
   "group.flat": "Flat sessions",
@@ -182,12 +172,7 @@ const en: LabelDict = {
 }
 
 const zh: LabelDict = {
-  "recentSession.pause": "重复按快捷键选择 · 停顿或按 Enter 打开 · Esc 取消",
-  "recentSession.title": "最近访问的会话",
-  "recentSession.next": "切换到下一个最近访问的会话",
   "recentSession.previous": "切换到上一个最近访问的会话",
-  "recentSession.release": "松开 Ctrl 或按 Enter 打开 · Esc 取消",
-  "recentSession.confirm": "Enter 打开 · Esc 取消",
   "group.options": "视图选项",
   "group.heading": "分组方式",
   "group.flat": "平铺会话",
@@ -263,12 +248,7 @@ const zh: LabelDict = {
 }
 
 const ja: LabelDict = {
-  "recentSession.pause": "ショートカットを繰り返して切り替え · 少し待つか Enter で開く · Esc でキャンセル",
-  "recentSession.title": "最近開いたセッション",
-  "recentSession.next": "最近開いた次のセッションに切り替え",
   "recentSession.previous": "最近開いた前のセッションに切り替え",
-  "recentSession.release": "Ctrl を離すか Enter で開く · Esc でキャンセル",
-  "recentSession.confirm": "Enter で開く · Esc でキャンセル",
   "group.options": "表示オプション",
   "group.heading": "グループ化",
   "group.flat": "セッション一覧",
@@ -344,12 +324,7 @@ const ja: LabelDict = {
 }
 
 const de: LabelDict = {
-  "recentSession.pause": "Zum Wechseln Tastenkürzel wiederholen · Kurz warten oder Enter zum Öffnen · Esc zum Abbrechen",
-  "recentSession.title": "Zuletzt geöffnete Sitzungen",
-  "recentSession.next": "Zur nächsten zuletzt geöffneten Sitzung wechseln",
   "recentSession.previous": "Zur vorherigen zuletzt geöffneten Sitzung wechseln",
-  "recentSession.release": "Strg loslassen oder Enter zum Öffnen · Esc zum Abbrechen",
-  "recentSession.confirm": "Enter zum Öffnen · Esc zum Abbrechen",
   "group.options": "Ansichtsoptionen",
   "group.heading": "Gruppieren nach",
   "group.flat": "Flache Sitzungsliste",
@@ -425,12 +400,7 @@ const de: LabelDict = {
 }
 
 const es: LabelDict = {
-  "recentSession.pause": "Repite el atajo para recorrer · Espera o pulsa Intro para abrir · Esc para cancelar",
-  "recentSession.title": "Sesiones visitadas recientemente",
-  "recentSession.next": "Cambiar a la siguiente sesión visitada recientemente",
   "recentSession.previous": "Cambiar a la anterior sesión visitada recientemente",
-  "recentSession.release": "Suelta Ctrl o pulsa Intro para abrir · Esc para cancelar",
-  "recentSession.confirm": "Intro para abrir · Esc para cancelar",
   "group.options": "Opciones de vista",
   "group.heading": "Agrupar por",
   "group.flat": "Lista de sesiones",
@@ -506,12 +476,7 @@ const es: LabelDict = {
 }
 
 const fr: LabelDict = {
-  "recentSession.pause": "Répéter le raccourci pour parcourir · Attendre ou appuyer sur Entrée pour ouvrir · Échap pour annuler",
-  "recentSession.title": "Sessions récemment consultées",
-  "recentSession.next": "Passer à la session récemment consultée suivante",
   "recentSession.previous": "Passer à la session récemment consultée précédente",
-  "recentSession.release": "Relâcher Ctrl ou appuyer sur Entrée pour ouvrir · Échap pour annuler",
-  "recentSession.confirm": "Entrée pour ouvrir · Échap pour annuler",
   "group.options": "Options d’affichage",
   "group.heading": "Regrouper par",
   "group.flat": "Liste des sessions",
@@ -587,12 +552,7 @@ const fr: LabelDict = {
 }
 
 const pt: LabelDict = {
-  "recentSession.pause": "Repita o atalho para percorrer · Aguarde ou pressione Enter para abrir · Esc para cancelar",
-  "recentSession.title": "Sessões visitadas recentemente",
-  "recentSession.next": "Alternar para a próxima sessão visitada recentemente",
   "recentSession.previous": "Alternar para a sessão visitada recentemente anterior",
-  "recentSession.release": "Solte Ctrl ou pressione Enter para abrir · Esc para cancelar",
-  "recentSession.confirm": "Enter para abrir · Esc para cancelar",
   "group.options": "Opções de visualização",
   "group.heading": "Agrupar por",
   "group.flat": "Lista de sessões",
@@ -668,12 +628,7 @@ const pt: LabelDict = {
 }
 
 const ru: LabelDict = {
-  "recentSession.pause": "Повторите сочетание для выбора · Подождите или нажмите Enter, чтобы открыть · Esc — отменить",
-  "recentSession.title": "Недавно открытые сеансы",
-  "recentSession.next": "Перейти к следующему недавно открытому сеансу",
   "recentSession.previous": "Перейти к предыдущему недавно открытому сеансу",
-  "recentSession.release": "Отпустите Ctrl или нажмите Enter, чтобы открыть · Esc для отмены",
-  "recentSession.confirm": "Enter — открыть · Esc — отменить",
   "group.options": "Параметры вида",
   "group.heading": "Группировка",
   "group.flat": "Список сессий",

@@ -1,22 +1,20 @@
 import type { Context } from '@deepseek-ai/cordis'
-import type { ShortcutBinding, ShortcutCatalogEntry } from '@deepseek-ai/dsh-client-shortcuts/client'
+import type {} from '@deepseek-ai/dsh-client-shortcuts/client'
 import { NS } from './labels'
 import type { WorkspaceId } from '@deepseek-ai/dsh-api-workspace-controller/client'
 import type { WorkspacePickerProps } from './view'
-import type { createRecentSessions, RecentConfirmation } from './recent-sessions'
+import type { createRecentSessions } from './recent-sessions'
 
 export const SWITCHER_MODAL = 'workspace-switcher'
 export type SwitcherMode = 'sessions' | 'workspaces'
-type OverlayMode = SwitcherMode | 'recent'
-const RECENT_SWITCH_PAUSE_MS = 650
 type HeroPicker = Pick<WorkspacePickerProps, 'onPick' | 'onClose' | 'selectedId'>
 
 export function createSwitcherControls() {
-  let mode: OverlayMode | null = null
+  let mode: SwitcherMode | null = null
   let origin: HTMLElement | null = null
   const listeners = new Set<() => void>()
   const heroPickers = new Set<() => HeroPicker>()
-  const setMode = (next: OverlayMode | null) => {
+  const setMode = (next: SwitcherMode | null) => {
     if (mode === next) return
     mode = next
     for (const listener of listeners) listener()
@@ -29,13 +27,6 @@ export function createSwitcherControls() {
     }
   }
   const hero = () => [...heroPickers].at(-1)?.()
-  const open = (next: OverlayMode) => {
-    if (mode === null) {
-      origin = document.activeElement instanceof HTMLElement ? document.activeElement : null
-      hero()?.onClose()
-    }
-    setMode(next)
-  }
   return {
     hero,
     bindHero(get: () => HeroPicker) {
@@ -49,10 +40,12 @@ export function createSwitcherControls() {
       return () => { listeners.delete(listener) }
     },
     close: () => setMode(null),
-    openRecent: () => open('recent'),
     toggle(next: SwitcherMode) {
-      if (mode === next) setMode(null)
-      else open(next)
+      if (mode === null) {
+        origin = document.activeElement instanceof HTMLElement ? document.activeElement : null
+        hero()?.onClose()
+      }
+      setMode(mode === next ? null : next)
     },
   }
 }
@@ -143,68 +136,24 @@ export function installSwitcherShortcuts(ctx: Context, controls: ReturnType<type
   return () => { for (const release of dispose.reverse()) release() }
 }
 
-/** New commands own their bindings and use the registry's native Desktop path. */
-export function installRecentShortcuts(ctx: Context, controls: ReturnType<typeof createSwitcherControls>,
-  recent: ReturnType<typeof createRecentSessions>): () => void {
-  const { shortcuts } = ctx
+/** Open the last visited session as soon as the shortcut is pressed. */
+export function installPreviousSessionShortcut(ctx: Context, recent: ReturnType<typeof createRecentSessions>): () => void {
   const t = ctx.locale.bind(NS)
-  const needsPauseFallback = shortcuts.runtime === 'desktop' && shortcuts.platform === 'macos'
-  let pauseTimer: number | undefined
-  const clearPause = () => {
-    if (pauseTimer !== undefined) window.clearTimeout(pauseTimer)
-    pauseTimer = undefined
+  const binding = { code: 'Tab', modifiers: ['control'] } as const
+  try {
+    return ctx.shortcuts.register({
+      id: 'workspace.recentSession' as ShortcutCommand['id'],
+      label: () => t('recentSession.previous'), aliases: [],
+      defaults: { 'desktop:macos': binding, 'desktop:windows': binding },
+      regions: ['page', 'editable'], modals: [],
+      resolve: ({ modal, region }) => {
+        if (modal !== null || region === 'terminal') return { status: 'pass' }
+        const run = recent.previous()
+        return run === undefined ? { status: 'pass' } : { status: 'handled', run }
+      },
+    })
+  } catch (error) {
+    console.warn('workspace-switcher: could not register previous session shortcut', error)
+    return () => {}
   }
-  const dispose = [
-    recent.subscribe(() => {
-      clearPause()
-      const selection = recent.getSnapshot()
-      if (selection?.confirmation === 'control-or-pause') {
-        pauseTimer = window.setTimeout(() => {
-          if (recent.getSnapshot() === selection) recent.confirm()
-        }, RECENT_SWITCH_PAUSE_MS)
-      }
-      if (selection === null && controls.getSnapshot() === 'recent') controls.close()
-    }),
-    controls.subscribe(() => { if (controls.getSnapshot() !== 'recent') recent.cancel() }),
-  ]
-  const confirmOnRelease = (event: KeyboardEvent) => {
-    const selection = recent.getSnapshot()
-    const releasedControl = event.key === 'Control' || event.code === 'ControlLeft' || event.code === 'ControlRight'
-    if (releasedControl && !event.ctrlKey && selection !== null && selection.confirmation !== 'explicit') recent.confirm()
-  }
-  window.addEventListener('keyup', confirmOnRelease, true)
-  window.addEventListener('blur', recent.cancel)
-  dispose.push(() => {
-    window.removeEventListener('keyup', confirmOnRelease, true)
-    window.removeEventListener('blur', recent.cancel)
-    clearPause()
-    recent.cancel()
-  })
-  for (const direction of [1, -1] as const) {
-    const id = (direction === 1 ? 'workspace.recentSession' : 'workspace.recentSessionReverse') as ShortcutCommand['id']
-    const binding: ShortcutBinding = { code: 'Tab', modifiers: direction === 1 ? ['control'] : ['control', 'shift'] }
-    try {
-      dispose.push(shortcuts.register({
-        id,
-        label: () => t(direction === 1 ? 'recentSession.next' : 'recentSession.previous'),
-        aliases: [],
-        defaults: { 'desktop:macos': binding, 'desktop:windows': binding },
-        regions: ['page', 'editable'],
-        modals: [SWITCHER_MODAL],
-        resolve: ({ modal, region, source }) => {
-          const mode = controls.getSnapshot()
-          if ((mode !== null && mode !== 'recent') || (modal !== null && modal !== SWITCHER_MODAL)
-            || region === 'terminal' || !recent.canStep()) return { status: 'pass' }
-          const effective = shortcuts.catalog.getSnapshot().find((row: ShortcutCatalogEntry) => row.id === id)?.binding
-          const release = source !== 'menu' && effective?.modifiers.includes('control') === true
-          const confirmation: RecentConfirmation = !release ? 'explicit'
-            : needsPauseFallback ? 'control-or-pause' : 'control-release'
-          return { status: 'handled', run: () => { controls.openRecent(); recent.step(direction, confirmation) } }
-        },
-      }))
-    } catch (error) {
-      console.warn(`workspace-switcher: could not register ${id}`, error)
-    }
-  }
-  return () => { for (const release of dispose.reverse()) release() }
 }

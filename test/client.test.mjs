@@ -5,18 +5,7 @@ import { test } from 'node:test'
 let registration
 globalThis.HTMLElement = class HTMLElement {}
 globalThis.document = { activeElement: null }
-const keyboardListeners = new Map()
-function sendKeyEvent(type, event = {}) {
-  for (const listener of keyboardListeners.get(type) ?? []) listener(event)
-}
 globalThis.window = {
-  setTimeout: (...args) => setTimeout(...args),
-  clearTimeout: timer => clearTimeout(timer),
-  addEventListener(type, listener) {
-    if (!keyboardListeners.has(type)) keyboardListeners.set(type, new Set())
-    keyboardListeners.get(type).add(listener)
-  },
-  removeEventListener(type, listener) { keyboardListeners.get(type)?.delete(listener) },
   requestAnimationFrame: callback => callback(),
   __ModuleLoader__: {
     load(entry) {
@@ -47,7 +36,7 @@ const plugin = registration.factory(name => (
 const {
   buildRows, filterRows, shortenPath, relativeTime, toMillis, SHORTLIST,
   buildNavigation, filterTree, initialExpansion, searchSessions,
-  activeGrouping, createGroupingPreferences, createGroupingRegistry, createViewPreferences, moveSession, sessionStatuses, createRecentSessions,
+  activeGrouping, createGroupingPreferences, createGroupingRegistry, createViewPreferences, moveSession, sessionStatuses,
 } = plugin.__test
 
 /** A minimal host: recorded effects, a locale service, and a slot registry. */
@@ -108,13 +97,10 @@ function fakeContext() {
     },
     shortcuts: {
       runtime: 'desktop', platform: 'macos', registry: { commands }, register,
-      catalog: {
-        getSnapshot: () => [...commands.values()].map(command => ({ id: command.id, binding: command.defaults?.['desktop:macos'] })),
-        subscribe: listener => {
-          catalogListeners.add(listener)
-          return () => { catalogListeners.delete(listener) }
-        },
-      },
+      catalog: { subscribe: listener => {
+        catalogListeners.add(listener)
+        return () => { catalogListeners.delete(listener) }
+      } },
     },
     contextMenus: { active: {} },
     remote: { $host: { home: '/Users/tester', isLoopback: true } },
@@ -605,123 +591,35 @@ test('quick actions use the exact live official action and dispose the occurrenc
 })
 
 
-test('snapshots actual visits, preserves order when moving the highlight and skips unavailable sessions', () => {
-  const opened = []
-  const recent = createRecentSessions(id => opened.push(id))
-  const available = new Set(['a', 'b', 'c'])
-  const observe = id => recent.observe(id, candidate => available.has(candidate))
-  observe('a')
-  assert.equal(recent.canStep(), false)
-  observe('c')
-  observe('b')
-  observe('b')
-  recent.step(1, 'control-release')
-  assert.deepEqual(recent.getSnapshot().ids, ['b', 'c', 'a'])
-  assert.equal(recent.getSnapshot().index, 1)
-  recent.step(1, 'control-release')
-  assert.equal(recent.getSnapshot().index, 2)
-  assert.deepEqual(opened, [])
-  recent.cancel()
-  recent.step(-1, 'control-release')
-  assert.equal(recent.getSnapshot().index, 2)
-  available.delete('a')
-  observe('b')
-  assert.equal(recent.getSnapshot().ids[recent.getSnapshot().index], 'c')
-  assert.equal(recent.getSnapshot().confirmation, 'explicit')
-  assert.deepEqual(opened, [])
-  recent.confirm()
-  assert.deepEqual(opened, ['c'])
-  observe('c')
-  recent.step(1, 'control-release')
-  recent.confirm()
-  assert.deepEqual(opened, ['c', 'b'])
-})
-
-test('registers both Desktop bindings and confirms on Control release, with blur and unload cleanup', () => {
+test('Ctrl+Tab immediately opens the previous available visit and can switch back', () => {
   const { ctx, effects, registrations, commands } = fakeContext()
-  const listenerCounts = () => ['keyup', 'blur'].map(type => keyboardListeners.get(type)?.size ?? 0)
-  const before = listenerCounts()
   const opened = []
   ctx.uiWorkspace.openSession = id => { opened.push(id) }
   plugin.apply(ctx)
   const { controls, recent } = registrations.find(record => record.options.name === 'shell.overlay').options.inject()
-  const next = commands.get('workspace.recentSession')
-  const reverse = commands.get('workspace.recentSessionReverse')
-  const page = { modal: null, region: 'editable' }
-  assert.deepEqual(next.defaults, {
+  const shortcut = commands.get('workspace.recentSession')
+  assert.deepEqual(shortcut.defaults, {
     'desktop:macos': { code: 'Tab', modifiers: ['control'] },
     'desktop:windows': { code: 'Tab', modifiers: ['control'] },
   })
-  assert.deepEqual(reverse.defaults['desktop:macos'], { code: 'Tab', modifiers: ['control', 'shift'] })
-  assert.equal(next.resolve(page).status, 'pass')
-  for (const id of ['a', 'b', 'c']) recent.observe(id, () => true)
-  assert.equal(next.resolve({ ...page, modal: 'other' }).status, 'pass')
-  assert.equal(next.resolve({ ...page, region: 'terminal' }).status, 'pass')
-  next.resolve(page).run()
-  assert.equal(controls.getSnapshot(), 'recent')
-  assert.equal(recent.getSnapshot().index, 1)
-  sendKeyEvent('keyup', { key: 'Tab', ctrlKey: true })
-  sendKeyEvent('keyup', { key: 'Control', ctrlKey: true })
-  assert.deepEqual(opened, [])
-  sendKeyEvent('keyup', { key: 'Control', ctrlKey: false })
-  assert.deepEqual(opened, ['b'])
-  assert.equal(controls.getSnapshot(), null)
-  reverse.resolve(page).run()
-  assert.equal(recent.getSnapshot().index, 2)
-  sendKeyEvent('blur')
-  assert.equal(controls.getSnapshot(), null)
-  sendKeyEvent('keyup', { key: 'Control', ctrlKey: false })
-  assert.deepEqual(opened, ['b'])
-  next.resolve(page).run()
-  commands.get('workspace.switcher').resolve({ ...page, modal: 'workspace-switcher' }).run()
-  assert.equal(controls.getSnapshot(), 'workspaces')
-  assert.equal(recent.getSnapshot(), null)
-  for (const { dispose } of effects.reverse()) dispose()
-  assert.equal(commands.has(next.id), false)
-  assert.equal(commands.has(reverse.id), false)
-  assert.deepEqual(listenerCounts(), before)
-})
-
-
-test('macOS confirms after a pause without keyup and drops stale timers', ({ mock }) => {
-  mock.timers.enable({ apis: ['setTimeout'] })
-  const { ctx, effects, registrations, commands } = fakeContext()
-  const opened = []
-  ctx.uiWorkspace.openSession = id => { opened.push(id) }
-  plugin.apply(ctx)
-  const { recent } = registrations.find(record => record.options.name === 'shell.overlay').options.inject()
   const page = { modal: null, region: 'editable' }
-  const next = () => commands.get('workspace.recentSession').resolve(page).run()
-  for (const id of ['a', 'b', 'c']) recent.observe(id, () => true)
-
-  next()
-  mock.timers.tick(500)
-  next()
-  mock.timers.tick(500)
-  assert.deepEqual(opened, [])
-  mock.timers.tick(150)
+  const available = new Set(['a', 'b', 'c'])
+  const observe = id => recent.observe(id, candidate => available.has(candidate))
+  observe('a')
+  assert.equal(shortcut.resolve(page).status, 'pass')
+  observe('b')
+  observe('c')
+  available.delete('b')
+  observe('c')
+  assert.equal(shortcut.resolve({ ...page, modal: 'other' }).status, 'pass')
+  assert.equal(shortcut.resolve({ ...page, region: 'terminal' }).status, 'pass')
+  shortcut.resolve(page).run()
   assert.deepEqual(opened, ['a'])
-
-  next()
-  sendKeyEvent('keyup', { key: 'Unidentified', code: 'ControlLeft', ctrlKey: false })
-  assert.deepEqual(opened, ['a', 'b'])
-  mock.timers.tick(650)
-  assert.deepEqual(opened, ['a', 'b'])
-
-  next()
-  recent.cancel()
-  mock.timers.tick(650)
-  assert.deepEqual(opened, ['a', 'b'])
-
-  next()
-  recent.step(1, 'explicit')
-  mock.timers.tick(650)
-  assert.deepEqual(opened, ['a', 'b'])
-  recent.confirm()
-  assert.deepEqual(opened, ['a', 'b', 'a'])
-
-  next()
+  assert.equal(controls.getSnapshot(), null)
+  observe('a')
+  shortcut.resolve(page).run()
+  assert.deepEqual(opened, ['a', 'c'])
+  assert.equal(commands.has('workspace.recentSessionReverse'), false)
   for (const { dispose } of effects.reverse()) dispose()
-  mock.timers.tick(650)
-  assert.deepEqual(opened, ['a', 'b', 'a'])
+  assert.equal(commands.has(shortcut.id), false)
 })

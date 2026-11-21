@@ -32,12 +32,11 @@ interface SwitcherDialogProps {
   readonly subtitle?: string
   readonly panelRef: RefObject<HTMLDivElement>
   readonly busy: boolean
-  readonly search?: ReactNode
-  readonly compact?: boolean
+  readonly search: ReactNode
   readonly toolbar?: ReactNode
   readonly body: ReactNode
   readonly status?: ReactNode
-  readonly footer?: ReactNode
+  readonly footer: ReactNode
   readonly t: TranslateSeat
   readonly onClose: () => void
   readonly onBack?: () => void
@@ -45,7 +44,7 @@ interface SwitcherDialogProps {
 }
 
 export function SwitcherDialog({
-  title, subtitle, panelRef, busy, search, compact, toolbar, body, status, footer, t, onClose, onBack, onKeyDown,
+  title, subtitle, panelRef, busy, search, toolbar, body, status, footer, t, onClose, onBack, onKeyDown,
 }: SwitcherDialogProps): ReactNode {
   const titleId = React.useId()
   React.useEffect(() => {
@@ -65,7 +64,7 @@ export function SwitcherDialog({
     },
       h('div', {
         ref: panelRef,
-        className: compact ? 'wsp-dialog wsp-dialog-compact' : 'wsp-dialog',
+        className: 'wsp-dialog',
         role: 'dialog',
         'aria-modal': true,
         'aria-labelledby': titleId,
@@ -88,11 +87,10 @@ export function SwitcherDialog({
             'aria-label': t('close'), title: t('close'), onClick: onClose,
           }, h(CloseGlyph, { size: 14 })),
         ),
-        search === undefined && toolbar === undefined ? null
-          : h('div', { className: toolbar ? 'wsp-dialog-search wsp-dialog-search-tools' : 'wsp-dialog-search' }, search, toolbar),
+        h('div', { className: toolbar ? 'wsp-dialog-search wsp-dialog-search-tools' : 'wsp-dialog-search' }, search, toolbar),
         h('div', { className: 'wsp-dialog-body' }, body),
         status,
-        footer === undefined ? null : h('div', { className: 'wsp-dialog-foot' }, footer),
+        h('div', { className: 'wsp-dialog-foot' }, footer),
       ),
     ),
   ), document.body)

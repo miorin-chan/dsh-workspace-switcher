@@ -13,12 +13,8 @@ Requires DeepSeek Harness 0.2.2-rc.3 or newer.
 - **Mod+Shift+K** opens the last selected workspace grouping and defaults to the workspace tree.
   Expand a workspace to browse and open its sessions.
   On a New Session screen, choosing a workspace switches the draft to that workspace.
-- **Ctrl+Tab** selects the previous session you visited.
-  Hold Ctrl and tap Tab to cycle, or add Shift to cycle backward.
-  Release Ctrl or press Enter to open the highlighted session, or press Esc to cancel.
-  On macOS Desktop, pausing for about 650 ms also opens it if the release event is missing.
-  The list tracks sessions you open in this window since the plugin loaded.
-  Visit at least two eligible sessions to switch back and forth.
+- **Ctrl+Tab** immediately opens the previous session visited in this window.
+  Press it again to switch back.
 - The workspace chip on a New Session screen opens the searchable five-row shortlist.
   **All N** expands it.
 
@@ -35,8 +31,8 @@ The menu offers the actions available for that row, including unarchiving.
 ## Limits
 
 - **Add workspace** uses the local Host’s native folder chooser.
-- **Ctrl+Tab** and **Ctrl+Shift+Tab** are default bindings on macOS and Windows Desktop.
-  On other platforms, assign supported keys to the two commands in **Settings → Shortcuts**.
+- **Ctrl+Tab** is the default binding on macOS and Windows Desktop.
+  On other platforms, assign supported keys to the command in **Settings → Shortcuts**.
 - Browsers can reserve key combinations.
   On macOS and Windows Web, the default session-search command also opens the dialog with **Mod+Alt+K**.
 

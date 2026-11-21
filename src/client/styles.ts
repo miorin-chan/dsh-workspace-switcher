@@ -228,12 +228,6 @@ export const CSS = `
   font-family: var(--dsw-font-family, inherit);
   animation: wsp-fade var(--ds-transition-duration, .2s) var(--ds-ease-in-out, cubic-bezier(.4, 0, .2, 1));
 }
-.wsp-dialog-compact {
-  width: min(440px, 100%);
-  height: auto; max-height: min(380px, calc(100dvh - 48px));
-}
-.wsp-dialog-compact .wsp-dialog-body { flex: 0 1 auto; padding-inline: 16px; }
-.wsp-dialog-compact .wsp-modal-list:focus-visible { outline: none; }
 .wsp-dialog-head {
   flex: none;
   display: flex; align-items: center; gap: 4px;

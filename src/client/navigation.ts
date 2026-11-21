@@ -19,7 +19,6 @@ import {
   buildNavigation, filterTree, initialExpansion, mainSessionId, searchSessions,
   type NavigationCatalog, type SearchHit, type SessionId, type SessionRow, type TreeMatch,
 } from './navigation-model'
-import { RecentSessionDialog } from './recent-dialog'
 import type { createRecentSessions } from './recent-sessions'
 import { SessionQuickActions, type RunSessionAction, type SessionActionAccess } from './session-quick-actions'
 import { sessionStatuses, type SessionStatusSnapshot } from './session-presentation'
@@ -63,7 +62,7 @@ interface OverlayProps extends NavigationActions, PropsRenderFactories, Pick<Pro
 }
 
 export function SwitcherOverlay(props: OverlayProps): ReactNode {
-  const { controls, recent, t, usePanelInfo, useSessions, useWorkspaces } = props
+  const { controls, recent, usePanelInfo, useSessions, useWorkspaces } = props
   const mode = useSyncExternalStore(controls.subscribe, controls.getSnapshot)
   const catalog = useSessions(state => state.byId)
   const archived = useWorkspaces(state => state.archivedSessionIds)
@@ -77,7 +76,6 @@ export function SwitcherOverlay(props: OverlayProps): ReactNode {
     })
   }, [recent, current, catalog, archived])
   if (mode === null) return null
-  if (mode === 'recent') return h(RecentSessionDialog, { recent, t, useSessions, useWorkspaces })
   return h(NavigationDialog, { ...props, key: mode, mode })
 }
 

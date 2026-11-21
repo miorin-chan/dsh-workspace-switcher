@@ -51,7 +51,7 @@ import { buildNavigation, filterTree, initialExpansion, searchSessions } from '.
 import { HERO_SLOT, heroInjection, registerLocale } from './remote'
 import { sessionStatuses } from './session-presentation'
 import { createRecentSessions } from './recent-sessions'
-import { createSwitcherControls, installRecentShortcuts, installSwitcherShortcuts } from './shortcuts'
+import { createSwitcherControls, installPreviousSessionShortcut, installSwitcherShortcuts } from './shortcuts'
 import { createViewPreferences, moveSession } from './view-preferences'
 import { WorkspacePicker, type WorkspacePickerProps } from './view'
 
@@ -107,7 +107,7 @@ export function apply(ctx: Context): void {
     },
   }, SwitcherOverlay)), `${NS}: shortcut overlay`)
   ctx.effect(() => installSwitcherShortcuts(ctx, controls), `${NS}: shortcuts`)
-  ctx.effect(() => installRecentShortcuts(ctx, controls, recent), `${NS}: recent session shortcuts`)
+  ctx.effect(() => installPreviousSessionShortcut(ctx, recent), `${NS}: previous session shortcut`)
 
   function HeroPicker(props: WorkspacePickerProps) {
     const current = React.useRef(props)
@@ -129,7 +129,6 @@ export function apply(ctx: Context): void {
 export const __test = {
   SHORTLIST,
   createGroupingRegistry,
-  createRecentSessions,
   createGroupingPreferences,
   createViewPreferences,
   moveSession,
