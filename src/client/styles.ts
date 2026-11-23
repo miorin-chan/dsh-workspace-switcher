@@ -365,7 +365,8 @@ export const CSS = `
 .wsp-row-action:focus-visible { outline-offset: -2px; }
 .wsp-row-action > svg { width: 14px; height: 14px; }
 .wsp-menu-row:has(.wsp-row-action) { --wsp-action-space: 30px; }
-.wsp-menu-row:has(.wsp-row-pin[data-pinned]) { --wsp-action-space: 59px; }
+.wsp-menu-row:has(.wsp-row-pin[data-pinned]),
+.wsp-menu-row:has(.wsp-row-menu):has(.wsp-row-new-session) { --wsp-action-space: 59px; }
 .wsp-row-title[data-scrolled] { mask-image: linear-gradient(to right, transparent, #000 12px); }
 .wsp-row-title[data-clipped] { mask-image: linear-gradient(to left, transparent, #000 12px); }
 .wsp-row-title[data-scrolled][data-clipped] {
@@ -375,11 +376,12 @@ export const CSS = `
   /* Keep More at the trailing edge while preserving its first Tab stop. */
   .wsp-row-pin[data-pinned] { order: -1; }
   .wsp-row-archive, .wsp-row-pin:not([data-pinned]),
-  .wsp-menu-row[data-collapsed-workspace] .wsp-row-actions,
   .wsp-menu-row .wsp-row-time[data-timestamp],
   .wsp-menu-row:has(.wsp-row-pin[data-pinned]) .wsp-row-pin-indicator { display: none; }
-  .wsp-menu-row:not([data-collapsed-workspace]) > .wsp-navigation-row {
-    padding-inline-end: var(--wsp-action-space, 8px);
+  .wsp-menu-row > .wsp-navigation-row { padding-inline-end: var(--wsp-action-space, 8px); }
+  .wsp-menu-row[data-collapsed-workspace]:not(:has(.wsp-row-new-session)) {
+    --wsp-action-space: 8px;
+    & > .wsp-row-actions { display: none; }
   }
 }
 @media (hover: hover) {

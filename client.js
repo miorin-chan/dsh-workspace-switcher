@@ -1409,7 +1409,8 @@ var CSS = `
 .wsp-row-action:focus-visible { outline-offset: -2px; }
 .wsp-row-action > svg { width: 14px; height: 14px; }
 .wsp-menu-row:has(.wsp-row-action) { --wsp-action-space: 30px; }
-.wsp-menu-row:has(.wsp-row-pin[data-pinned]) { --wsp-action-space: 59px; }
+.wsp-menu-row:has(.wsp-row-pin[data-pinned]),
+.wsp-menu-row:has(.wsp-row-menu):has(.wsp-row-new-session) { --wsp-action-space: 59px; }
 .wsp-row-title[data-scrolled] { mask-image: linear-gradient(to right, transparent, #000 12px); }
 .wsp-row-title[data-clipped] { mask-image: linear-gradient(to left, transparent, #000 12px); }
 .wsp-row-title[data-scrolled][data-clipped] {
@@ -1419,11 +1420,12 @@ var CSS = `
   /* Keep More at the trailing edge while preserving its first Tab stop. */
   .wsp-row-pin[data-pinned] { order: -1; }
   .wsp-row-archive, .wsp-row-pin:not([data-pinned]),
-  .wsp-menu-row[data-collapsed-workspace] .wsp-row-actions,
   .wsp-menu-row .wsp-row-time[data-timestamp],
   .wsp-menu-row:has(.wsp-row-pin[data-pinned]) .wsp-row-pin-indicator { display: none; }
-  .wsp-menu-row:not([data-collapsed-workspace]) > .wsp-navigation-row {
-    padding-inline-end: var(--wsp-action-space, 8px);
+  .wsp-menu-row > .wsp-navigation-row { padding-inline-end: var(--wsp-action-space, 8px); }
+  .wsp-menu-row[data-collapsed-workspace]:not(:has(.wsp-row-new-session)) {
+    --wsp-action-space: 8px;
+    & > .wsp-row-actions { display: none; }
   }
 }
 @media (hover: hover) {
@@ -2105,9 +2107,11 @@ function NavigationDialog({
   useSessionAccess,
   useSessionStatus,
   useRowMenuTarget,
-  statusLabel,
+  useWorkspaceAccess,
+  workspaceLabel,
   searchContent,
   openSession,
+  startSession,
   addWorkspace,
   runSessionAction
 }) {
@@ -2257,6 +2261,11 @@ function NavigationDialog({
       toggle(row);
     }
   };
+  const startWorkspaceSession = (id) => {
+    if (pendingWrite.current) return;
+    startSession(id);
+    controls.close();
+  };
   const add = async () => {
     if (addWorkspace === void 0 || pendingWrite.current) return;
     pendingWrite.current = true;
@@ -2364,6 +2373,15 @@ function NavigationDialog({
       const id = optionId(i);
       const groupId2 = children.has(row.key) ? `${id}-children` : void 0;
       const target = busy || choosing ? void 0 : rowMenuTarget(row, sessions.byId);
+      const workspace = row.kind === "branch" ? row.match.branch.workspace : void 0;
+      const newSessionAction = mode === "workspaces" && !busy && !choosing && workspace !== void 0 ? h6(WorkspaceNewSessionAction, {
+        workspaceId: workspace.id,
+        name: workspace.title,
+        rowId: id,
+        t: workspaceLabel,
+        useWorkspaceAccess,
+        onStart: startWorkspaceSession
+      }) : void 0;
       const option = h6(ResultRow, {
         key: row.key,
         row,
@@ -2375,8 +2393,8 @@ function NavigationDialog({
         active: i === index,
         selected: row.kind === "session" ? row.session.id === currentId : row.match.branch.workspace?.id !== void 0 && row.match.branch.workspace.id === hero?.selectedId,
         currentBranch: currentBranches.has(row.key),
-        statuses: row.kind === "session" ? sessionStatuses(row.session, sessions, statuses, statusLabel) : void 0,
-        pinnedLabel: statusLabel("row.pinned"),
+        statuses: row.kind === "session" ? sessionStatuses(row.session, sessions, statuses, workspaceLabel) : void 0,
+        pinnedLabel: workspaceLabel("row.pinned"),
         menuTrigger: getTriggerProps(target, { tabIndex: -1 }),
         menuOpen: target?.kind === "session" && openMenuTarget?.kind === "session" ? target.value.sessionId === openMenuTarget.value.sessionId : target?.kind === "workspace" && openMenuTarget?.kind === "workspace" && target.value.workspaceId === openMenuTarget.value.workspaceId,
         quickActions: target?.kind === "session" && row.kind === "session" ? h6(SessionQuickActions, {
@@ -2384,13 +2402,13 @@ function NavigationDialog({
           archived: row.session.archived,
           pinned: row.session.pinned,
           useSessionAccess,
-          t: statusLabel,
+          t: workspaceLabel,
           runSessionAction
-        }) : void 0,
+        }) : newSessionAction,
         rowMenu: target === void 0 ? void 0 : renderFactorySlot("contextMenu.button", {
           target,
           className: "wsp-row-action wsp-row-menu",
-          label: statusLabel(
+          label: workspaceLabel(
             target.kind === "session" ? "actions.session.aria" : "actions.workspace.aria",
             { name: row.kind === "session" ? row.session.title : row.title }
           )
@@ -2606,6 +2624,35 @@ function flattenTree(matches, expanded, auto, filtering, t, depth = 0, parentKey
     ];
   });
 }
+function WorkspaceNewSessionAction({ workspaceId, name, rowId, t, useWorkspaceAccess, onStart }) {
+  const canStart = useWorkspaceAccess(workspaceId, "session/create");
+  const focused = useRef3(false);
+  React5.useLayoutEffect(() => {
+    if (canStart || !focused.current) return;
+    focused.current = false;
+    if (document.activeElement === document.body) document.getElementById(rowId)?.focus({ preventScroll: true });
+  }, [canStart, rowId]);
+  if (!canStart) return null;
+  return h6(import_dsh_client_ui_primitives4.Tooltip, {
+    label: t("actions.newSession"),
+    side: "bottom",
+    align: "end",
+    delayMs: 500,
+    portal: true,
+    children: h6("button", {
+      type: "button",
+      className: "wsp-row-action wsp-row-new-session",
+      "aria-label": t("actions.newSession.aria", { name }),
+      onFocus: () => {
+        focused.current = true;
+      },
+      onBlur: () => {
+        focused.current = false;
+      },
+      onClick: () => onStart(workspaceId)
+    }, h6(import_dsh_client_ui_primitives4.IconNewChatOutlineRegular, { size: 14 }))
+  });
+}
 function ResultRow({
   row,
   id,
@@ -2723,7 +2770,7 @@ function ResultRow({
     ),
     choosing && selected ? h6("span", { className: "wsp-row-check", "aria-hidden": true }, h6(CheckGlyph, { size: 14 })) : null
   );
-  if (!splitDisclosure) return rowMenu === void 0 ? option : h6("div", {
+  if (!splitDisclosure) return rowMenu === void 0 && quickActions === void 0 ? option : h6("div", {
     className: "wsp-tree-option wsp-menu-row",
     role: "presentation",
     "data-menu-open": menuOpen || void 0,
@@ -3405,10 +3452,11 @@ function apply(ctx) {
   const actions = {
     controls,
     openSession: (id) => ctx.uiWorkspace.openSession(id),
+    startSession: (id) => ctx.uiWorkspace.startSession(id),
     groupings,
     groupingPreferences,
     viewPreferences: createViewPreferences(),
-    statusLabel: ctx.locale.bind("workspace"),
+    workspaceLabel: ctx.locale.bind("workspace"),
     searchContent: (query, signal) => ctx.sessions.search(query, signal),
     runSessionAction: (target, id, icon) => {
       const menu = contextMenus.resolve(target);

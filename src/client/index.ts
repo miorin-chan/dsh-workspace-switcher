@@ -74,10 +74,11 @@ export function apply(ctx: Context): void {
   const actions: NavigationActions = {
     controls,
     openSession: id => ctx.uiWorkspace.openSession(id),
+    startSession: id => ctx.uiWorkspace.startSession(id),
     groupings,
     groupingPreferences,
     viewPreferences: createViewPreferences(),
-    statusLabel: ctx.locale.bind('workspace'),
+    workspaceLabel: ctx.locale.bind('workspace'),
     searchContent: (query, signal) => ctx.sessions.search(query, signal),
     runSessionAction: (target, id, icon) => {
       const menu = contextMenus.resolve(target)

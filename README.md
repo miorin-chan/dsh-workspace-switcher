@@ -12,6 +12,8 @@ Requires DeepSeek Harness 0.2.2-rc.3 or newer.
   Search by title, workspace, path, ID, or message content, then open a result.
 - **Mod+Shift+K** opens the last selected workspace grouping and defaults to the workspace tree.
   Expand a workspace to browse and open its sessions.
+  Use the new-session icon to the right of More to open a draft in that workspace.
+  With a workspace row focused, press Tab to reach the icon, then Enter or Space to activate it.
   On a New Session screen, choosing a workspace switches the draft to that workspace.
 - **Ctrl+Tab** immediately opens the previous session visited in this window.
   Press it again to switch back.

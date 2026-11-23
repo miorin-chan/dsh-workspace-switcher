@@ -1,6 +1,6 @@
 import {
   IconArchiveOutlineRegular, IconChevronDownOutlineRegular, IconChevronUpOutlineRegular, IconPinFillRegular,
-  IconProjectAddOutlineRegular, StateDot,
+  IconNewChatOutlineRegular, IconProjectAddOutlineRegular, StateDot, Tooltip,
 } from '@deepseek-ai/dsh-client-ui-primitives'
 import * as React from 'react'
 import type { ReactNode } from 'react'
@@ -39,14 +39,16 @@ export interface NavigationActions {
   readonly groupings: ReturnType<typeof createGroupingRegistry>
   readonly groupingPreferences: ReturnType<typeof createGroupingPreferences>
   readonly viewPreferences: ReturnType<typeof createViewPreferences>
-  readonly statusLabel: PropsLocale<'workspace'>['t']
+  readonly workspaceLabel: PropsLocale<'workspace'>['t']
   readonly searchContent: ContentSearch
   readonly openSession: (id: SessionId) => void
+  readonly startSession: (id: WorkspaceId) => void
   readonly runSessionAction: RunSessionAction
   readonly addWorkspace?: (signal: AbortSignal) => Promise<WorkspaceId | undefined>
 }
 
-interface OverlayProps extends NavigationActions, PropsRenderFactories, Pick<PropsRuntime<'shell.overlay'>, 'useContextMenu'> {
+interface OverlayProps extends NavigationActions, PropsRenderFactories,
+  Pick<PropsRuntime<'shell.overlay'>, 'useContextMenu' | 'useWorkspaceAccess'> {
   readonly t: TranslateSeat
   readonly recent: ReturnType<typeof createRecentSessions>
   readonly useSessionAccess: SessionActionAccess
@@ -77,8 +79,8 @@ export function SwitcherOverlay(props: OverlayProps): ReactNode {
 }
 
 function NavigationDialog({ mode, controls, groupings, groupingPreferences, viewPreferences, t, useWorkspaces, useSessions, usePanelInfo,
-  useContextMenu, renderFactorySlot, useRemoteAccess, useSessionAccess, useSessionStatus, useRowMenuTarget,
-  statusLabel, searchContent, openSession, addWorkspace, runSessionAction,
+  useContextMenu, renderFactorySlot, useRemoteAccess, useSessionAccess, useSessionStatus, useRowMenuTarget, useWorkspaceAccess,
+  workspaceLabel, searchContent, openSession, startSession, addWorkspace, runSessionAction,
 }: OverlayProps & { mode: SwitcherMode }): ReactNode {
   const workspaces = useWorkspaces(state => state)
   const sessions = useSessions(state => state)
@@ -217,6 +219,11 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
       toggle(row)
     }
   }
+  const startWorkspaceSession = (id: WorkspaceId) => {
+    if (pendingWrite.current) return
+    startSession(id)
+    controls.close()
+  }
   const add = async () => {
     if (addWorkspace === undefined || pendingWrite.current) return
     pendingWrite.current = true
@@ -332,13 +339,19 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
       const id = optionId(i)
       const groupId = children.has(row.key) ? `${id}-children` : undefined
       const target = busy || choosing ? undefined : rowMenuTarget(row, sessions.byId)
+      const workspace = row.kind === 'branch' ? row.match.branch.workspace : undefined
+      const newSessionAction = mode === 'workspaces' && !busy && !choosing && workspace !== undefined
+        ? h(WorkspaceNewSessionAction, {
+          workspaceId: workspace.id, name: workspace.title, rowId: id, t: workspaceLabel,
+          useWorkspaceAccess, onStart: startWorkspaceSession,
+        }) : undefined
       const option = h(ResultRow, {
         key: row.key, row, id, groupId, t, now, choosing, active: i === index,
         selected: row.kind === 'session' ? row.session.id === currentId
           : row.match.branch.workspace?.id !== undefined && row.match.branch.workspace.id === hero?.selectedId,
         currentBranch: currentBranches.has(row.key),
-        statuses: row.kind === 'session' ? sessionStatuses(row.session, sessions, statuses, statusLabel) : undefined,
-        pinnedLabel: statusLabel('row.pinned'),
+        statuses: row.kind === 'session' ? sessionStatuses(row.session, sessions, statuses, workspaceLabel) : undefined,
+        pinnedLabel: workspaceLabel('row.pinned'),
         menuTrigger: getTriggerProps(target, { tabIndex: -1 }),
         menuOpen: target?.kind === 'session' && openMenuTarget?.kind === 'session'
           ? target.value.sessionId === openMenuTarget.value.sessionId
@@ -346,11 +359,11 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
             && target.value.workspaceId === openMenuTarget.value.workspaceId,
         quickActions: target?.kind === 'session' && row.kind === 'session' ? h(SessionQuickActions, {
           target, archived: row.session.archived, pinned: row.session.pinned,
-          useSessionAccess, t: statusLabel, runSessionAction,
-        }) : undefined,
+          useSessionAccess, t: workspaceLabel, runSessionAction,
+        }) : newSessionAction,
         rowMenu: target === undefined ? undefined : renderFactorySlot('contextMenu.button', {
           target, className: 'wsp-row-action wsp-row-menu',
-          label: statusLabel(target.kind === 'session' ? 'actions.session.aria' : 'actions.workspace.aria',
+          label: workspaceLabel(target.kind === 'session' ? 'actions.session.aria' : 'actions.workspace.aria',
             { name: row.kind === 'session' ? row.session.title : row.title }),
         }),
         dropTarget: dropTarget?.key === row.key ? dropTarget.half : undefined,
@@ -516,6 +529,39 @@ function flattenTree(matches: readonly TreeMatch[], expanded: ReadonlyMap<string
   })
 }
 
+/**
+ * Adapted from ProjectRow in @deepseek-ai/dsh-client-ui-workspace 0.2.2-rc.5, src/client/rows/Rows.tsx.
+ * Copyright (c) 2026 DeepSeek. MIT License, see ../../LICENSE.deepseek-harness.
+ */
+function WorkspaceNewSessionAction({ workspaceId, name, rowId, t, useWorkspaceAccess, onStart }: {
+  readonly workspaceId: WorkspaceId
+  readonly name: string
+  readonly rowId: string
+  readonly t: PropsLocale<'workspace'>['t']
+  readonly useWorkspaceAccess: OverlayProps['useWorkspaceAccess']
+  readonly onStart: (id: WorkspaceId) => void
+}): ReactNode {
+  const canStart = useWorkspaceAccess(workspaceId, 'session/create')
+  const focused = useRef(false)
+  React.useLayoutEffect(() => {
+    // A permission change can remove the button while it owns keyboard focus.
+    if (canStart || !focused.current) return
+    focused.current = false
+    if (document.activeElement === document.body) document.getElementById(rowId)?.focus({ preventScroll: true })
+  }, [canStart, rowId])
+  if (!canStart) return null
+  return h(Tooltip, {
+    label: t('actions.newSession'), side: 'bottom', align: 'end', delayMs: 500, portal: true,
+    children: h('button', {
+      type: 'button', className: 'wsp-row-action wsp-row-new-session',
+      'aria-label': t('actions.newSession.aria', { name }),
+      onFocus: () => { focused.current = true },
+      onBlur: () => { focused.current = false },
+      onClick: () => onStart(workspaceId),
+    }, h(IconNewChatOutlineRegular, { size: 14 })),
+  })
+}
+
 function ResultRow({ row, id, groupId, t, now, choosing, active, selected, currentBranch,
   statuses, pinnedLabel, tree, busy, dropTarget, drag, menuTrigger, menuOpen, rowMenu, quickActions, onChoose, onFocus, onToggle,
 }: {
@@ -587,7 +633,7 @@ function ResultRow({ row, id, groupId, t, now, choosing, active, selected, curre
     ),
     choosing && selected ? h('span', { className: 'wsp-row-check', 'aria-hidden': true }, h(CheckGlyph, { size: 14 })) : null,
   )
-  if (!splitDisclosure) return rowMenu === undefined ? option : h('div', {
+  if (!splitDisclosure) return rowMenu === undefined && quickActions === undefined ? option : h('div', {
     className: 'wsp-tree-option wsp-menu-row', role: 'presentation', 'data-menu-open': menuOpen || undefined,
     ref: rowRef,
     onPointerEnter: session === undefined ? undefined : marquee.enter,
