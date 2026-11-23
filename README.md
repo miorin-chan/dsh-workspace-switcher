@@ -39,7 +39,7 @@ The menu offers the actions available for that row, including unarchiving.
 ## Install
 
 **Plugins** > **Add plugin**, or install this directory with `plugin_manager`.
-This bundle is part of [`@miorin/dsh-workspace-atlas`](../dsh-workspace-atlas/README.md);
+This bundle is part of [`@miorin/dsh-atlas-workspace`](../dsh-atlas-workspace/README.md);
 install either one, never both.
 
 [Project documentation](docs/README.md)
