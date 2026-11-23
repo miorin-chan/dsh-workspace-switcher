@@ -35,7 +35,7 @@ const plugin = registration.factory(name => (
 ))
 const {
   buildRows, filterRows, shortenPath, relativeTime, toMillis, SHORTLIST, placeWorkspacePopover,
-  buildNavigation, filterTree, initialExpansion, contentHits, searchSessions,
+  buildNavigation, filterTree, flattenTree, initialExpansion, contentHits, searchSessions,
   activeGrouping, createGroupingPreferences, createGroupingRegistry, createViewPreferences, moveSession, sessionStatuses,
 } = plugin.__test
 
@@ -412,6 +412,32 @@ test('nests registered directories, preserves ancestors in search, and omits dra
   assert.deepEqual(match.children[0].sessions.map(session => session.id), ['code'])
   assert.deepEqual(filterTree(roots, 'fix checkout', true, 'Ungrouped'), [])
   assert.ok(filterTree(roots, '', true, 'Ungrouped').every(result => result.branch.workspace !== undefined))
+})
+
+test('divides child workspaces from the parent\'s own sessions', () => {
+  const items = [
+    { workspaceId: 'parent', path: '/project', title: 'Project', sessionIds: ['release', 'triage'] },
+    { workspaceId: 'child', path: '/project/app', title: 'App', sessionIds: ['build'] },
+  ]
+  const list = [['build', 'Build app', 30], ['release', 'Start release', 20], ['triage', 'Triage issues', 10]]
+    .map(([id, title, updatedAt]) => [id, { id, title, updatedAt, blank: false, retainedBy: {} }])
+  const { roots } = buildNavigation({ items, archivedSessionIds: [] },
+    { ids: list.map(([id]) => id), byId: Object.fromEntries(list) }, 'Default', 'Untitled')
+  const open = new Set(['workspace:parent', 'workspace:child'])
+  const layout = (query, expanded = new Map(), choosing = false) =>
+    flattenTree(filterTree(roots, query, choosing, 'Ungrouped'), expanded, open, query !== '', 'Ungrouped')
+      .map(row => row.kind === 'branch' ? row.key : `${row.session.id}${row.followsBranches ? ' |' : ''}`)
+
+  // Only the first of the parent's own sessions follows the child block; the child's sessions stand alone.
+  assert.deepEqual(layout(''), ['workspace:parent', 'workspace:child', 'build', 'release |', 'triage'])
+  // A folded child still forms a block, so toggling it never moves the divider.
+  assert.deepEqual(layout('', new Map([['workspace:child', false]])),
+    ['workspace:parent', 'workspace:child', 'release |', 'triage'])
+  // A search that keeps both blocks keeps the divider.
+  assert.deepEqual(layout('project'), ['workspace:parent', 'workspace:child', 'build', 'release |', 'triage'])
+  // Rejected: a search that leaves no child branch, and the picker mode that lists no sessions.
+  assert.deepEqual(layout('release'), ['workspace:parent', 'release'])
+  assert.deepEqual(layout('', new Map(), true), ['workspace:parent', 'workspace:child'])
 })
 
 const DIRECTORY_GROUP = {

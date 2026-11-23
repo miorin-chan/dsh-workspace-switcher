@@ -267,6 +267,44 @@ export function filterTree(
   }
 }
 
+export type BranchRow = {
+  kind: 'branch'; key: string; depth: number; parentKey?: string; title: string
+  match: TreeMatch; expanded: boolean; expandable: boolean
+}
+export type SessionResult = {
+  kind: 'session'; key: string; depth: number; parentKey?: string
+  session: SessionRow & { snippet?: string | undefined }
+  /**
+   * The row opens its parent's own sessions after a block of child branches.
+   * The native sidebar runs the two blocks together; the switcher draws a
+   * divider here so an expanded child subtree visibly ends before them.
+   */
+  followsBranches: boolean
+}
+export type NavigationRow = BranchRow | SessionResult
+
+/**
+ * Flatten the visible tree in display order: each open branch lists its child
+ * branches first, as the native sidebar does, then its own sessions.
+ */
+export function flattenTree(matches: readonly TreeMatch[], expanded: ReadonlyMap<string, boolean>, auto: ReadonlySet<string>,
+  filtering: boolean, ungrouped: string, depth = 0, parentKey?: string,
+): NavigationRow[] {
+  return matches.flatMap(match => {
+    const { key, workspace } = match.branch
+    const expandable = match.children.length + match.sessions.length > 0
+    const open = expandable && (expanded.get(key) ?? (filtering || auto.has(key) || match.branch.directory !== undefined))
+    const row: BranchRow = { kind: 'branch', key, depth, ...(parentKey === undefined ? {} : { parentKey }),
+      match, title: workspace?.title ?? match.branch.directory?.title ?? ungrouped, expandable, expanded: open }
+    if (!open) return [row]
+    return [row,
+      ...flattenTree(match.children, expanded, auto, filtering, ungrouped, depth + 1, key),
+      ...match.sessions.map((session, i): NavigationRow => ({ kind: 'session', key: `session:${session.id}`,
+        depth: depth + 1, parentKey: key, session, followsBranches: i === 0 && match.children.length > 0 })),
+    ]
+  })
+}
+
 export function initialExpansion(roots: readonly WorkspaceBranch[], workspaceId: WorkspaceId | undefined, currentId: SessionId | undefined): string[] {
   for (const branch of roots) {
     if ((workspaceId !== undefined && branch.workspace?.id === workspaceId)

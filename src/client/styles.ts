@@ -319,6 +319,8 @@ export const CSS = `
   margin-inline-start: 8px; padding-inline-start: 3px;
   border-inline-start: 1px solid var(--dsw-alias-border-l3);
 }
+/* Ends a block of child branches before the parent's own sessions; the grid gap adds 2px on each side. */
+.wsp-tree-divider { height: 1px; margin: 2px 8px; background: var(--dsw-alias-border-l3); }
 .wsp-dialog-body .wsp-navigation-row { min-height: 32px; padding: 0 8px; gap: 6px; text-align: start; }
 .wsp-dialog-body .wsp-navigation-row[data-search-meta='true'] { min-height: 48px; padding-block: 4px; }
 .wsp-navigation-row .wsp-row-title { font-size: 14px; }

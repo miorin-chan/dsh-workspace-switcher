@@ -16,9 +16,9 @@ import { activeGrouping, FLAT, WORKSPACES, WORKSPACE_TREE, type createGroupingPr
 import type { TranslateSeat } from './labels'
 import { filterRows, relativeTime, shortenPath } from './model'
 import {
-  buildNavigation, contentHits, filterTree, initialExpansion, mainSessionId, searchSessions,
-  type ContentHits, type ContentSearch, type NavigationCatalog, type SearchHit, type SessionId,
-  type SessionRow, type TreeMatch,
+  buildNavigation, contentHits, filterTree, flattenTree, initialExpansion, mainSessionId, searchSessions,
+  type BranchRow, type ContentHits, type ContentSearch, type NavigationCatalog, type NavigationRow, type SearchHit,
+  type SessionId, type SessionResult,
 } from './navigation-model'
 import type { createRecentSessions } from './recent-sessions'
 import { SessionQuickActions, type RunSessionAction, type SessionActionAccess } from './session-quick-actions'
@@ -142,10 +142,10 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
   const currentBranches = useMemo(() => new Set(initialExpansion(roots, hero?.selectedId, currentId)),
     [roots, hero?.selectedId, currentId])
   const matches = tree ? filterTree(roots, trimmed, choosing, t('ungrouped'), remote.hits) : []
-  const treeRows = tree ? flattenTree(matches, expanded, autoExpanded, trimmed !== '', t) : []
+  const treeRows = tree ? flattenTree(matches, expanded, autoExpanded, trimmed !== '', t('ungrouped')) : []
   const flatRows = tree ? [] : searchSessions(sessionRows, trimmed, remote.hits)
   const rows: NavigationRow[] = tree ? treeRows : flatRows.map(session => ({
-    kind: 'session', key: `session:${session.id}`, depth: 0, session,
+    kind: 'session', key: `session:${session.id}`, depth: 0, session, followsBranches: false,
   }))
   const activeIndex = rows.findIndex(row => row.key === activeKey)
   const selectedIndex = rows.findIndex(row => row.kind === 'branch'
@@ -397,7 +397,12 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
         tree, busy, onChoose: () => choose(row), onFocus: () => setActiveKey(row.key),
         onToggle: row.kind === 'branch' ? () => { setActiveKey(row.key); toggle(row) } : undefined,
       })
-      if (row.kind === 'session') return option
+      if (row.kind === 'session') {
+        // A decorative divider, outside `rows`, so keyboard order and the tree's owned items stay unchanged.
+        return row.followsBranches
+          ? h(React.Fragment, { key: row.key }, h('div', { className: 'wsp-tree-divider', 'aria-hidden': true }), option)
+          : option
+      }
       return h('div', { key: row.key, role: 'presentation' }, option,
         groupId === undefined ? null
           : h('div', { id: groupId, role: 'group', className: 'wsp-tree-children' }, renderGroup(row.key)),
@@ -485,16 +490,6 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
   })
 }
 
-type BranchRow = {
-  kind: 'branch'; key: string; depth: number; parentKey?: string; title: string
-  match: TreeMatch; expanded: boolean; expandable: boolean
-}
-type NavigationRow = BranchRow | SessionResult
-type SessionResult = {
-  kind: 'session'; key: string; depth: number; parentKey?: string
-  session: SessionRow & { snippet?: string | undefined }
-}
-
 function rowMenuTarget(row: NavigationRow, byId: NavigationCatalog['byId']): ContextMenuTarget | undefined {
   if (row.kind === 'session') {
     const { id } = row.session
@@ -509,24 +504,6 @@ type DropHalf = 'before' | 'after'
 function sessionDropHalf(event: React.DragEvent<HTMLButtonElement>): DropHalf {
   const bounds = event.currentTarget.getBoundingClientRect()
   return event.clientY < bounds.top + bounds.height / 2 ? 'before' : 'after'
-}
-
-function flattenTree(matches: readonly TreeMatch[], expanded: ReadonlyMap<string, boolean>, auto: ReadonlySet<string>,
-  filtering: boolean, t: TranslateSeat, depth = 0, parentKey?: string,
-): NavigationRow[] {
-  return matches.flatMap(match => {
-    const { key, workspace } = match.branch
-    const expandable = match.children.length + match.sessions.length > 0
-    const open = expandable && (expanded.get(key) ?? (filtering || auto.has(key) || match.branch.directory !== undefined))
-    const row: BranchRow = { kind: 'branch', key, depth, ...(parentKey === undefined ? {} : { parentKey }),
-      match, title: workspace?.title ?? match.branch.directory?.title ?? t('ungrouped'), expandable, expanded: open }
-    if (!open) return [row]
-    return [row,
-      ...flattenTree(match.children, expanded, auto, filtering, t, depth + 1, key),
-      ...match.sessions.map((session): NavigationRow => ({ kind: 'session', key: `session:${session.id}`,
-        depth: depth + 1, parentKey: key, session })),
-    ]
-  })
 }
 
 /**
