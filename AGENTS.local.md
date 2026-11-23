@@ -25,6 +25,9 @@ The aggregate and this bundle insert the same row id, so do not install both.
   Keep implementation status, schedules, and debugging notes out of it.
 - `CHANGELOG.md` records changes for developers.
 - Keep design records, proposals, and verification evidence under `docs/`, with `docs/README.md` as the index.
+- Keep the plugin detail page short and easy to scan.
+  Use plain language and show only what the user needs to know or do right away.
+  Reveal details as needed.
 
 ## Language
 
