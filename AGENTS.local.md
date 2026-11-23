@@ -83,7 +83,7 @@ Node.js 22.18 or newer runs the `.test.mts` files directly.
   Keep DSH source and installed files intact.
   Do not patch global behavior or override DSH internals.
   When an extension point is missing, report the gap and stay within supported scope.
-- Use TypeScript for new implementation.
+- Use TypeScript for plugin source unless otherwise specified.
   Reuse the DSH type declarations for the supported runtime version.
   Retain types across interfaces, configuration, and events, validate and narrow unknown inputs,
   and keep type dependencies in sync.
