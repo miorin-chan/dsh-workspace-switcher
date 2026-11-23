@@ -40,6 +40,9 @@ The aggregate and this bundle insert the same row id, so do not install both.
 
 ## Structure
 
+`npm run build:tools` compiles `.mts` tooling in `scripts/` to adjacent ignored `.mjs` files.
+Node.js 22.18 or newer runs the `.test.mts` files directly.
+
 - `src/client/` holds the browser half.
   `node scripts/build.mjs` generates `client.js`, which Git ignores.
   Read the header of [src/client/index.ts](src/client/index.ts) before changing it.
@@ -50,11 +53,11 @@ The aggregate and this bundle insert the same row id, so do not install both.
   - `model.ts` is the pure row, recency, and filter model; `labels.ts` and `styles.ts` hold the runtime copy
     and the component stylesheet.
 - `src/host/index.ts` is the inert Host half that lets the bundle row load.
-- `tsconfig.json`, `scripts/build.mjs`, and `scripts/sync-types.mjs` are the TypeScript base,
+- `tsconfig.json`, `scripts/build.mts`, and `scripts/sync-types.mts` are the TypeScript base,
   copied from the workspace `tools/dsh-plugin-ts/` template.
   Import DSH declarations as types. The Client build may use `@deepseek-ai/dsh-client-ui-primitives`
   from the DSH Web shell's shared platform module table for public menu controls and icons.
-- [test/client.test.mjs](test/client.test.mjs) drives the pure model through the built `client.js`
+- [test/client.test.mts](test/client.test.mts) drives the pure model through the built `client.js`
   with a fake `ctx` that checks registration, resources, and cleanup.
   The test loads the artifact, so the source migration does not change it.
 - Keep Plugin Manager metadata in `locale/*.json`; runtime translations live in `LABELS` in `src/client/labels.ts`.
