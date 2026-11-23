@@ -53,7 +53,7 @@ import { sessionStatuses } from './session-presentation'
 import { createRecentSessions } from './recent-sessions'
 import { createSwitcherControls, installPreviousSessionShortcut, installSwitcherShortcuts } from './shortcuts'
 import { createViewPreferences, moveSession } from './view-preferences'
-import { WorkspacePicker, type WorkspacePickerProps } from './view'
+import { placeWorkspacePopover, WorkspacePicker, type WorkspacePickerProps } from './view'
 
 /** Services this module needs before `apply` runs. */
 export const inject = ['slots', 'locale', 'uiWorkspace', 'workspaces', 'remote', 'sessions', 'shortcuts', 'contextMenus']
@@ -128,6 +128,7 @@ export function apply(ctx: Context): void {
 /** Pure model helpers the offline tests drive directly. */
 export const __test = {
   SHORTLIST,
+  placeWorkspacePopover,
   createGroupingRegistry,
   createGroupingPreferences,
   createViewPreferences,

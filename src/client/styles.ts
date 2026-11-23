@@ -15,7 +15,6 @@ export const CSS = `
 .wsp-popover {
   position: fixed; z-index: 1100; box-sizing: border-box;
   display: flex; flex-direction: column;
-  width: 360px; max-width: calc(100vw - 24px); max-height: min(64vh, 420px);
   padding: 4px;
   border: 0;
   border-radius: var(--dsw-radius-lg);
@@ -31,11 +30,14 @@ export const CSS = `
   font-family: var(--dsw-font-family, inherit);
   animation: wsp-fade 150ms ease-out;
 }
+.wsp-popover[data-side='above'] { transform: translateY(-100%); }
 .wsp-pop-head { flex: none; padding: 0; }
 .wsp-pop-body {
   min-height: 0; overflow: auto; overscroll-behavior: contain;
   padding: 0;
 }
+.wsp-popover[data-short='true'] { overflow: auto; overscroll-behavior: contain; }
+.wsp-popover[data-short='true'] .wsp-pop-body { flex: none; overflow: visible; }
 .wsp-search {
   box-sizing: border-box; position: relative; display: flex; align-items: center; gap: 6px;
   margin: 2px 0 3px; padding: 5px 8px;
@@ -414,13 +416,6 @@ export const CSS = `
   .wsp-skeleton-bar, .wsp-spinner { animation: none; }
 }
 @media (max-width: 640px) {
-  .wsp-popover {
-    left: 12px !important; right: 12px !important;
-    top: auto !important;
-    bottom: max(12px, env(safe-area-inset-bottom)) !important;
-    width: auto !important; max-height: min(76vh, 560px) !important;
-    animation: wsp-fade 150ms ease-out;
-  }
   .wsp-modal-layer { padding: 10px; padding-bottom: max(10px, env(safe-area-inset-bottom)); }
   .wsp-dialog {
     width: 100%; height: 100%;

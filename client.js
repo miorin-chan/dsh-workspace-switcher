@@ -1067,7 +1067,6 @@ var CSS = `
 .wsp-popover {
   position: fixed; z-index: 1100; box-sizing: border-box;
   display: flex; flex-direction: column;
-  width: 360px; max-width: calc(100vw - 24px); max-height: min(64vh, 420px);
   padding: 4px;
   border: 0;
   border-radius: var(--dsw-radius-lg);
@@ -1083,11 +1082,14 @@ var CSS = `
   font-family: var(--dsw-font-family, inherit);
   animation: wsp-fade 150ms ease-out;
 }
+.wsp-popover[data-side='above'] { transform: translateY(-100%); }
 .wsp-pop-head { flex: none; padding: 0; }
 .wsp-pop-body {
   min-height: 0; overflow: auto; overscroll-behavior: contain;
   padding: 0;
 }
+.wsp-popover[data-short='true'] { overflow: auto; overscroll-behavior: contain; }
+.wsp-popover[data-short='true'] .wsp-pop-body { flex: none; overflow: visible; }
 .wsp-search {
   box-sizing: border-box; position: relative; display: flex; align-items: center; gap: 6px;
   margin: 2px 0 3px; padding: 5px 8px;
@@ -1466,13 +1468,6 @@ var CSS = `
   .wsp-skeleton-bar, .wsp-spinner { animation: none; }
 }
 @media (max-width: 640px) {
-  .wsp-popover {
-    left: 12px !important; right: 12px !important;
-    top: auto !important;
-    bottom: max(12px, env(safe-area-inset-bottom)) !important;
-    width: auto !important; max-height: min(76vh, 560px) !important;
-    animation: wsp-fade 150ms ease-out;
-  }
   .wsp-modal-layer { padding: 10px; padding-bottom: max(10px, env(safe-area-inset-bottom)); }
   .wsp-dialog {
     width: 100%; height: 100%;
@@ -3018,6 +3013,33 @@ var {
   useState: useState3,
   useSyncExternalStore: useSyncExternalStore2
 } = React6;
+var MIN_SHORTLIST_HEIGHT = 132;
+function placeWorkspacePopover(anchor, viewport, narrow) {
+  const gutter = 12;
+  const gap = 4;
+  const minLeft = viewport.left + gutter;
+  const minTop = viewport.top + gutter;
+  const maxBottom = viewport.top + viewport.height - gutter;
+  const availableWidth = Math.max(0, viewport.width - 2 * gutter);
+  const width = narrow ? availableWidth : Math.min(360, availableWidth);
+  const left = Math.min(Math.max(minLeft, anchor.left), minLeft + availableWidth - width);
+  const aboveEnd = Math.min(anchor.top - gap, maxBottom);
+  const belowStart = Math.max(anchor.bottom + gap, minTop);
+  const above = Math.max(0, aboveEnd - minTop);
+  const below = Math.max(0, maxBottom - belowStart);
+  if (narrow && Math.max(above, below) < MIN_SHORTLIST_HEIGHT) {
+    return { left, width, top: minTop, side: "below", maxHeight: Math.max(0, maxBottom - minTop) };
+  }
+  const preferredHeight = 284;
+  const useAbove = narrow ? above >= preferredHeight || above > below : below < preferredHeight && above >= preferredHeight;
+  return {
+    left,
+    width,
+    maxHeight: Math.min(420, useAbove ? above : below),
+    top: useAbove ? aboveEnd : belowStart,
+    side: useAbove ? "above" : "below"
+  };
+}
 var EMPTY_WORKSPACES = {
   items: [],
   archivedSessionIds: [],
@@ -3119,28 +3141,32 @@ function WorkspacePicker(props) {
   }, [open, expanded]);
   useLayoutEffect2(() => {
     if (!open || expanded) return void 0;
+    const viewport = window.visualViewport;
     let frame = 0;
     const update = () => {
-      const anchor = anchorRef && anchorRef.current;
+      const anchor = anchorRef?.current;
       if (!anchor) return;
-      const rect = anchor.getBoundingClientRect();
-      const width = Math.min(360, window.innerWidth - 24);
-      const left = Math.min(Math.max(12, rect.left), Math.max(12, window.innerWidth - width - 12));
-      const below = window.innerHeight - rect.bottom >= 300 || rect.top < 300;
-      const available = below ? window.innerHeight - rect.bottom - 16 : rect.top - 16;
-      const maxHeight = Math.max(180, Math.min(420, available));
-      const next = below ? { left, width, maxHeight, top: rect.bottom + 4 } : { left, width, maxHeight, bottom: window.innerHeight - rect.top + 4 };
-      setPlacement((previous) => previous !== null && previous.left === next.left && previous.width === next.width && previous.top === next.top && previous.bottom === next.bottom && previous.maxHeight === next.maxHeight ? previous : next);
+      const next = placeWorkspacePopover(anchor.getBoundingClientRect(), {
+        left: viewport?.offsetLeft ?? 0,
+        top: viewport?.offsetTop ?? 0,
+        width: viewport?.width ?? document.documentElement.clientWidth,
+        height: viewport?.height ?? window.innerHeight
+      }, window.matchMedia("(max-width: 640px)").matches);
+      setPlacement((previous) => previous !== null && previous.left === next.left && previous.width === next.width && previous.top === next.top && previous.side === next.side && previous.maxHeight === next.maxHeight ? previous : next);
     };
     const schedule = () => {
       window.cancelAnimationFrame(frame);
       frame = window.requestAnimationFrame(update);
     };
     update();
+    viewport?.addEventListener("resize", schedule);
+    viewport?.addEventListener("scroll", schedule);
     window.addEventListener("resize", schedule);
     window.addEventListener("scroll", schedule, true);
     return () => {
       window.cancelAnimationFrame(frame);
+      viewport?.removeEventListener("resize", schedule);
+      viewport?.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
       window.removeEventListener("scroll", schedule, true);
     };
@@ -3153,7 +3179,7 @@ function WorkspacePicker(props) {
     if (active && typeof active.scrollIntoView === "function") {
       active.scrollIntoView({ block: "nearest" });
     }
-  }, [open, expanded, activeRow && activeRow.id]);
+  }, [open, expanded, activeRow?.id, placement?.maxHeight]);
   const requestClose = useCallback(() => {
     closedRef.current = true;
     onClose();
@@ -3327,6 +3353,8 @@ function WorkspacePicker(props) {
         {
           ref: panelRef,
           className: "wsp-popover",
+          "data-side": placement.side,
+          "data-short": placement.maxHeight < MIN_SHORTLIST_HEIGHT || void 0,
           role: "dialog",
           "aria-label": t("dialog.title"),
           "aria-busy": busy || pending || void 0,
@@ -3334,7 +3362,7 @@ function WorkspacePicker(props) {
             left: placement.left + "px",
             width: placement.width + "px",
             maxHeight: placement.maxHeight + "px",
-            ...placement.top === void 0 ? { bottom: (placement.bottom ?? 0) + "px" } : { top: placement.top + "px" }
+            top: placement.top + "px"
           },
           onMouseDown: (event) => event.stopPropagation(),
           onKeyDown
@@ -3435,6 +3463,7 @@ function apply(ctx) {
 }
 var __test = {
   SHORTLIST,
+  placeWorkspacePopover,
   createGroupingRegistry,
   createGroupingPreferences,
   createViewPreferences,

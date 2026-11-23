@@ -34,7 +34,7 @@ const plugin = registration.factory(name => (
     : name === '@deepseek-ai/dsh-client-ui-primitives' ? {} : undefined
 ))
 const {
-  buildRows, filterRows, shortenPath, relativeTime, toMillis, SHORTLIST,
+  buildRows, filterRows, shortenPath, relativeTime, toMillis, SHORTLIST, placeWorkspacePopover,
   buildNavigation, filterTree, initialExpansion, searchSessions,
   activeGrouping, createGroupingPreferences, createGroupingRegistry, createViewPreferences, moveSession, sessionStatuses,
 } = plugin.__test
@@ -109,6 +109,41 @@ function fakeContext() {
   }
   return { ctx, effects, dictionaries, registrations, commands, services }
 }
+
+test('centers the narrow shortlist above the New Session workspace button', () => {
+  const anchor = { left: 20, top: 432, bottom: 460 }
+  const viewport = { left: 0, top: 0, width: 402, height: 860 }
+  assert.deepEqual(placeWorkspacePopover(anchor, viewport, true), {
+    left: 12, width: 378, top: 428, side: 'above', maxHeight: 416,
+  })
+  assert.deepEqual(placeWorkspacePopover({ ...anchor, top: 80, bottom: 108 }, viewport, true), {
+    left: 12, width: 378, top: 112, side: 'below', maxHeight: 420,
+  })
+})
+
+test('keeps the shortlist within the visual viewport when the keyboard covers the trigger', () => {
+  const anchor = { left: 20, top: 432, bottom: 460 }
+  const viewport = { left: 10, top: 20, width: 380, height: 350 }
+  assert.deepEqual(placeWorkspacePopover(anchor, viewport, true), {
+    left: 22, width: 356, top: 358, side: 'above', maxHeight: 326,
+  })
+})
+
+test('uses the visible height when neither side can fit a usable narrow shortlist', () => {
+  const anchor = { left: 20, top: 90, bottom: 122 }
+  const viewport = { left: 0, top: 0, width: 402, height: 200 }
+  assert.deepEqual(placeWorkspacePopover(anchor, viewport, true), {
+    left: 12, width: 378, top: 12, side: 'below', maxHeight: 176,
+  })
+})
+
+test('prefers the space below on desktop and clamps the popover at the right edge', () => {
+  const anchor = { left: 1040, top: 350, bottom: 380 }
+  const viewport = { left: 0, top: 0, width: 1200, height: 900 }
+  assert.deepEqual(placeWorkspacePopover(anchor, viewport, false), {
+    left: 828, width: 360, top: 384, side: 'below', maxHeight: 420,
+  })
+})
 
 test('declares the services it injects', () => {
   assert.deepEqual(plugin.inject, ['slots', 'locale', 'uiWorkspace', 'workspaces', 'remote', 'sessions', 'shortcuts', 'contextMenus'])

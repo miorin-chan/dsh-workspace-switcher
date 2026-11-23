@@ -59,13 +59,56 @@ interface KeyEventLike {
   stopPropagation(): void
 }
 
+interface ViewportBounds {
+  readonly left: number
+  readonly top: number
+  readonly width: number
+  readonly height: number
+}
+
 /** Fixed-position geometry of the compact popover. */
 interface Placement {
   readonly left: number
   readonly width: number
   readonly maxHeight: number
-  readonly top?: number | undefined
-  readonly bottom?: number | undefined
+  readonly top: number
+  readonly side: 'above' | 'below'
+}
+
+const MIN_SHORTLIST_HEIGHT = 132 // Search, section label, one row, and footer.
+
+export function placeWorkspacePopover(
+  anchor: Pick<DOMRect, 'left' | 'top' | 'bottom'>,
+  viewport: ViewportBounds,
+  narrow: boolean,
+): Placement {
+  const gutter = 12
+  const gap = 4
+  const minLeft = viewport.left + gutter
+  const minTop = viewport.top + gutter
+  const maxBottom = viewport.top + viewport.height - gutter
+  const availableWidth = Math.max(0, viewport.width - 2 * gutter)
+  const width = narrow ? availableWidth : Math.min(360, availableWidth)
+  const left = Math.min(Math.max(minLeft, anchor.left), minLeft + availableWidth - width)
+  const aboveEnd = Math.min(anchor.top - gap, maxBottom)
+  const belowStart = Math.max(anchor.bottom + gap, minTop)
+  const above = Math.max(0, aboveEnd - minTop)
+  const below = Math.max(0, maxBottom - belowStart)
+  if (narrow && Math.max(above, below) < MIN_SHORTLIST_HEIGHT) {
+    // Use the full visible height when anchoring would hide most controls.
+    return { left, width, top: minTop, side: 'below', maxHeight: Math.max(0, maxBottom - minTop) }
+  }
+  const preferredHeight = 284
+  const useAbove = narrow
+    ? above >= preferredHeight || above > below
+    : below < preferredHeight && above >= preferredHeight
+  return {
+    left,
+    width,
+    maxHeight: Math.min(420, useAbove ? above : below),
+    top: useAbove ? aboveEnd : belowStart,
+    side: useAbove ? 'above' : 'below',
+  }
 }
 
 /** Props the picker reads: the hero owner share, standard hooks, and injected Host actions. */
@@ -228,33 +271,26 @@ export function WorkspacePicker(props: WorkspacePickerProps): ReactNode {
     return () => window.cancelAnimationFrame(frame)
   }, [open, expanded])
 
-  // Anchor the compact popover under the chip, clamped to the viewport, and
-  // follow scrolls and resizes while it is open.
+  // The visual viewport tracks the usable area when a mobile keyboard opens.
   useLayoutEffect(() => {
     if (!open || expanded) return undefined
+    const viewport = window.visualViewport
     let frame = 0
     const update = (): void => {
-      const anchor = anchorRef && anchorRef.current
+      const anchor = anchorRef?.current
       if (!anchor) return
-      const rect = anchor.getBoundingClientRect()
-      // Same geometry as the host Menu card: 12px viewport gutters and a
-      // 4px gap under the trigger.
-      const width = Math.min(360, window.innerWidth - 24)
-      const left = Math.min(Math.max(12, rect.left), Math.max(12, window.innerWidth - width - 12))
-      const below = window.innerHeight - rect.bottom >= 300 || rect.top < 300
-      const available = below
-        ? window.innerHeight - rect.bottom - 16
-        : rect.top - 16
-      const maxHeight = Math.max(180, Math.min(420, available))
-      const next: Placement = below
-        ? { left, width, maxHeight, top: rect.bottom + 4 }
-        : { left, width, maxHeight, bottom: window.innerHeight - rect.top + 4 }
-      setPlacement((previous: Placement | null) => (
+      const next = placeWorkspacePopover(anchor.getBoundingClientRect(), {
+        left: viewport?.offsetLeft ?? 0,
+        top: viewport?.offsetTop ?? 0,
+        width: viewport?.width ?? document.documentElement.clientWidth,
+        height: viewport?.height ?? window.innerHeight,
+      }, window.matchMedia('(max-width: 640px)').matches)
+      setPlacement(previous => (
         previous !== null
         && previous.left === next.left
         && previous.width === next.width
         && previous.top === next.top
-        && previous.bottom === next.bottom
+        && previous.side === next.side
         && previous.maxHeight === next.maxHeight
       ) ? previous : next)
     }
@@ -263,10 +299,14 @@ export function WorkspacePicker(props: WorkspacePickerProps): ReactNode {
       frame = window.requestAnimationFrame(update)
     }
     update()
+    viewport?.addEventListener('resize', schedule)
+    viewport?.addEventListener('scroll', schedule)
     window.addEventListener('resize', schedule)
     window.addEventListener('scroll', schedule, true)
     return () => {
       window.cancelAnimationFrame(frame)
+      viewport?.removeEventListener('resize', schedule)
+      viewport?.removeEventListener('scroll', schedule)
       window.removeEventListener('resize', schedule)
       window.removeEventListener('scroll', schedule, true)
     }
@@ -281,7 +321,7 @@ export function WorkspacePicker(props: WorkspacePickerProps): ReactNode {
     if (active && typeof active.scrollIntoView === 'function') {
       active.scrollIntoView({ block: 'nearest' })
     }
-  }, [open, expanded, activeRow && activeRow.id])
+  }, [open, expanded, activeRow?.id, placement?.maxHeight])
 
   const requestClose = useCallback(() => {
     closedRef.current = true
@@ -461,6 +501,8 @@ export function WorkspacePicker(props: WorkspacePickerProps): ReactNode {
       h('div', {
         ref: panelRef,
         className: 'wsp-popover',
+        'data-side': placement.side,
+        'data-short': placement.maxHeight < MIN_SHORTLIST_HEIGHT || undefined,
         role: 'dialog',
         'aria-label': t('dialog.title'),
         'aria-busy': busy || pending || undefined,
@@ -468,9 +510,7 @@ export function WorkspacePicker(props: WorkspacePickerProps): ReactNode {
           left: placement.left + 'px',
           width: placement.width + 'px',
           maxHeight: placement.maxHeight + 'px',
-          ...(placement.top === undefined
-            ? { bottom: (placement.bottom ?? 0) + 'px' }
-            : { top: placement.top + 'px' }),
+          top: placement.top + 'px',
         },
         onMouseDown: (event: React.MouseEvent<HTMLDivElement>) => event.stopPropagation(),
         onKeyDown,
