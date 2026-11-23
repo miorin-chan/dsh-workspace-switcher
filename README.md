@@ -30,6 +30,8 @@ The menu offers the actions available for that row, including unarchiving.
 
 ## Limits
 
+- Message-content search follows the DSH deployment, as the built-in sidebar does.
+  Until content search is enabled there, the dialog matches titles, workspaces, paths, and IDs only.
 - **Add workspace** uses the local Host’s native folder chooser.
 - **Ctrl+Tab** is the default binding on macOS and Windows Desktop.
   On other platforms, assign supported keys to the command in **Settings → Shortcuts**.

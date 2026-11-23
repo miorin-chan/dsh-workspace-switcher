@@ -30,6 +30,32 @@ export interface WorkspaceBranch {
 
 export type SearchHit = SessionSearchResultItem
 
+/** The Host message-content search the dialog drives: a settled page, or the refusal it reports. */
+export type ContentSearch = (query: string, signal: AbortSignal) => Promise<{
+  readonly ok: true
+  readonly value: { readonly items: readonly SearchHit[]; readonly hasMore: boolean }
+} | { readonly ok: false; readonly error: { readonly message: string } }>
+
+/** The content hits one query shows, and whether the Host bounded its page. */
+export interface ContentHits {
+  readonly hits: readonly SearchHit[]
+  readonly hasMore: boolean
+}
+
+const NO_CONTENT_HITS: ContentHits = { hits: [], hasMore: false }
+
+/**
+ * The content hits a settled search contributes to its query. DSH ships
+ * content search switched off (`openAt: never`), and its sidebar drops a
+ * refused or rejected search without a notice and keeps the local title,
+ * path, and ID matches. The dialog follows the same rule.
+ * @param response - the settled search result, or `undefined` when it rejected.
+ * @returns the hits to merge, empty when the search did not answer.
+ */
+export function contentHits(response: Awaited<ReturnType<ContentSearch>> | undefined): ContentHits {
+  return response?.ok ? { hits: response.value.items, hasMore: response.value.hasMore } : NO_CONTENT_HITS
+}
+
 /**
  * folderPath, owningParentFolder, and mainSessionId are adapted from DeepSeek Harness dsh-v0.2.2-rc.5,
  * packages/client/ui-workspace/src/client/tree.ts. Copyright (c) 2026 DeepSeek.

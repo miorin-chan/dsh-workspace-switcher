@@ -16,8 +16,9 @@ import { activeGrouping, FLAT, WORKSPACES, WORKSPACE_TREE, type createGroupingPr
 import type { TranslateSeat } from './labels'
 import { filterRows, relativeTime, shortenPath } from './model'
 import {
-  buildNavigation, filterTree, initialExpansion, mainSessionId, searchSessions,
-  type NavigationCatalog, type SearchHit, type SessionId, type SessionRow, type TreeMatch,
+  buildNavigation, contentHits, filterTree, initialExpansion, mainSessionId, searchSessions,
+  type ContentHits, type ContentSearch, type NavigationCatalog, type SearchHit, type SessionId,
+  type SessionRow, type TreeMatch,
 } from './navigation-model'
 import type { createRecentSessions } from './recent-sessions'
 import { SessionQuickActions, type RunSessionAction, type SessionActionAccess } from './session-quick-actions'
@@ -32,10 +33,6 @@ const { useEffect, useId, useMemo, useRef, useState, useSyncExternalStore } = Re
 const NO_HITS: readonly SearchHit[] = []
 
 type Controls = ReturnType<typeof createSwitcherControls>
-type Search = (query: string, signal: AbortSignal) => Promise<{
-  readonly ok: true
-  readonly value: { readonly items: readonly SearchHit[]; readonly hasMore: boolean }
-} | { readonly ok: false; readonly error: { readonly message: string } }>
 
 export interface NavigationActions {
   readonly controls: Controls
@@ -43,7 +40,7 @@ export interface NavigationActions {
   readonly groupingPreferences: ReturnType<typeof createGroupingPreferences>
   readonly viewPreferences: ReturnType<typeof createViewPreferences>
   readonly statusLabel: PropsLocale<'workspace'>['t']
-  readonly searchContent: Search
+  readonly searchContent: ContentSearch
   readonly openSession: (id: SessionId) => void
   readonly runSessionAction: RunSessionAction
   readonly addWorkspace?: (signal: AbortSignal) => Promise<WorkspaceId | undefined>
@@ -317,7 +314,6 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
     setActiveKey(from.key)
     changeView({ ...view, orders: { ...view.orders, [key]: next } })
   }
-  const status = error ?? (remote.error === undefined ? undefined : { label: t('contentSearchFailed'), message: remote.error })
   const catalogError = workspaces.state === 'error'
   const empty = pending ? h(Skeleton, { rows: 5 })
     : h('div', { className: 'wsp-empty', role: 'status' }, t(catalogError ? 'listUnavailable'
@@ -413,8 +409,8 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
     status: h(React.Fragment, null,
       groupingError ? h('div', { className: 'wsp-warning', role: 'status' }, t('group.failed')) : null,
       catalogError && rows.length > 0 ? h('div', { className: 'wsp-warning', role: 'status' }, t('listUnavailable')) : null,
-      status === undefined ? null : h(ErrorBanner, {
-        ...status, dismiss: t('dismiss'), onDismiss: error === undefined ? remote.dismiss : () => setError(undefined),
+      error === undefined ? null : h(ErrorBanner, {
+        ...error, dismiss: t('dismiss'), onDismiss: () => setError(undefined),
       }),
     ),
     toolbar: h('div', { className: 'wsp-navigation-toolbar' },
@@ -615,28 +611,38 @@ function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error)
 }
 
-function useContentSearch(query: string, search: Search) {
-  const [result, setResult] = useState<{ query: string; hits: readonly SearchHit[]; hasMore: boolean; error?: string }>()
+/** One settled content search, or `undefined` when it rejected. */
+async function settledSearch(
+  search: ContentSearch, query: string, signal: AbortSignal,
+): Promise<Awaited<ReturnType<ContentSearch>> | undefined> {
+  try {
+    return await search(query, signal)
+  } catch {
+    return undefined
+  }
+}
+
+/**
+ * Debounced message-content search for the current query. A search the Host
+ * refuses, or that rejects, contributes no hits and raises no notice, so the
+ * dialog keeps its local title, path, and ID matches as the shipped sidebar does.
+ */
+function useContentSearch(query: string, search: ContentSearch) {
+  const [result, setResult] = useState<{ query: string } & ContentHits>()
   useEffect(() => {
     setResult(undefined)
     if (query === '' || query.length > 500) return
     const abort = new AbortController()
     const timer = window.setTimeout(async () => {
-      try {
-        const response = await search(query, abort.signal)
-        if (abort.signal.aborted) return
-        setResult(response.ok ? { query, hits: response.value.items, hasMore: response.value.hasMore }
-          : { query, hits: NO_HITS, hasMore: false, error: response.error.message })
-      } catch (reason) {
-        if (!abort.signal.aborted) setResult({ query, hits: NO_HITS, hasMore: false, error: errorMessage(reason) })
-      }
+      const response = await settledSearch(search, query, abort.signal)
+      if (abort.signal.aborted) return
+      setResult({ query, ...contentHits(response) })
     }, 250)
     return () => { window.clearTimeout(timer); abort.abort() }
   }, [query, search])
   const current = query !== '' && result?.query === query ? result : undefined
   return {
-    hits: current?.hits ?? NO_HITS, hasMore: current?.hasMore ?? false, error: current?.error,
+    hits: current?.hits ?? NO_HITS, hasMore: current?.hasMore ?? false,
     pending: query !== '' && query.length <= 500 && current === undefined,
-    dismiss: () => setResult(current === undefined ? undefined : { query, hits: current.hits, hasMore: current.hasMore }),
   }
 }

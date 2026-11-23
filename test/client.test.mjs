@@ -35,7 +35,7 @@ const plugin = registration.factory(name => (
 ))
 const {
   buildRows, filterRows, shortenPath, relativeTime, toMillis, SHORTLIST, placeWorkspacePopover,
-  buildNavigation, filterTree, initialExpansion, searchSessions,
+  buildNavigation, filterTree, initialExpansion, contentHits, searchSessions,
   activeGrouping, createGroupingPreferences, createGroupingRegistry, createViewPreferences, moveSession, sessionStatuses,
 } = plugin.__test
 
@@ -522,6 +522,34 @@ test('merges metadata and content hits without duplicate or non-openable rows', 
   ])
   assert.deepEqual(results.map(({ id, snippet }) => [id, snippet]), [
     ['code', 'metadata plus content'], ['root-session', 'body-only match'],
+  ])
+})
+
+test('a refused or rejected content search leaves the local matches and raises no notice', () => {
+  const answered = {
+    ok: true, value: { items: [{ sessionId: 'root-session', snippet: 'body-only match' }], hasMore: true },
+  }
+  assert.deepEqual(contentHits(answered), {
+    hits: [{ sessionId: 'root-session', snippet: 'body-only match' }], hasMore: true,
+  })
+  // DSH ships content search switched off, so the Host refuses every query.
+  const refused = {
+    ok: false,
+    error: {
+      message: 'session search failed: SessionQueryError: session search is disabled: '
+        + 'this deployment configures the session-query index with openAt "never"',
+    },
+  }
+  assert.deepEqual(contentHits(refused), { hits: [], hasMore: false })
+  // A search that rejected reaches the dialog as no answer.
+  assert.deepEqual(contentHits(undefined), { hits: [], hasMore: false })
+  // The dialog then lists only what the query matches in its own rows.
+  const { sessions } = navigationFixture()
+  assert.deepEqual(searchSessions(sessions, 'fix project', contentHits(refused).hits)
+    .map(({ id, snippet }) => [id, snippet]), [['code', undefined]])
+  assert.deepEqual(searchSessions(sessions, 'fix project', contentHits(answered).hits)
+    .map(({ id, snippet }) => [id, snippet]), [
+    ['code', undefined], ['root-session', 'body-only match'],
   ])
 })
 

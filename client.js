@@ -199,7 +199,6 @@ var en = {
   listUnavailable: "The list may be unavailable or out of date.",
   searching: "Searching message content\u2026",
   refineSearch: "Refine your search for more results",
-  contentSearchFailed: "Could not search message content",
   openFailed: "Could not open session",
   expandBranch: "Expand",
   collapseBranch: "Collapse",
@@ -274,7 +273,6 @@ var zh = {
   listUnavailable: "\u5217\u8868\u53EF\u80FD\u6682\u65F6\u4E0D\u53EF\u7528\u6216\u5C1A\u672A\u66F4\u65B0\u3002",
   searching: "\u6B63\u5728\u641C\u7D22\u6D88\u606F\u5185\u5BB9\u2026",
   refineSearch: "\u7F29\u5C0F\u641C\u7D22\u8303\u56F4\u4EE5\u67E5\u627E\u66F4\u591A\u7ED3\u679C",
-  contentSearchFailed: "\u65E0\u6CD5\u641C\u7D22\u6D88\u606F\u5185\u5BB9",
   openFailed: "\u65E0\u6CD5\u6253\u5F00\u4F1A\u8BDD",
   expandBranch: "\u5C55\u5F00",
   collapseBranch: "\u6298\u53E0",
@@ -349,7 +347,6 @@ var ja = {
   listUnavailable: "\u4E00\u89A7\u3092\u5229\u7528\u3067\u304D\u306A\u3044\u304B\u3001\u6700\u65B0\u3067\u306F\u306A\u3044\u53EF\u80FD\u6027\u304C\u3042\u308A\u307E\u3059\u3002",
   searching: "\u30E1\u30C3\u30BB\u30FC\u30B8\u306E\u5185\u5BB9\u3092\u691C\u7D22\u4E2D\u2026",
   refineSearch: "\u691C\u7D22\u6761\u4EF6\u3092\u7D5E\u308A\u8FBC\u3093\u3067\u304F\u3060\u3055\u3044",
-  contentSearchFailed: "\u30E1\u30C3\u30BB\u30FC\u30B8\u306E\u5185\u5BB9\u3092\u691C\u7D22\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F",
   openFailed: "\u30BB\u30C3\u30B7\u30E7\u30F3\u3092\u958B\u3051\u307E\u305B\u3093\u3067\u3057\u305F",
   expandBranch: "\u5C55\u958B",
   collapseBranch: "\u6298\u308A\u305F\u305F\u3080",
@@ -424,7 +421,6 @@ var de = {
   listUnavailable: "Die Liste ist m\xF6glicherweise nicht verf\xFCgbar oder veraltet.",
   searching: "Nachrichteninhalte werden durchsucht\u2026",
   refineSearch: "Suche f\xFCr weitere Ergebnisse eingrenzen",
-  contentSearchFailed: "Nachrichteninhalte konnten nicht durchsucht werden",
   openFailed: "Sitzung konnte nicht ge\xF6ffnet werden",
   expandBranch: "Ausklappen",
   collapseBranch: "Einklappen",
@@ -499,7 +495,6 @@ var es = {
   listUnavailable: "Es posible que la lista no est\xE9 disponible o est\xE9 desactualizada.",
   searching: "Buscando en el contenido de los mensajes\u2026",
   refineSearch: "Afina la b\xFAsqueda para ver m\xE1s resultados",
-  contentSearchFailed: "No se pudo buscar en el contenido de los mensajes",
   openFailed: "No se pudo abrir la sesi\xF3n",
   expandBranch: "Expandir",
   collapseBranch: "Contraer",
@@ -574,7 +569,6 @@ var fr = {
   listUnavailable: "La liste est peut-\xEAtre indisponible ou obsol\xE8te.",
   searching: "Recherche dans le contenu des messages\u2026",
   refineSearch: "Affinez la recherche pour voir plus de r\xE9sultats",
-  contentSearchFailed: "Impossible de rechercher dans le contenu des messages",
   openFailed: "Impossible d\u2019ouvrir la session",
   expandBranch: "D\xE9velopper",
   collapseBranch: "Replier",
@@ -649,7 +643,6 @@ var pt = {
   listUnavailable: "A lista pode estar indispon\xEDvel ou desatualizada.",
   searching: "Pesquisando o conte\xFAdo das mensagens\u2026",
   refineSearch: "Refine a pesquisa para ver mais resultados",
-  contentSearchFailed: "N\xE3o foi poss\xEDvel pesquisar o conte\xFAdo das mensagens",
   openFailed: "N\xE3o foi poss\xEDvel abrir a sess\xE3o",
   expandBranch: "Expandir",
   collapseBranch: "Recolher",
@@ -724,7 +717,6 @@ var ru = {
   listUnavailable: "\u0421\u043F\u0438\u0441\u043E\u043A \u043C\u043E\u0436\u0435\u0442 \u0431\u044B\u0442\u044C \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u0435\u043D \u0438\u043B\u0438 \u0443\u0441\u0442\u0430\u0440\u0435\u0442\u044C.",
   searching: "\u041F\u043E\u0438\u0441\u043A \u043F\u043E \u0441\u043E\u0434\u0435\u0440\u0436\u0438\u043C\u043E\u043C\u0443 \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0439\u2026",
   refineSearch: "\u0423\u0442\u043E\u0447\u043D\u0438\u0442\u0435 \u0437\u0430\u043F\u0440\u043E\u0441, \u0447\u0442\u043E\u0431\u044B \u0443\u0432\u0438\u0434\u0435\u0442\u044C \u0431\u043E\u043B\u044C\u0448\u0435 \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442\u043E\u0432",
-  contentSearchFailed: "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u0432\u044B\u043F\u043E\u043B\u043D\u0438\u0442\u044C \u043F\u043E\u0438\u0441\u043A \u043F\u043E \u0441\u043E\u0434\u0435\u0440\u0436\u0438\u043C\u043E\u043C\u0443 \u0441\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0439",
   openFailed: "\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043E\u0442\u043A\u0440\u044B\u0442\u044C \u0441\u0435\u0430\u043D\u0441",
   expandBranch: "\u0420\u0430\u0437\u0432\u0435\u0440\u043D\u0443\u0442\u044C",
   collapseBranch: "\u0421\u0432\u0435\u0440\u043D\u0443\u0442\u044C",
@@ -1748,6 +1740,10 @@ function moveSession(order, from, to, side) {
 }
 
 // src/client/navigation-model.ts
+var NO_CONTENT_HITS = { hits: [], hasMore: false };
+function contentHits(response) {
+  return response?.ok ? { hits: response.value.items, hasMore: response.value.hasMore } : NO_CONTENT_HITS;
+}
 function mainSessionId(byId) {
   return Object.values(byId).find(({ retainedBy }) => "mainView" in retainedBy && typeof retainedBy.mainView === "number" && retainedBy.mainView > 0)?.id;
 }
@@ -2354,7 +2350,6 @@ function NavigationDialog({
     setActiveKey(from.key);
     changeView({ ...view, orders: { ...view.orders, [key2]: next } });
   }
-  const status = error ?? (remote.error === void 0 ? void 0 : { label: t("contentSearchFailed"), message: remote.error });
   const catalogError = workspaces.state === "error";
   const empty = pending ? h6(Skeleton, { rows: 5 }) : h6("div", { className: "wsp-empty", role: "status" }, t(catalogError ? "listUnavailable" : trimmed !== "" ? "noMatches" : tree && (choosing || view.archiveFilter !== "only-archived") ? "empty.noWorkspacesTitle" : "noSessions"));
   function renderRows() {
@@ -2477,10 +2472,10 @@ function NavigationDialog({
       null,
       groupingError ? h6("div", { className: "wsp-warning", role: "status" }, t("group.failed")) : null,
       catalogError && rows.length > 0 ? h6("div", { className: "wsp-warning", role: "status" }, t("listUnavailable")) : null,
-      status === void 0 ? null : h6(ErrorBanner, {
-        ...status,
+      error === void 0 ? null : h6(ErrorBanner, {
+        ...error,
         dismiss: t("dismiss"),
-        onDismiss: error === void 0 ? remote.dismiss : () => setError(void 0)
+        onDismiss: () => setError(void 0)
       })
     ),
     toolbar: h6(
@@ -2763,6 +2758,13 @@ function ResultRow({
 function errorMessage(error) {
   return error instanceof Error ? error.message : String(error);
 }
+async function settledSearch(search, query, signal) {
+  try {
+    return await search(query, signal);
+  } catch {
+    return void 0;
+  }
+}
 function useContentSearch(query, search) {
   const [result, setResult] = useState2();
   useEffect3(() => {
@@ -2770,13 +2772,9 @@ function useContentSearch(query, search) {
     if (query === "" || query.length > 500) return;
     const abort = new AbortController();
     const timer = window.setTimeout(async () => {
-      try {
-        const response = await search(query, abort.signal);
-        if (abort.signal.aborted) return;
-        setResult(response.ok ? { query, hits: response.value.items, hasMore: response.value.hasMore } : { query, hits: NO_HITS, hasMore: false, error: response.error.message });
-      } catch (reason) {
-        if (!abort.signal.aborted) setResult({ query, hits: NO_HITS, hasMore: false, error: errorMessage(reason) });
-      }
+      const response = await settledSearch(search, query, abort.signal);
+      if (abort.signal.aborted) return;
+      setResult({ query, ...contentHits(response) });
     }, 250);
     return () => {
       window.clearTimeout(timer);
@@ -2787,9 +2785,7 @@ function useContentSearch(query, search) {
   return {
     hits: current?.hits ?? NO_HITS,
     hasMore: current?.hasMore ?? false,
-    error: current?.error,
-    pending: query !== "" && query.length <= 500 && current === void 0,
-    dismiss: () => setResult(current === void 0 ? void 0 : { query, hits: current.hits, hasMore: current.hasMore })
+    pending: query !== "" && query.length <= 500 && current === void 0
   };
 }
 
@@ -3474,6 +3470,7 @@ var __test = {
   buildNavigation,
   filterTree,
   initialExpansion,
+  contentHits,
   searchSessions,
   filterRows,
   shortenPath,

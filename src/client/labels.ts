@@ -83,7 +83,6 @@ export type LabelKey =
   | 'listUnavailable'
   | 'searching'
   | 'refineSearch'
-  | 'contentSearchFailed'
   | 'openFailed'
   | 'expandBranch'
   | 'collapseBranch'
@@ -164,7 +163,6 @@ const en: LabelDict = {
   listUnavailable: "The list may be unavailable or out of date.",
   searching: "Searching message content…",
   refineSearch: "Refine your search for more results",
-  contentSearchFailed: "Could not search message content",
   openFailed: "Could not open session",
   expandBranch: "Expand",
   collapseBranch: "Collapse",
@@ -240,7 +238,6 @@ const zh: LabelDict = {
   listUnavailable: "列表可能暂时不可用或尚未更新。",
   searching: "正在搜索消息内容…",
   refineSearch: "缩小搜索范围以查找更多结果",
-  contentSearchFailed: "无法搜索消息内容",
   openFailed: "无法打开会话",
   expandBranch: "展开",
   collapseBranch: "折叠",
@@ -316,7 +313,6 @@ const ja: LabelDict = {
   listUnavailable: "一覧を利用できないか、最新ではない可能性があります。",
   searching: "メッセージの内容を検索中…",
   refineSearch: "検索条件を絞り込んでください",
-  contentSearchFailed: "メッセージの内容を検索できませんでした",
   openFailed: "セッションを開けませんでした",
   expandBranch: "展開",
   collapseBranch: "折りたたむ",
@@ -392,7 +388,6 @@ const de: LabelDict = {
   listUnavailable: "Die Liste ist möglicherweise nicht verfügbar oder veraltet.",
   searching: "Nachrichteninhalte werden durchsucht…",
   refineSearch: "Suche für weitere Ergebnisse eingrenzen",
-  contentSearchFailed: "Nachrichteninhalte konnten nicht durchsucht werden",
   openFailed: "Sitzung konnte nicht geöffnet werden",
   expandBranch: "Ausklappen",
   collapseBranch: "Einklappen",
@@ -468,7 +463,6 @@ const es: LabelDict = {
   listUnavailable: "Es posible que la lista no esté disponible o esté desactualizada.",
   searching: "Buscando en el contenido de los mensajes…",
   refineSearch: "Afina la búsqueda para ver más resultados",
-  contentSearchFailed: "No se pudo buscar en el contenido de los mensajes",
   openFailed: "No se pudo abrir la sesión",
   expandBranch: "Expandir",
   collapseBranch: "Contraer",
@@ -544,7 +538,6 @@ const fr: LabelDict = {
   listUnavailable: "La liste est peut-être indisponible ou obsolète.",
   searching: "Recherche dans le contenu des messages…",
   refineSearch: "Affinez la recherche pour voir plus de résultats",
-  contentSearchFailed: "Impossible de rechercher dans le contenu des messages",
   openFailed: "Impossible d’ouvrir la session",
   expandBranch: "Développer",
   collapseBranch: "Replier",
@@ -620,7 +613,6 @@ const pt: LabelDict = {
   listUnavailable: "A lista pode estar indisponível ou desatualizada.",
   searching: "Pesquisando o conteúdo das mensagens…",
   refineSearch: "Refine a pesquisa para ver mais resultados",
-  contentSearchFailed: "Não foi possível pesquisar o conteúdo das mensagens",
   openFailed: "Não foi possível abrir a sessão",
   expandBranch: "Expandir",
   collapseBranch: "Recolher",
@@ -696,7 +688,6 @@ const ru: LabelDict = {
   listUnavailable: "Список может быть недоступен или устареть.",
   searching: "Поиск по содержимому сообщений…",
   refineSearch: "Уточните запрос, чтобы увидеть больше результатов",
-  contentSearchFailed: "Не удалось выполнить поиск по содержимому сообщений",
   openFailed: "Не удалось открыть сеанс",
   expandBranch: "Развернуть",
   collapseBranch: "Свернуть",
