@@ -132,6 +132,7 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
   const [now, setNow] = useState(Date.now)
   const inputRef = useRef<HTMLInputElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
+  const activeNewSessionButton = useRef<HTMLButtonElement>(null)
   const listId = useId()
   const trimmed = query.trim()
   const remoteQuery = choosing ? '' : trimmed.replaceAll('\0', '')
@@ -270,6 +271,19 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
       if (tree) document.getElementById(optionId(next))?.focus({ preventScroll: true })
     }
     const fromSearch = event.target === inputRef.current
+    if (!fromSearch && mode === 'workspaces' && active?.kind === 'branch' && active.match.branch.workspace !== undefined) {
+      if (event.key === ' ') {
+        event.preventDefault()
+        if (!event.repeat && !pendingWrite.current) toggle(active)
+        return
+      }
+      const newSessionButton = activeNewSessionButton.current
+      if (event.key === 'Enter' && newSessionButton !== null) {
+        event.preventDefault()
+        if (!event.repeat) newSessionButton.click()
+        return
+      }
+    }
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       if (rows.length === 0) return
       event.preventDefault()
@@ -343,6 +357,7 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
       const newSessionAction = mode === 'workspaces' && !busy && !choosing && workspace !== undefined
         ? h(WorkspaceNewSessionAction, {
           workspaceId: workspace.id, name: workspace.title, rowId: id, t: workspaceLabel,
+          buttonRef: i === index ? activeNewSessionButton : undefined,
           useWorkspaceAccess, onStart: startWorkspaceSession,
         }) : undefined
       const option = h(ResultRow, {
@@ -510,11 +525,12 @@ function sessionDropHalf(event: React.DragEvent<HTMLButtonElement>): DropHalf {
  * Adapted from ProjectRow in @deepseek-ai/dsh-client-ui-workspace 0.2.2-rc.5, src/client/rows/Rows.tsx.
  * Copyright (c) 2026 DeepSeek. MIT License, see ../../LICENSE.deepseek-harness.
  */
-function WorkspaceNewSessionAction({ workspaceId, name, rowId, t, useWorkspaceAccess, onStart }: {
+function WorkspaceNewSessionAction({ workspaceId, name, rowId, t, buttonRef, useWorkspaceAccess, onStart }: {
   readonly workspaceId: WorkspaceId
   readonly name: string
   readonly rowId: string
   readonly t: PropsLocale<'workspace'>['t']
+  readonly buttonRef: React.Ref<HTMLButtonElement> | undefined
   readonly useWorkspaceAccess: OverlayProps['useWorkspaceAccess']
   readonly onStart: (id: WorkspaceId) => void
 }): ReactNode {
@@ -530,7 +546,7 @@ function WorkspaceNewSessionAction({ workspaceId, name, rowId, t, useWorkspaceAc
   return h(Tooltip, {
     label: t('actions.newSession'), side: 'bottom', align: 'end', delayMs: 500, portal: true,
     children: h('button', {
-      type: 'button', className: 'wsp-row-action wsp-row-new-session',
+      ref: buttonRef, type: 'button', className: 'wsp-row-action wsp-row-new-session',
       'aria-label': t('actions.newSession.aria', { name }),
       onFocus: () => { focused.current = true },
       onBlur: () => { focused.current = false },
