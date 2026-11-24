@@ -1,4 +1,4 @@
-import { WORKSPACES, type WorkspaceGrouping, type WorkspaceGroupNode } from './grouping'
+import { WORKSPACES, WORKSPACE_TREE, type GroupBy } from './grouping'
 import type { SessionListState, SessionSearchResultItem } from '@deepseek-ai/dsh-api-session-controller/client'
 import type { WorkspaceId, WorkspaceSnapshot } from '@deepseek-ai/dsh-api-workspace-controller/client'
 import { orderByRecency, reconcileManualOrder } from './session-order'
@@ -23,7 +23,6 @@ export interface SessionRow {
 export interface WorkspaceBranch {
   readonly key: string
   readonly workspace: WorkspaceRow | undefined
-  readonly directory?: { readonly title: string; readonly path: string }
   readonly sessions: SessionRow[]
   readonly children: WorkspaceBranch[]
 }
@@ -115,32 +114,9 @@ function workspaceRoots(branches: readonly WorkspaceBranch[]): WorkspaceBranch[]
   return roots
 }
 
-function projectedRoots(grouping: WorkspaceGrouping, branches: ReadonlyMap<string, WorkspaceBranch>): WorkspaceBranch[] {
-  const input = [...branches.values()].flatMap(({ workspace }) => workspace === undefined
-    ? [] : [{ workspaceId: workspace.id, path: workspace.path }])
-  const seen = new Set<string>()
-  const convert = (node: WorkspaceGroupNode): WorkspaceBranch => {
-    const key = node.kind === 'workspace' ? `workspace:${node.workspaceId}` : `directory:${node.key}`
-    if (seen.has(key)) throw new Error(`Repeated node: ${key}`)
-    seen.add(key)
-    const children = (node.children ?? []).map(convert)
-    if (node.kind === 'directory') {
-      return { key, directory: { title: node.title, path: node.path }, workspace: undefined, sessions: [], children }
-    }
-    const branch = branches.get(node.workspaceId)
-    if (branch === undefined) throw new Error(`Unknown workspace: ${node.workspaceId}`)
-    return { ...branch, children }
-  }
-  const roots = grouping.project(input).map(convert)
-  if (input.some(({ workspaceId }) => !seen.has(`workspace:${workspaceId}`))) {
-    throw new Error('A registered workspace is missing from the grouping')
-  }
-  return roots
-}
-
 export function buildNavigation(
   snapshot: WorkspaceSnapshot, catalog: NavigationCatalog, defaultName: string, untitled: string,
-  groupId?: string, grouping?: WorkspaceGrouping,
+  groupId: GroupBy = WORKSPACE_TREE,
   view: { orderBy: OrderBy; archiveFilter: ArchiveFilter; orders: SessionOrders } = {
     orderBy: 'updated', archiveFilter: 'hide-archived', orders: {},
   },
@@ -205,20 +181,10 @@ export function buildNavigation(
   }
   for (const branch of branchById.values()) branch.sessions.push(...visible(branch.key))
   const branches = [...branchById.values()]
-  let roots: WorkspaceBranch[] | undefined
-  let groupingError = false
-  if (grouping !== undefined) {
-    try {
-      roots = projectedRoots(grouping, branchById)
-    } catch (error) {
-      console.warn(`[workspace switcher] Grouping ${grouping.id} failed`, error)
-      groupingError = true
-    }
-  }
-  roots ??= groupId === WORKSPACES ? branches : workspaceRoots(branches)
+  let roots = groupId === WORKSPACES ? branches : workspaceRoots(branches)
   if (ungrouped.sessions.length > 0) roots.push(ungrouped)
   if (view.archiveFilter === 'only-archived') roots = keepArchivedBranches(roots)
-  return { roots, sessions, currentId, groupingError, orders }
+  return { roots, sessions, currentId, orders }
 }
 
 function keepArchivedBranches(roots: WorkspaceBranch[]): WorkspaceBranch[] {
@@ -256,8 +222,8 @@ export function filterTree(
 
   function matchBranches(branches: readonly WorkspaceBranch[], text: string): TreeMatch[] {
     return branches.flatMap(branch => {
-      if (choosing && branch.workspace === undefined && branch.directory === undefined) return []
-      const matches = filterRows([branch.workspace ?? branch.directory ?? { title: ungrouped, path: '' }], text).length > 0
+      if (choosing && branch.workspace === undefined) return []
+      const matches = filterRows([branch.workspace ?? { title: ungrouped, path: '' }], text).length > 0
       const children = matchBranches(branch.children, matches ? '' : text)
       const hits = choosing ? [] : branch.sessions.filter(session => matches || bySession.has(session.id)
         || filterRows([session], text).length > 0)
@@ -293,9 +259,9 @@ export function flattenTree(matches: readonly TreeMatch[], expanded: ReadonlyMap
   return matches.flatMap(match => {
     const { key, workspace } = match.branch
     const expandable = match.children.length + match.sessions.length > 0
-    const open = expandable && (expanded.get(key) ?? (filtering || auto.has(key) || match.branch.directory !== undefined))
+    const open = expandable && (expanded.get(key) ?? (filtering || auto.has(key)))
     const row: BranchRow = { kind: 'branch', key, depth, ...(parentKey === undefined ? {} : { parentKey }),
-      match, title: workspace?.title ?? match.branch.directory?.title ?? ungrouped, expandable, expanded: open }
+      match, title: workspace?.title ?? ungrouped, expandable, expanded: open }
     if (!open) return [row]
     return [row,
       ...flattenTree(match.children, expanded, auto, filtering, ungrouped, depth + 1, key),

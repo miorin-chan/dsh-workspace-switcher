@@ -10,7 +10,6 @@ import {
   IconSlidersTwoOutlineRegular, IconWorkspaceTreeOutlineRegular, Menu,
 } from '@deepseek-ai/dsh-client-ui-primitives'
 import type { MenuEntry } from '@deepseek-ai/dsh-client-ui-primitives'
-import { DirectoryTreeGlyph } from './glyphs'
 import { FLAT, WORKSPACES, WORKSPACE_TREE } from './grouping'
 
 const h = React.createElement
@@ -42,7 +41,7 @@ function optionIcon(sectionIndex: number, id: string): ReactNode {
     if (id === WORKSPACES) return h(IconFolderCloseRegular)
     if (id === WORKSPACE_TREE) return h(IconWorkspaceTreeOutlineRegular)
   }
-  return h(DirectoryTreeGlyph)
+  return null
 }
 
 export function GroupingMenu({ label, sections, disabled }: GroupingMenuProps): ReactNode {

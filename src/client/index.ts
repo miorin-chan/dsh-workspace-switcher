@@ -43,7 +43,7 @@ import type {} from '@deepseek-ai/dsh-client-ui-layout/client'
 import type { ContextMenus, MenuActionView } from '@deepseek-ai/dsh-client-ui-context-menu/client'
 import * as React from 'react'
 
-import { createGroupingPreferences, createGroupingRegistry, activeGrouping } from './grouping'
+import { createGroupingPreferences } from './grouping'
 import { NS } from './labels'
 import { buildRows, filterRows, relativeTime, shortenPath, toMillis, SHORTLIST } from './model'
 import { SwitcherOverlay, type NavigationActions } from './navigation'
@@ -66,16 +66,13 @@ export function apply(ctx: Context): void {
   ctx.effect(() => registerLocale(ctx), `${NS}: locale`)
 
   const controls = createSwitcherControls()
-  const groupings = createGroupingRegistry()
   const groupingPreferences = createGroupingPreferences()
-  ctx.provide('workspaceSwitcherGrouping', { register: groupings.register })
   const injected = heroInjection(ctx)
   const contextMenus: ContextMenus = ctx.contextMenus
   const actions: NavigationActions = {
     controls,
     openSession: id => ctx.uiWorkspace.openSession(id),
     startSession: id => ctx.uiWorkspace.startSession(id),
-    groupings,
     groupingPreferences,
     viewPreferences: createViewPreferences(),
     workspaceLabel: ctx.locale.bind('workspace'),
@@ -130,12 +127,10 @@ export function apply(ctx: Context): void {
 export const __test = {
   SHORTLIST,
   placeWorkspacePopover,
-  createGroupingRegistry,
   createGroupingPreferences,
   createViewPreferences,
   moveSession,
   sessionStatuses,
-  activeGrouping,
   buildRows,
   buildNavigation,
   filterTree,

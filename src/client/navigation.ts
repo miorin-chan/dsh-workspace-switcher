@@ -12,7 +12,7 @@ import { ErrorBanner, SearchField, Skeleton } from './components'
 import { SwitcherDialog, trapTab } from './dialog'
 import { CheckGlyph, DisclosureGlyph, FolderGlyph, OpenFolderGlyph } from './glyphs'
 import { GroupingMenu } from './grouping-menu'
-import { activeGrouping, FLAT, WORKSPACES, WORKSPACE_TREE, type createGroupingPreferences, type createGroupingRegistry } from './grouping'
+import { FLAT, WORKSPACES, WORKSPACE_TREE, isGrouping, type GroupBy, type createGroupingPreferences } from './grouping'
 import type { TranslateSeat } from './labels'
 import { filterRows, relativeTime, shortenPath } from './model'
 import {
@@ -36,7 +36,6 @@ type Controls = ReturnType<typeof createSwitcherControls>
 
 export interface NavigationActions {
   readonly controls: Controls
-  readonly groupings: ReturnType<typeof createGroupingRegistry>
   readonly groupingPreferences: ReturnType<typeof createGroupingPreferences>
   readonly viewPreferences: ReturnType<typeof createViewPreferences>
   readonly workspaceLabel: PropsLocale<'workspace'>['t']
@@ -78,7 +77,7 @@ export function SwitcherOverlay(props: OverlayProps): ReactNode {
   return h(NavigationDialog, { ...props, key: mode, mode })
 }
 
-function NavigationDialog({ mode, controls, groupings, groupingPreferences, viewPreferences, t, useWorkspaces, useSessions, usePanelInfo,
+function NavigationDialog({ mode, controls, groupingPreferences, viewPreferences, t, useWorkspaces, useSessions, usePanelInfo,
   useContextMenu, renderFactorySlot, useRemoteAccess, useSessionAccess, useSessionStatus, useRowMenuTarget, useWorkspaceAccess,
   workspaceLabel, searchContent, openSession, startSession, addWorkspace, runSessionAction,
 }: OverlayProps & { mode: SwitcherMode }): ReactNode {
@@ -91,39 +90,28 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
   const canAdd = useRemoteAccess('workspace/create')
   const hero = mode === 'workspaces' && showMain ? controls.hero() : undefined
   const choosing = hero !== undefined
-  const catalog = useSyncExternalStore(groupings.subscribe, groupings.getSnapshot)
-  const [groupId, setGroupId] = useState(() => groupingPreferences.initial(mode, catalog))
-  const preferenceChoice = useRef<string | undefined>(undefined)
-  const groupBy = activeGrouping(groupId, catalog, choosing)
-  const grouping = catalog.find(entry => entry.id === groupBy)
+  const [groupId, setGroupId] = useState(() => groupingPreferences.initial(mode))
+  const groupBy = choosing && groupId === FLAT ? WORKSPACE_TREE : groupId
   const tree = groupBy !== FLAT
   const [view, setView] = useState(viewPreferences.get)
   const changeView = (next: typeof view) => {
     setView(next)
     viewPreferences.set(next)
   }
-  const { roots, sessions: sessionRows, currentId, groupingError, orders } = useMemo(
-    () => buildNavigation(workspaces, sessions, t('defaultName'), t('untitledSession'), groupBy, grouping,
-      choosing ? undefined : view),
-    [workspaces, sessions, t, groupBy, grouping, choosing, view],
+  const { roots, sessions: sessionRows, currentId, orders } = useMemo(
+    () => buildNavigation(workspaces, sessions, t('defaultName'), t('untitledSession'), groupBy, choosing ? undefined : view),
+    [workspaces, sessions, t, groupBy, choosing, view],
   )
-  const displayedGroup = groupingError ? WORKSPACE_TREE : groupBy
-  useEffect(() => {
-    if (preferenceChoice.current !== groupId) return
-    preferenceChoice.current = undefined
-    if (displayedGroup === groupId) groupingPreferences.remember(groupId)
-  }, [displayedGroup, groupId, groupingPreferences])
   const choices = [
     ...(!choosing ? [{ id: FLAT, label: t('group.flat') }] : []),
     { id: WORKSPACES, label: t('list.label') },
     { id: WORKSPACE_TREE, label: t('workspaceTree') },
-    ...catalog.map(entry => ({ id: entry.id, label: entry.label() })),
   ]
   const [query, setQuery] = useState('')
   const [activeKey, setActiveKey] = useState<string>()
   const [addedWorkspaceId, setAddedWorkspaceId] = useState<WorkspaceId>()
-  const [expansions, setExpansions] = useState<ReadonlyMap<string, ReadonlyMap<string, boolean>>>(() => new Map())
-  const expanded = expansions.get(displayedGroup) ?? new Map<string, boolean>()
+  const [expansions, setExpansions] = useState<ReadonlyMap<GroupBy, ReadonlyMap<string, boolean>>>(() => new Map())
+  const expanded = expansions.get(groupBy) ?? new Map<string, boolean>()
   const [busy, setBusy] = useState(false)
   const pendingWrite = useRef(false)
   const lifetime = useRef<AbortController | null>(null)
@@ -160,7 +148,7 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
   const active = rows[index]
   const optionId = (i: number) => `${listId}-${i}`
   const title = choosing ? t('dialog.title')
-    : tree ? choices.find(choice => choice.id === displayedGroup)?.label ?? t('workspaceTree') : t('sessionSearch')
+    : tree ? choices.find(choice => choice.id === groupBy)?.label ?? t('workspaceTree') : t('sessionSearch')
   const pending = rows.length === 0 && (remote.pending
     || (workspaces.phase !== 'ready' && workspaces.state !== 'error')
     || (!choosing && sessions.phase !== 'ready'))
@@ -184,7 +172,7 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
     if (document.activeElement === document.body) {
       inputRef.current?.focus({ preventScroll: true })
     }
-  }, [displayedGroup, activeIndex])
+  }, [groupBy, activeIndex])
   useEffect(() => {
     panelRef.current?.querySelector('[data-active="true"]')?.scrollIntoView({ block: 'nearest' })
   }, [active?.key])
@@ -196,7 +184,7 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
   }
   const toggle = (row: BranchRow, open = !row.expanded) => {
     if (row.expandable) setExpansions(previous => new Map(previous).set(
-      displayedGroup, new Map(previous.get(displayedGroup)).set(row.key, open),
+      groupBy, new Map(previous.get(groupBy)).set(row.key, open),
     ))
   }
   const choose = (row: NavigationRow) => {
@@ -241,7 +229,7 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
         return
       }
       changeQuery('')
-      if (!tree) setGroupId(groupingPreferences.initial('workspaces', groupings.getSnapshot()))
+      if (!tree) setGroupId(groupingPreferences.initial('workspaces'))
       setAddedWorkspaceId(id)
       setActiveKey(`workspace:${id}`)
       inputRef.current?.focus({ preventScroll: true })
@@ -440,7 +428,6 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
       className: 'wsp-list wsp-navigation-list', role: tree ? 'tree' : 'listbox', id: listId, 'aria-label': title,
     }, renderRows()),
     status: h(React.Fragment, null,
-      groupingError ? h('div', { className: 'wsp-warning', role: 'status' }, t('group.failed')) : null,
       catalogError && rows.length > 0 ? h('div', { className: 'wsp-warning', role: 'status' }, t('listUnavailable')) : null,
       error === undefined ? null : h(ErrorBanner, {
         ...error, dismiss: t('dismiss'), onDismiss: () => setError(undefined),
@@ -450,11 +437,12 @@ function NavigationDialog({ mode, controls, groupings, groupingPreferences, view
       h(GroupingMenu, {
         label: t('group.options'), disabled: busy,
         sections: [{
-          heading: t('group.heading'), choices, selected: displayedGroup,
+          heading: t('group.heading'), choices, selected: groupBy,
           onSelect: (id: string) => {
-            preferenceChoice.current = id
+            if (!isGrouping(id)) return
             setGroupId(id)
             setActiveKey(undefined)
+            groupingPreferences.remember(id)
           },
         }, ...(!choosing ? [{
           heading: t('order.heading'), selected: view.orderBy,
@@ -575,9 +563,8 @@ function ResultRow({ row, id, groupId, t, now, choosing, active, selected, curre
   const branch = row.kind === 'branch' ? row : undefined
   const session = row.kind === 'session' ? row.session : undefined
   const workspace = branch?.match.branch.workspace
-  const directory = branch?.match.branch.directory
   const title = branch?.title ?? session?.title
-  const path = workspace?.path ?? directory?.path ?? session?.path
+  const path = workspace?.path ?? session?.path
   const splitDisclosure = choosing && workspace !== undefined && branch?.expandable === true
   const hasSearchMeta = Boolean(session?.snippet || (!tree && (session?.workspace || session?.path)))
   const status = statuses?.[0]

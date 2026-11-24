@@ -64,7 +64,6 @@ export type LabelKey =
   | 'group.options'
   | 'group.heading'
   | 'group.flat'
-  | 'group.failed'
   | 'order.heading'
   | 'order.manual'
   | 'order.updated'
@@ -99,7 +98,6 @@ const en: LabelDict = {
   "group.options": "View options",
   "group.heading": "Group by",
   "group.flat": "Flat sessions",
-  "group.failed": "Could not apply this grouping. Showing the workspace tree.",
   "order.heading": "Order by",
   "order.manual": "Manual",
   "order.updated": "Last updated",
@@ -174,7 +172,6 @@ const zh: LabelDict = {
   "group.options": "视图选项",
   "group.heading": "分组方式",
   "group.flat": "平铺会话",
-  "group.failed": "无法应用此分组，已显示工作区树",
   "order.heading": "排序方式",
   "order.manual": "手动排序",
   "order.updated": "最近更新",
@@ -249,7 +246,6 @@ const ja: LabelDict = {
   "group.options": "表示オプション",
   "group.heading": "グループ化",
   "group.flat": "セッション一覧",
-  "group.failed": "このグループ化を適用できなかったため、ワークスペースツリーを表示しています。",
   "order.heading": "並び順",
   "order.manual": "手動",
   "order.updated": "最終更新",
@@ -324,7 +320,6 @@ const de: LabelDict = {
   "group.options": "Ansichtsoptionen",
   "group.heading": "Gruppieren nach",
   "group.flat": "Flache Sitzungsliste",
-  "group.failed": "Die Gruppierung konnte nicht angewendet werden. Der Arbeitsbereichsbaum wird angezeigt.",
   "order.heading": "Sortieren nach",
   "order.manual": "Manuell",
   "order.updated": "Zuletzt aktualisiert",
@@ -399,7 +394,6 @@ const es: LabelDict = {
   "group.options": "Opciones de vista",
   "group.heading": "Agrupar por",
   "group.flat": "Lista de sesiones",
-  "group.failed": "No se pudo aplicar la agrupación. Se muestra el árbol de espacios de trabajo.",
   "order.heading": "Ordenar por",
   "order.manual": "Manual",
   "order.updated": "Última actualización",
@@ -474,7 +468,6 @@ const fr: LabelDict = {
   "group.options": "Options d’affichage",
   "group.heading": "Regrouper par",
   "group.flat": "Liste des sessions",
-  "group.failed": "Impossible d’appliquer ce regroupement. L’arborescence des espaces de travail est affichée.",
   "order.heading": "Trier par",
   "order.manual": "Manuel",
   "order.updated": "Dernière mise à jour",
@@ -549,7 +542,6 @@ const pt: LabelDict = {
   "group.options": "Opções de visualização",
   "group.heading": "Agrupar por",
   "group.flat": "Lista de sessões",
-  "group.failed": "Não foi possível aplicar este agrupamento. A árvore de espaços de trabalho está sendo exibida.",
   "order.heading": "Ordenar por",
   "order.manual": "Manual",
   "order.updated": "Última atualização",
@@ -624,7 +616,6 @@ const ru: LabelDict = {
   "group.options": "Параметры вида",
   "group.heading": "Группировка",
   "group.flat": "Список сессий",
-  "group.failed": "Не удалось применить группировку. Показано дерево рабочих областей.",
   "order.heading": "Сортировать по",
   "order.manual": "Вручную",
   "order.updated": "Последнее обновление",

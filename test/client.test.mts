@@ -36,14 +36,13 @@ const plugin = registration.factory(name => (
 const {
   buildRows, filterRows, shortenPath, relativeTime, toMillis, SHORTLIST, placeWorkspacePopover,
   buildNavigation, filterTree, flattenTree, initialExpansion, contentHits, searchSessions,
-  activeGrouping, createGroupingPreferences, createGroupingRegistry, createViewPreferences, moveSession, sessionStatuses,
+  createGroupingPreferences, createViewPreferences, moveSession, sessionStatuses,
 } = plugin.__test
 
 /** A minimal host: recorded effects, a locale service, and a slot registry. */
 function fakeContext() {
   const effects = []
   const dictionaries = new Map()
-  const services = new Map()
   const entries = { 'conversation.hero.workspace.directoryFlow': [] }
   const registrations = []
   const catalogListeners = new Set()
@@ -60,12 +59,6 @@ function fakeContext() {
     effect(install, label) {
       const dispose = install()
       effects.push({ label, dispose })
-      return dispose
-    },
-    provide(name, service) {
-      services.set(name, service)
-      const dispose = () => { services.delete(name) }
-      effects.push({ label: `provide ${name}`, dispose })
       return dispose
     },
     locale: {
@@ -107,7 +100,7 @@ function fakeContext() {
     uiWorkspace: { pickDirectory: async () => null },
     workspaces: { create: async input => ({ workspaceId: 'ws-created', path: input.path }) },
   }
-  return { ctx, effects, dictionaries, registrations, commands, services }
+  return { ctx, effects, dictionaries, registrations, commands }
 }
 
 test('centers the narrow shortlist above the New Session workspace button', () => {
@@ -395,7 +388,7 @@ function navigationFixture(groupId, view) {
     ['subagent', { origin: 'subagent' }],
   ].map(([id, fields]) => [id, { id, blank: false, retainedBy: {}, ...fields }])
   return buildNavigation({ items, archivedSessionIds: ['archived'] },
-    { ids: list.map(([id]) => id), byId: Object.fromEntries(list) }, 'Default workspace', 'Untitled session', groupId, undefined, view)
+    { ids: list.map(([id]) => id), byId: Object.fromEntries(list) }, 'Default workspace', 'Untitled session', groupId, view)
 }
 
 test('nests registered directories, preserves ancestors in search, and omits drafts and archives', () => {
@@ -410,6 +403,10 @@ test('nests registered directories, preserves ancestors in search, and omits dra
   const [match] = filterTree(roots, 'fix checkout', false, 'Ungrouped')
   assert.equal(match.branch.key, 'workspace:project')
   assert.deepEqual(match.children[0].sessions.map(session => session.id), ['code'])
+  const [content] = filterTree(roots, 'keywords', false, 'Ungrouped', [
+    { sessionId: 'code', snippet: 'Found in the conversation' },
+  ])
+  assert.equal(content.children[0].sessions[0].snippet, 'Found in the conversation')
   assert.deepEqual(filterTree(roots, 'fix checkout', true, 'Ungrouped'), [])
   assert.ok(filterTree(roots, '', true, 'Ungrouped').every(result => result.branch.workspace !== undefined))
 })
@@ -440,103 +437,25 @@ test('divides child workspaces from the parent\'s own sessions', () => {
   assert.deepEqual(layout('', new Map(), true), ['workspace:parent', 'workspace:child'])
 })
 
-const DIRECTORY_GROUP = {
-  id: 'workspace-file-tree',
-  label: () => 'Directory tree',
-  project: input => [{ kind: 'directory', key: '/project', title: 'project', path: '/project',
-    children: input.map(({ workspaceId }) => ({ kind: 'workspace', workspaceId })) }],
-}
-
-const groupedItems = [
-  { workspaceId: 'app', path: '/project/apps/mobile', title: 'Mobile', sessionIds: [] },
-  { workspaceId: 'web', path: '/project/apps/web', title: 'Web', sessionIds: ['test-session'] },
-]
-const treeFixture = (groupId, grouping) => buildNavigation({ items: groupedItems, archivedSessionIds: [] },
-  { ids: ['test-session'], byId: { 'test-session': { id: 'test-session', title: 'Build', retainedBy: {} } } },
-  'Default', 'Untitled', groupId, grouping)
-
-test('renders extension directories with existing workspace operations and search ancestry', () => {
-  assert.ok(treeFixture('workspace-tree').roots.every(root => root.workspace !== undefined))
-  const { roots, groupingError } = treeFixture(DIRECTORY_GROUP.id, DIRECTORY_GROUP)
-  const [project] = roots
-  assert.equal(groupingError, false)
-  assert.equal(project.directory.path, '/project')
-  assert.deepEqual(project.children.map(branch => branch.workspace.id), ['app', 'web'])
-  assert.deepEqual(initialExpansion(roots, 'web', undefined), [project.key, 'workspace:web'])
-  const [match] = filterTree(roots, 'web', true, 'Ungrouped')
-  assert.deepEqual(match.children.map(child => child.branch.workspace.id), ['web'])
-  const [content] = filterTree(roots, 'keywords', false, 'Ungrouped', [
-    { sessionId: 'test-session', snippet: 'Found in the conversation' },
-  ])
-  assert.equal(content.children[0].sessions[0].snippet, 'Found in the conversation')
-})
-
-test('invalid projections fall back without losing workspace rows or sessions', t => {
-  const warn = t.mock.method(console, 'warn', () => {})
-  for (const project of [() => [], () => [{ kind: 'workspace', workspaceId: 'unknown' }],
-    () => Array(2).fill({ kind: 'workspace', workspaceId: 'app' }),
-    () => {
-      const node = { kind: 'directory', key: '/x', title: 'x', path: '/x', children: [] }
-      node.children.push(node)
-      return [node]
-    },
-    () => { throw new Error('projection error') }]) {
-    const { roots, groupingError } = treeFixture(DIRECTORY_GROUP.id, { ...DIRECTORY_GROUP, project })
-    assert.equal(groupingError, true)
-    assert.deepEqual(roots.map(root => root.workspace.id), ['app', 'web'])
-    assert.equal(roots[1].sessions[0].id, 'test-session')
-  }
-  assert.equal(warn.mock.callCount(), 5)
-})
-
 test('workspace list keeps all real workspace rows at the root', () => {
   const { roots } = navigationFixture('workspace')
   assert.ok(roots.some(root => root.key === 'workspace:nested'))
   assert.ok(roots.every(root => root.children.length === 0))
 })
 
-test('the overlay sees grouping registrations and their disposal immediately', () => {
-  const { ctx, effects, registrations, services } = fakeContext()
-  plugin.apply(ctx)
-  const { register } = services.get('workspaceSwitcherGrouping')
-  const { groupings } = registrations.find(entry => entry.options.name === 'shell.overlay').options.inject()
-  const initial = groupings.getSnapshot()
-  const changes = []
-  const unsubscribe = groupings.subscribe(() => changes.push(groupings.getSnapshot().map(entry => entry.id)))
-  const dispose = register(DIRECTORY_GROUP)
-  assert.deepEqual(initial, [])
-  assert.equal(groupings.getSnapshot(), groupings.getSnapshot())
-  assert.throws(() => register(DIRECTORY_GROUP), /already registered/)
-  assert.throws(() => register({ ...DIRECTORY_GROUP, id: 'workspace-tree' }), /Invalid/)
-  dispose()
-  dispose()
-  assert.deepEqual(changes, [['workspace-file-tree'], []])
-  unsubscribe()
-  for (const effect of effects) effect.dispose()
-  assert.equal(services.has('workspaceSwitcherGrouping'), false)
-})
-
-test('remembered non-flat grouping survives disposal, flat openings, and page reload', () => {
-  const registry = createGroupingRegistry()
-  const values = new Map()
-  const storage = () => ({ getItem: key => values.get(key), setItem: (key, value) => values.set(key, value) })
+test('discarded grouping IDs fall back and the last workspace grouping survives reload', () => {
+  const values = new Map([['dsh-workspace-welcome-switcher.grouping', 'workspace-file-tree']])
+  const storage = () => ({ getItem: key => values.get(key) ?? null, setItem: (key, value) => values.set(key, value) })
   const prefs = createGroupingPreferences(storage)
-  assert.equal(prefs.initial('workspaces', registry.getSnapshot()), 'workspace-tree')
-  const dispose = registry.register(DIRECTORY_GROUP)
-  prefs.remember('workspace-file-tree')
+  assert.equal(prefs.initial('workspaces'), 'workspace-tree')
+  prefs.remember('workspace')
   prefs.remember('flat')
   const restored = createGroupingPreferences(storage)
-  assert.equal(restored.initial('sessions', registry.getSnapshot()), 'flat')
-  assert.equal(restored.initial('workspaces', registry.getSnapshot()), 'workspace-file-tree')
-  dispose()
-  assert.equal(activeGrouping('workspace-file-tree', registry.getSnapshot(), false), 'workspace-tree')
-  assert.equal(restored.initial('workspaces', registry.getSnapshot()), 'workspace-tree')
-  registry.register(DIRECTORY_GROUP)
-  assert.equal(restored.initial('workspaces', registry.getSnapshot()), 'workspace-file-tree')
-  assert.equal(activeGrouping('flat', registry.getSnapshot(), true), 'workspace-tree')
+  assert.equal(restored.initial('sessions'), 'flat')
+  assert.equal(restored.initial('workspaces'), 'workspace')
   const volatile = createGroupingPreferences(() => { throw Error('restricted storage') })
   volatile.remember('workspace')
-  assert.equal(volatile.initial('workspaces', []), 'workspace')
+  assert.equal(volatile.initial('workspaces'), 'workspace')
 })
 
 test('merges metadata and content hits without duplicate or non-openable rows', () => {

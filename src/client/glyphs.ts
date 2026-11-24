@@ -54,8 +54,3 @@ export const GridGlyph = (props: GlyphProps): ReactNode => h(Glyph, {
     'M2.6 9.3h4.1v4.1H2.6z', 'M9.3 9.3h4.1v4.1H9.3z',
   ],
 })
-
-/** The directory grouping shows branches of folders. */
-export const DirectoryTreeGlyph = (props: GlyphProps): ReactNode => h(Glyph, {
-  ...props, paths: ['M3 3v10m0-5h4m-4 5h4', 'M7 2h3l1 1h3v3H7zM7 8h3l1 1h3v4H7z'],
-})

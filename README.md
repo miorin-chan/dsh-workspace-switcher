@@ -23,7 +23,6 @@ Use ↑ and ↓ to move, ← and → to collapse or expand a focused tree row, E
 Mod is Command on macOS and Ctrl elsewhere.
 
 Open **View options** in the dialog to choose a grouping, session order, or archive filter.
-The optional [directory tree plugin](../dsh-workspace-file-tree/README.md) adds a grouping.
 In manual mode, drag sessions within one group, or select a session and use the move buttons.
 Use the row’s ellipsis or right-click to open DSH’s action menu.
 With a row focused or highlighted by search, **Shift+F10** opens the same menu.
