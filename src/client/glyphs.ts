@@ -6,7 +6,6 @@ import {
   IconFolderCloseRegular,
   IconFolderOpenOutlineRegular,
   IconPlusOutlineRegular,
-  IconProjectAddOutlineRegular,
   IconSearchOutlineRegular,
   IconTriangleRightFillRegular,
 } from '@deepseek-ai/dsh-client-ui-primitives'
@@ -34,7 +33,6 @@ export const CheckGlyph = platformGlyph(IconCheckOutlineRegular)
 export const CloseGlyph = platformGlyph(IconCloseOutlineRegular)
 export const ChevronRightGlyph = platformGlyph(IconChevronRightOutlineRegular)
 export const ChevronLeftGlyph = platformGlyph(IconChevronLeftOutlineRegular)
-export const FolderAddGlyph = platformGlyph(IconProjectAddOutlineRegular)
 
 /** Draw the switcher-specific glyphs with the same size and color contract. */
 function Glyph({ paths, size = 16, className }: GlyphProps & { readonly paths: readonly string[] }): ReactNode {
