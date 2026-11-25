@@ -352,7 +352,7 @@ function NavigationDialog({ mode, controls, groupingPreferences, viewPreferences
         key: row.key, row, id, groupId, t, now, choosing, active: i === index,
         selected: row.kind === 'session' ? row.session.id === currentId
           : row.match.branch.workspace?.id !== undefined && row.match.branch.workspace.id === hero?.selectedId,
-        currentBranch: currentBranches.has(row.key),
+        currentBranch: !choosing && currentBranches.has(row.key),
         statuses: row.kind === 'session' ? sessionStatuses(row.session, sessions, statuses, workspaceLabel) : undefined,
         pinnedLabel: workspaceLabel('row.pinned'),
         menuTrigger: getTriggerProps(target, { tabIndex: -1 }),
@@ -425,7 +425,8 @@ function NavigationDialog({ mode, controls, groupingPreferences, viewPreferences
       onKeyDown: busy || choosing || active === undefined ? undefined : getTriggerProps(rowMenuTarget(active, sessions.byId)).onKeyDown,
     }),
     body: rows.length === 0 ? empty : h('div', {
-      className: 'wsp-list wsp-navigation-list', role: tree ? 'tree' : 'listbox', id: listId, 'aria-label': title,
+      className: 'wsp-list wsp-navigation-list', 'data-mode': mode,
+      role: tree ? 'tree' : 'listbox', id: listId, 'aria-label': title,
     }, renderRows()),
     status: h(React.Fragment, null,
       catalogError && rows.length > 0 ? h('div', { className: 'wsp-warning', role: 'status' }, t('listUnavailable')) : null,

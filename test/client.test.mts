@@ -1,5 +1,14 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
+import { CSS } from '../src/client/styles.ts'
+
+test('workspace navigation highlights the cursor independently of selection', () => {
+  assert.match(CSS, /\.wsp-row\[data-active='true'\][^{]*\{\s*background:/)
+  const selectionRules = CSS.match(/[^{}]*\[data-selected='true'\][^{}]*(?=\{)/g) ?? []
+  assert.deepEqual(selectionRules.map(selector => selector.trim()), [
+    ".wsp-navigation-list[data-mode='sessions'] .wsp-navigation-row[data-selected='true']",
+  ])
+})
 
 /** Capture the module registration the browser module loader would receive. */
 let registration

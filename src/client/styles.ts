@@ -324,7 +324,9 @@ export const CSS = `
 .wsp-dialog-body .wsp-navigation-row { min-height: 32px; padding: 0 8px; gap: 6px; text-align: start; }
 .wsp-dialog-body .wsp-navigation-row[data-search-meta='true'] { min-height: 48px; padding-block: 4px; }
 .wsp-navigation-row .wsp-row-title { font-size: 14px; }
-.wsp-navigation-row[data-selected='true'] { background-color: var(--dsw-alias-interactive-bg-hover); }
+.wsp-navigation-list[data-mode='sessions'] .wsp-navigation-row[data-selected='true'] {
+  background-color: var(--dsw-alias-interactive-bg-hover);
+}
 .wsp-navigation-row[data-archived='true'] .wsp-row-title { color: var(--dsw-alias-label-secondary); }
 .wsp-navigation-row[draggable='true'] { cursor: grab; }
 .wsp-navigation-row[draggable='true']:active { cursor: grabbing; }
