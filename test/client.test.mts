@@ -578,6 +578,8 @@ test('session attention status precedes own activity and reports running subagen
   statuses.set('child', { running: false })
   statuses.set('parent', { running: false, completionUnread: true })
   assert.deepEqual(sessionStatuses(session, catalog, statuses, translate), [{ state: 'done', label: 'status.completed' }])
+  const unreadTranslate = key => key === 'status.unread' ? 'Unread' : translate(key)
+  assert.deepEqual(sessionStatuses(session, catalog, statuses, unreadTranslate), [{ state: 'done', label: 'Unread' }])
 })
 
 

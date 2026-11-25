@@ -25,9 +25,16 @@ const PENDING_LABELS = {
 type PendingKind = keyof typeof PENDING_LABELS
 type SessionStatusLabel = typeof PENDING_LABELS[PendingKind][number]
   | 'status.subagentsRunning.one' | 'status.subagentsRunning.other'
-  | 'status.running' | 'status.completed' | 'status.idle'
+  | 'status.running' | 'status.idle'
 
 export type SessionStatusTranslate = (key: SessionStatusLabel, params?: { n: number }) => string
+
+function completionUnreadLabel(t: SessionStatusTranslate): string {
+  // DSH 0.2.3 renamed workspace locale key `status.completed` to `status.unread`.
+  const lookup = t as (key: string) => string
+  const unread = lookup('status.unread')
+  return unread !== 'status.unread' ? unread : lookup('status.completed')
+}
 
 interface SessionStatus {
   readonly state: StateDotState
@@ -68,6 +75,6 @@ export function sessionStatuses(
     return subagents === undefined ? [primary] : [primary, subagents]
   }
   if (subagents !== undefined) return [subagents]
-  if (live?.completionUnread) return [{ state: 'done', label: t('status.completed') }]
+  if (live?.completionUnread) return [{ state: 'done', label: completionUnreadLabel(t) }]
   return [{ state: 'idle', label: t('status.idle') }]
 }
