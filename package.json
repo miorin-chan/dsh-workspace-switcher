@@ -1,6 +1,6 @@
 {
   "name": "@miorin/dsh-workspace-switcher",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "description": "Search sessions and navigate the workspace tree from a shared switcher dialog.",
   "type": "module",
@@ -91,5 +91,13 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/miorin-chan/dsh-workspace-switcher.git"
+  },
+  "homepage": "https://github.com/miorin-chan/dsh-workspace-switcher#readme",
+  "bugs": {
+    "url": "https://github.com/miorin-chan/dsh-workspace-switcher/issues"
   }
 }
