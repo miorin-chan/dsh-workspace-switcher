@@ -32,11 +32,7 @@
     "docs/README.md",
     "README.zh.md",
     "CHANGELOG.md",
-    "docs/*.md",
-    "src",
-    "scripts",
-    "tsconfig.json",
-    "tsconfig.tools.json"
+    "docs/*.md"
   ],
   "engines": {
     "dsh": ">=0.2.2-rc.3"
@@ -49,13 +45,16 @@
       "platform": "web",
       "immediately": true,
       "inject": [
+        "@deepseek-ai/dsh-api-remotes",
+        "@deepseek-ai/dsh-api-session-controller",
+        "@deepseek-ai/dsh-api-workspace-controller",
         "@deepseek-ai/dsh-client-locale",
         "@deepseek-ai/dsh-client-shortcuts",
-        "@deepseek-ai/dsh-client-ui-renderer",
+        "@deepseek-ai/dsh-client-ui-context-menu",
         "@deepseek-ai/dsh-client-ui-conversation",
-        "@deepseek-ai/dsh-client-ui-workspace",
-        "@deepseek-ai/dsh-api-remotes",
-        "@deepseek-ai/dsh-api-workspace-controller"
+        "@deepseek-ai/dsh-client-ui-renderer",
+        "@deepseek-ai/dsh-client-ui-slots",
+        "@deepseek-ai/dsh-client-ui-workspace"
       ]
     }
   },
