@@ -47,7 +47,7 @@ import { createGroupingPreferences } from './grouping'
 import { NS } from './labels'
 import { buildRows, filterRows, relativeTime, shortenPath, toMillis, SHORTLIST } from './model'
 import { SwitcherOverlay, type NavigationActions } from './navigation'
-import { buildNavigation, contentHits, filterTree, flattenTree, initialExpansion, searchSessions } from './navigation-model'
+import { buildNavigation, contentHits, filterTree, flattenTree, initialExpansion, searchSessions, stepNavigationIndex } from './navigation-model'
 import { HERO_SLOT, heroInjection, registerLocale } from './remote'
 import { sessionStatuses } from './session-presentation'
 import { createRecentSessions } from './recent-sessions'
@@ -138,6 +138,7 @@ export const __test = {
   initialExpansion,
   contentHits,
   searchSessions,
+  stepNavigationIndex,
   filterRows,
   shortenPath,
   relativeTime,

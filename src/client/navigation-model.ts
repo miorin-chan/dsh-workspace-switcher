@@ -194,6 +194,12 @@ function keepArchivedBranches(roots: WorkspaceBranch[]): WorkspaceBranch[] {
   })
 }
 
+export function stepNavigationIndex(length: number, from: number, direction: 1 | -1): number {
+  if (length === 0) return -1
+  if (from < 0) return direction === 1 ? 0 : length - 1
+  return Math.max(0, Math.min(length - 1, from + direction))
+}
+
 export function searchSessions(rows: readonly SessionRow[], query: string, hits: readonly SearchHit[]) {
   const snippets = new Map(hits.map(hit => [hit.sessionId, hit.snippet]))
   const metadata = query === '' ? rows : filterRows(rows.map(row => ({

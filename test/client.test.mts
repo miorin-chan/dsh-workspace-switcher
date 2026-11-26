@@ -4,10 +4,12 @@ import { CSS } from '../src/client/styles.ts'
 
 test('workspace navigation highlights the cursor independently of selection', () => {
   assert.match(CSS, /\.wsp-row\[data-active='true'\][^{]*\{\s*background:/)
-  const selectionRules = CSS.match(/[^{}]*\[data-selected='true'\][^{}]*(?=\{)/g) ?? []
-  assert.deepEqual(selectionRules.map(selector => selector.trim()), [
-    ".wsp-navigation-list[data-mode='sessions'] .wsp-navigation-row[data-selected='true']",
-  ])
+  const selectionRules = CSS.match(/[^{}]*\[data-selected='true'\][^{]*\{[^}]*\}/g) ?? []
+  assert.equal(selectionRules.length, 2)
+  assert.ok(selectionRules.every(rule => rule.trim().startsWith(".wsp-navigation-list[data-mode='sessions']")))
+  assert.doesNotMatch(selectionRules[0], /background/)
+  assert.match(selectionRules[1], /::before\s*\{[^}]*inset-inline-start:/)
+  assert.match(CSS, /\.wsp-navigation-row\[data-active='true'\] \{\s*outline:/)
 })
 
 /** Capture the module registration the browser module loader would receive. */
@@ -44,9 +46,21 @@ const plugin = registration.factory(name => (
 ))
 const {
   buildRows, filterRows, shortenPath, relativeTime, toMillis, SHORTLIST, placeWorkspacePopover,
-  buildNavigation, filterTree, flattenTree, initialExpansion, contentHits, searchSessions,
+  buildNavigation, filterTree, flattenTree, initialExpansion, contentHits, searchSessions, stepNavigationIndex,
   createGroupingPreferences, createViewPreferences, moveSession, sessionStatuses,
 } = plugin.__test
+
+test('arrow navigation steps from the current row and clamps repeated moves at both ends', () => {
+  const moves = (start, directions) => {
+    let index = start
+    return directions.map(direction => index = stepNavigationIndex(5, index, direction))
+  }
+  assert.deepEqual(moves(2, [1, 1, 1, -1, -1, -1, -1, -1]), [3, 4, 4, 3, 2, 1, 0, 0])
+  assert.deepEqual(moves(-1, [1, 1]), [0, 1])
+  assert.deepEqual(moves(-1, [-1, -1]), [4, 3])
+  assert.equal(stepNavigationIndex(0, -1, 1), -1)
+  assert.equal(stepNavigationIndex(0, -1, -1), -1)
+})
 
 /** A minimal host: recorded effects, a locale service, and a slot registry. */
 function fakeContext() {
