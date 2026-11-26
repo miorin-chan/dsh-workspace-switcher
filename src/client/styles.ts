@@ -325,7 +325,7 @@ export const CSS = `
 .wsp-dialog-body .wsp-navigation-row[data-search-meta='true'] { min-height: 48px; padding-block: 4px; }
 .wsp-navigation-row .wsp-row-title { font-size: 14px; }
 .wsp-navigation-list[data-mode='sessions'] .wsp-navigation-row[data-active='true'] {
-  outline: 1px solid var(--dsw-focus-ring-color); outline-offset: -1px;
+  outline: 1px solid var(--dsw-focus-ring-color, var(--dsw-alias-state-business-primary)); outline-offset: -1px;
 }
 .wsp-navigation-list[data-mode='sessions'] .wsp-navigation-row[data-selected='true'] { position: relative; }
 .wsp-navigation-list[data-mode='sessions'] .wsp-navigation-row[data-selected='true']::before {
