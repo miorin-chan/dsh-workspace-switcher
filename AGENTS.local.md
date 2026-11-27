@@ -21,10 +21,15 @@ The aggregate and this bundle insert the same row id, so do not install both.
 
 - `README.md` is for users: installation, usage, commands, and limits.
   Provide `README.zh.md` as its Chinese version.
-- `DESIGN.md` records the design, domain semantics, and invariants.
-  Keep implementation status, schedules, and debugging notes out of it.
-- `CHANGELOG.md` records changes for developers.
-- Keep design records, proposals, and verification evidence under `docs/`, with `docs/README.md` as the index.
+- [docs/DESIGN.md](docs/DESIGN.md) is the product design entry point.
+  Read it before changing product behavior.
+  It explains the user problem, intended experience, scope, and observable success criteria.
+- Keep implementation contracts, proposals, and verification records separate from the product design.
+  Use [docs/README.md](docs/README.md) as the index (starting with [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md)).
+  Verification records say what was actually tested.
+- `CHANGELOG.md` records changes by version.
+  Keep progress, schedules, and debugging notes in task records.
+  Before closing a task, update the product design with approved decisions and link back to it.
 - Keep the plugin detail page short and easy to scan.
   Use plain language and show only what the user needs to know or do right away.
   Reveal details as needed.
