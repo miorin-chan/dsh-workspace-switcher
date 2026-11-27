@@ -1,6 +1,7 @@
 {
   "meta": {
     "title": "Workspace Switcher",
-    "description": "Search and open sessions, browse the workspace tree, or choose a workspace for a new session."
+    "description": "Search and open sessions, browse the workspace tree, or choose a workspace for a new session.",
+    "detail": "docs/DETAIL.md"
   }
 }

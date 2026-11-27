@@ -1,6 +1,7 @@
 {
   "meta": {
     "title": "工作区切换",
-    "description": "用快捷键检索和打开会话、浏览工作区树，或为新会话选择工作区。"
+    "description": "用快捷键检索和打开会话、浏览工作区树，或为新会话选择工作区。",
+    "detail": "docs/DETAIL.zh.md"
   }
 }

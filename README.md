@@ -6,6 +6,16 @@
 
 Requires DeepSeek Harness 0.2.2-rc.3 or newer.
 
+## Preview
+
+On the New Session screen, click the workspace chip and choose **All N** to open the full picker.
+The screenshots show a workspace search in the Chinese interface.
+
+| | Light | Dark |
+| --- | --- | --- |
+| Workspace search | ![Light workspace picker showing four search results](docs/assets/screenshots/main-light.png) | ![Dark workspace picker showing four search results](docs/assets/screenshots/main-dark.png) |
+| Workspace chip | ![Light workspace chip on the New Session screen](docs/assets/screenshots/entry-light.png) | ![Dark workspace chip on the New Session screen](docs/assets/screenshots/entry-dark.png) |
+
 ## Use
 
 - **Mod+K** opens recent sessions.

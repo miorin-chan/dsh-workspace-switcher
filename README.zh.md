@@ -6,6 +6,16 @@
 
 需要 DeepSeek Harness 0.2.2-rc.3 或更新版本。
 
+## 界面与入口
+
+在新会话页点击工作区标签，再点「全部 N 个」展开选择器。
+主图展示搜索「设计」后筛出的四个工作区。
+
+| | 浅色 | 深色 |
+| --- | --- | --- |
+| 工作区搜索 | ![浅色工作区选择器，显示四条搜索结果](docs/assets/screenshots/main-light.png) | ![深色工作区选择器，显示四条搜索结果](docs/assets/screenshots/main-dark.png) |
+| 新会话入口 | ![浅色新会话工作区标签](docs/assets/screenshots/entry-light.png) | ![深色新会话工作区标签](docs/assets/screenshots/entry-dark.png) |
+
 ## 使用
 
 - **Mod+K** 打开最近会话列表。可按标题、工作区、路径、会话 ID 或消息正文检索，选择结果后直接打开会话。
