@@ -2,57 +2,30 @@
 
 [简体中文](README.zh.md)
 
-**Search and switch sessions or browse the workspace tree from a shared dialog.**
+Search and switch sessions or browse the workspace tree from a shared dialog.
 
-Requires DeepSeek Harness 0.2.2-rc.3 or newer.
+- **Mod+K** (also **Mod+Alt+K** on macOS/Windows Web) searches recent sessions across title, workspace,
+  path, ID, and message content (when enabled by the DSH deployment).
+- **Mod+Shift+K** opens the workspace view (`Space` expands/collapses a focused workspace,
+  `Enter` starts a new session there); clicking the New Session workspace chip and **All N** opens the chooser.
+- **Ctrl+Tab** jumps between recent sessions in the current window (default on macOS and Windows Desktop;
+  configurable in **Settings → Shortcuts**).
+- Use **View options** to change grouping, order, or archive filter; press `Shift+F10`,
+  click `…`, or right-click a row for DSH actions; **Add workspace** uses the local Host picker.
 
-## Preview
+Requires DeepSeek Harness `0.2.2-rc.3` or newer.
+This bundle is part of **Workspace Modular Improvement Plan** (`@miorin/dsh-atlas-workspace`);
+install either one, never both.
+For standalone use, run `pnpm install --frozen-lockfile` and select this directory in **Plugins → Add plugin**
+(or via `plugin_manager`).
 
-On the New Session screen, click the workspace chip and choose **All N** to open the full picker.
+## Screenshots
+
 The screenshots show a workspace search in the Chinese interface.
 
 | | Light | Dark |
 | --- | --- | --- |
 | Workspace search | ![Light workspace picker showing four search results](docs/assets/screenshots/main-light.png) | ![Dark workspace picker showing four search results](docs/assets/screenshots/main-dark.png) |
 | Workspace chip | ![Light workspace chip on the New Session screen](docs/assets/screenshots/entry-light.png) | ![Dark workspace chip on the New Session screen](docs/assets/screenshots/entry-dark.png) |
-
-## Use
-
-- **Mod+K** opens recent sessions.
-  Search by title, workspace, path, ID, or message content, then open a result.
-- **Mod+Shift+K** opens the last selected workspace grouping and defaults to the workspace tree.
-  When a workspace row has focus, **Space** expands or collapses it.
-  Press **Enter** to open a new session in the workspace, or click the new-session icon to the right of More.
-  On a New Session screen, **Enter** selects the workspace for the current draft.
-- **Ctrl+Tab** immediately opens the previous session visited in this window.
-  Press it again to switch back.
-- The workspace chip on a New Session screen opens the searchable five-row shortlist.
-  **All N** expands it.
-
-Use ↑ and ↓ to move, ← and → to collapse or expand a focused tree row, Enter to activate, and Esc to dismiss.
-Mod is Command on macOS and Ctrl elsewhere.
-
-Open **View options** in the dialog to choose a grouping, session order, or archive filter.
-In manual mode, drag sessions within one group, or select a session and use the move buttons.
-Use the row’s ellipsis or right-click to open DSH’s action menu.
-With a row focused or highlighted by search, **Shift+F10** opens the same menu.
-The menu offers the actions available for that row, including unarchiving.
-
-## Limits
-
-- Message-content search follows the DSH deployment, as the built-in sidebar does.
-  Until content search is enabled there, the dialog matches titles, workspaces, paths, and IDs only.
-- **Add workspace** uses the local Host’s native folder chooser.
-- **Ctrl+Tab** is the default binding on macOS and Windows Desktop.
-  On other platforms, assign supported keys to the command in **Settings → Shortcuts**.
-- Browsers can reserve key combinations.
-  On macOS and Windows Web, the default session-search command also opens the dialog with **Mod+Alt+K**.
-
-## Install
-
-Run `pnpm install --frozen-lockfile` in a fresh checkout to install dependencies and build the plugin.
-Then select this directory in **Plugins** > **Add plugin**, or install it with `plugin_manager`.
-This bundle is part of [`@miorin/dsh-atlas-workspace`](../dsh-atlas-workspace/README.md);
-install either one, never both.
 
 [Project documentation](docs/README.md)
